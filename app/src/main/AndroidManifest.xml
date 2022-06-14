@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.wintec.lamp">
+
+    <application
+        android:name=".base.MyApp"
+        android:allowBackup="true"
+        android:icon="@drawable/icon_ai"
+        android:label="@string/app_name"
+        android:largeHeap="true"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme"
+        android:extractNativeLibs="true">
+
+        <activity
+            android:name=".GetPluSettingActivty"
+            android:exported="true" />
+        <activity android:name=".BackUpActivity" />
+        <activity android:name=".SimBarCodeSettingActivity" />
+        <activity android:name=".BarCodeSettingActivity" />
+        <activity android:name=".ButtonSettingActivity" />
+        <activity android:name=".UiSettingActivity" />
+        <activity android:name=".SendSettingActivity" />
+        <activity android:name=".ShowInfo" />
+        <activity
+            android:name=".ScaleActivityUI"
+            android:alwaysRetainTaskState="true"
+            android:configChanges="orientation|keyboardHidden"
+            android:launchMode="singleTask"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden" />
+        <activity android:name=".EditActivity" />
+        <activity
+            android:name=".WelcomeActivity"
+            android:alwaysRetainTaskState="true"
+            android:launchMode="singleTask">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".CorpPicActivaty"
+            android:label="标定" />
+        <activity
+            android:name=".SettingActivity"
+            android:label="设置" />
+        <activity
+            android:name=".WeightSettingActivity"
+            android:label="称重设置" />
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.wintec.lamp.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
+        <receiver
+            android:name=".broadcastReceiver.MyBroadcastReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter android:priority="1000">
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <!-- <category android:name="android.intent.category.HOME" /> -->
+            </intent-filter>
+        </receiver>
+
+        <service
+            android:name=".service.DownloadService"
+            android:exported="false" />
+    </application>
+    <uses-feature android:name="android.hardware.camera" />
+<!--    /**  弹窗权限 **/-->
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+    <uses-feature android:name="android.hardware.camera.autofocus" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" /> <!-- 安装应用权限 -->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission
+        android:name="android.permission.WRITE_SETTINGS"
+        tools:ignore="ProtectedPermissions" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+
+    <uses-permission android:name="android.permission.EXPAND_STATUS_BAR" />
+
+</manifest>

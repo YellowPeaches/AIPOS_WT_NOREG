@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:state_pressed="true" android:drawable="@drawable/keyboard_pressed"/>
+
+    <item
+        android:drawable="@drawable/keyboard_abc_normal"/>
+
+</selector>
+<!--<layer-list xmlns:android="http://schemas.android.com/apk/res/android">-->
+<!--    &lt;!&ndash; 此处设置key边距 &ndash;&gt;-->
+<!--    <item-->
+<!--        android:bottom="2dp"-->
+<!--        android:left="2dp"-->
+<!--        android:right="2dp"-->
+<!--        android:top="2dp">-->
+<!--        <selector>-->
+<!--            &lt;!&ndash; 按压后图层 &ndash;&gt;-->
+<!--            <item android:state_pressed="true">-->
+<!--                <shape>-->
+<!--                    <solid android:color="@color/press_blue" />-->
+<!--                    <stroke android:width="1px" android:color="@color/press_blue_bolder"/>-->
+<!--                    <corners android:radius="10dp" />-->
+<!--                </shape>-->
+<!--            </item>-->
+<!--            &lt;!&ndash; 正常状态图层 &ndash;&gt;-->
+<!--            <item>-->
+<!--                <shape>-->
+<!--                    <solid android:color="@color/Grey125" />-->
+<!--                    <stroke android:color="@color/Grey350" android:width="1px" />-->
+<!--                    <corners android:radius="10dp" />-->
+<!--                </shape>-->
+<!--            </item>-->
+<!--        </selector>-->
+<!--    </item>-->
+<!--</layer-list>-->

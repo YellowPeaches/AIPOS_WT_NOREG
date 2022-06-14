@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="spinner">
+        <item name="android:textColor">?attr/qmui_config_color_gray_5</item>
+        <item name="android:textSize">?attr/qmui_common_list_item_detail_h_text_size</item>
+    </style>
+</resources>

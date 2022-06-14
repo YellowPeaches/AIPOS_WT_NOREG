@@ -1,0 +1,33 @@
+<resources>
+    <string name="app_name">睿眼</string>
+
+    <string name="no_net">网络出错了！</string>
+
+    <string name="title_activity_check_data">CheckDataActivity</string>
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="welcome">"Welcome !"</string>
+    <string name="invalid_username">Not a valid username</string>
+    <string name="invalid_password">Password must be >5 characters</string>
+    <string name="login_failed">"Login failed"</string>
+    <string name="http_unknown_error">请求出错，未知错误</string>
+
+    <string name="http_account_error">账号异常，请重新登录</string>
+    <string name="http_data_explain_error">数据解析异常，请稍后</string>
+    <string name="http_server_out_time">服务器请求超时，请稍后再试</string>
+    <string name="http_network_error">请求失败，请检查网络设置</string>
+    <string name="http_response_error">服务器响应异常，请稍后再试</string>
+    <string name="http_server_error">服务器连接异常，请稍后再试</string>
+    <string name="http_request_cancel">请求被中断，请重试</string>
+    <string name="sign_in">注册</string>
+    <string name="hint_mac">mac地址</string>
+    <string name="hint_pos">POS编号</string>
+    <string name="hint_branch">门店编号</string>
+    <string name="click_get">点击获取</string>
+    <string-array name="unit">
+        <item>计重</item>
+        <item>计件</item>
+    </string-array>
+</resources>

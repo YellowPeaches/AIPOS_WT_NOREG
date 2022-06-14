@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/Grey100"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingHorizontal="5dp">
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/gvline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.70" />
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/gvline_52"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.52" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/ghline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.14" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/ghline_75"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.75" />
+
+    <com.wintec.aiposui.view.AiPosTitleView
+        android:id="@+id/ap_title"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="@+id/ghline"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="@+id/gvline"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginRight="10dp"/>
+
+    <!--识别结果列表-->
+    <com.wintec.aiposui.view.AiPosListView
+        android:id="@+id/ap_list"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginRight="10dp"
+        app:layout_constraintBottom_toBottomOf="@+id/ghline_75"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/ap_account_list"
+        app:layout_constraintTop_toTopOf="@+id/ghline" />
+
+    <!--快捷选项列表-->
+    <com.wintec.aiposui.view.AiposQuickSelectView
+        android:id="@+id/ap_quick_list"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@+id/ghline_75"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/gvline"
+        />
+
+    <!--字母键盘-->
+    <com.wintec.aiposui.view.keyboard.KeybroadView
+        android:id="@+id/ap_keyboard"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="10dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/gvline"
+        />
+
+    <!--    操作  operating-->
+    <com.wintec.aiposui.view.AiPosOperatingView
+        android:id="@+id/ap_opv"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintLeft_toLeftOf="@+id/gvline"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <!--结算列表-->
+    <com.wintec.aiposui.view.AiPosAccountList
+        android:id="@+id/ap_account_list"
+        android:layout_width="350dp"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        android:layout_margin="10dp"
+        app:layout_constraintBottom_toTopOf="@+id/ap_keyboard"
+        app:layout_constraintRight_toLeftOf="@+id/gvline"
+        app:layout_constraintTop_toBottomOf="@id/ap_title" />
+</androidx.constraintlayout.widget.ConstraintLayout>

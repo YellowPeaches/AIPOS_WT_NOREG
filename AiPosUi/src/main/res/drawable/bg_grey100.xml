@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 灰色阴影 -->
+    <item>
+        <shape android:shape="rectangle">
+            <padding
+                android:left="1dp"
+                android:right="1dp"
+                android:top="1dp" />
+            <solid android:color="@color/Grey400" />
+            <!--            android:radius="@dimen/ui_16_dp"-->
+            <corners
+                android:bottomLeftRadius="@dimen/ui_16_dp"
+                android:bottomRightRadius="@dimen/ui_16_dp"
+                android:topLeftRadius="@dimen/ui_8_dp"
+                android:topRightRadius="@dimen/ui_8_dp" />
+        </shape>
+    </item>
+    <!-- 白色前景 -->
+    <item>
+        <shape android:shape="rectangle">
+            <padding
+                android:bottom="@dimen/ui_6_dp"
+                android:left="@dimen/ui_6_dp"
+                android:right="@dimen/ui_6_dp"
+                android:top="@dimen/ui_6_dp" />
+            <solid android:color="@color/Grey200" />
+            <corners android:radius="@dimen/ui_8_dp" />
+        </shape>
+    </item>
+</layer-list>

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FF000000</color>
+    <color name="white0.5">#80F1F1F1</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="white0.2">#0DFFFFFF</color>
+    <color name="black0.5">#65000000</color>
+    <color name="black0.2">#33000000</color>
+    <color name="black_clear">#00000000</color>
+    <color name="black0.7">#B3000000</color>
+    <color name="black0.8">#CC000000</color>
+    <color name="view_bg">@color/Grey100</color>
+    <color name="line_divider">@color/Grey300</color>
+    <color name="bottom_nav_checked">#00ACC1</color>
+    <color name="bottom_nav_not_checked">#cccccc</color>
+    <color name="nav_item_color_ic">#616161</color>
+    <color name="nav_item_color_tv">#19191B</color>
+    <color name="card_view_bg">@color/white</color>
+    <color name="item_title">#19191B</color>
+    <color name="item_author">@color/Grey700</color>
+    <color name="item_search_history">@color/Grey700</color>
+    <color name="item_desc">@color/Grey800</color>
+    <color name="arrow_color">@color/Grey700</color>
+    <color name="bottom_nav_bg">@color/white</color>
+    <color name="nav_header_tv">@color/white</color>
+    <color name="tab_selected">@color/white</color>
+    <color name="tab_text">@color/Grey200</color>
+    <color name="main_text_color">@color/white</color>
+    <color name="flow_layout_bg">@color/Grey200</color>
+    <color name="toolbar_button">@color/white</color>
+    <color name="splash_bg">@color/white</color>
+    <color name="scrollbar">@color/Grey400</color>
+    <color name="popup_window_bg">@color/card_view_bg</color>
+    <color name="popup_window_bg_press">@color/Grey300</color>
+
+
+    <color name="blue_100">#FD72B5FD</color>
+    <color name="blue_200">#FD69B2FF</color>
+    <color name="blue_light">#489cfa</color>
+    <color name="blue_dark">#2D78DD</color>
+    <color name="blue_welcome">#006EB9</color>
+    <color name="blue_btn">#089BFA</color>
+
+    <color name="red">#f44336</color>
+
+    <color name="Grey49">#F9F9F9</color>
+    <color name="Grey50">#FAFAFA</color>
+    <color name="Grey60">#FBFBFB</color>
+    <color name="Grey100">#F5F5F5</color>
+    <color name="Grey200">#EEEEEE</color>
+    <color name="Grey300">#E0E0E0</color>
+    <color name="Grey400">#bdbdbd</color>
+    <color name="Grey500">#9e9e9e</color>
+    <color name="Grey600">#757575</color>
+    <color name="Grey700">#616161</color>
+    <color name="Grey800">#3D3D3D</color>
+    <color name="Grey900">#212121</color>
+    <color name="Orange">#FF7500</color>
+
+    <color name="blue_text_007dff">#ff007dff</color>
+    <color name="reserve_normal_textcolor">#fffffffe</color>
+    <color name="detail_dowanload_progressbar_color">#ff007dff</color>
+    <color name="category_button_select_stroke">#4c007dff</color>
+    <color name="detail_downloadbutton_processing">#26007dff</color>
+    <color name="detail_install_color">#55007dff</color>
+    <color name="white_text_7c7c7c">#ff7c7c7c</color>
+    <color name="hms_background">#fff7f7f7</color>
+    <color name="swipeColor1">#3F51B5</color>
+    <color name="swipeColor2">#b2d235</color>
+    <color name="swipeColor3">#f58220</color>
+    <color name="swipeColor4">#008792</color>
+    <color name="swipeColor5">#ea66a6</color>
+    <color name="backgound_fcfcfc">#fffcfcfc</color>
+    <color name="half_black">#80000000</color>.
+
+
+    <color name="color_pure_black">#000000</color>
+    <color name="color_75_pure_black">#C0000000</color>
+    <color name="color_60_pure_black">#99000000</color>
+    <color name="color_50_pure_black">#80000000</color>
+    <color name="color_25_pure_black">#40000000</color>
+    <color name="color_15_pure_black">#26000000</color>
+    <color name="color_10_pure_black">#19000000</color>
+
+    <color name="aquamarine">#7fffd4</color> <!-- 碧绿色 -->
+    <color name="chartreuse">#7fff00</color> <!-- 黄绿色 -->
+    <color name="lawngreen">#7cfc00</color> <!-- 草绿色 -->
+    <color name="mediumaquamarine">#35EF3C</color> <!-- 中绿色 -->
+    <color name="deepgreen1">#10B333</color>
+    <color name="darkolivegreen">#556b2f</color> <!-- 暗橄榄绿 -->
+
+    <color name="c_333333">#333333</color>
+    <color name="c_d8d3cf">#d8d3cf</color>
+    <color name="c_a59a93">#a59a93</color>
+    <color name="c_b9afa9">#b9afa9</color>
+    <color name="c_c35b3a">#c35b3a</color>
+    <color name="c_9d472c">#9d472c</color>
+
+</resources>

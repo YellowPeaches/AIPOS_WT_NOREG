@@ -1,0 +1,407 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/dp_10"
+    android:background="@color/Grey125"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/ghline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/gvline_parent_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.25" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/gvline_parent_2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.50" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/gvline_parent_3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.75" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/gl_h_2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.22"/>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:visibility="gone"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0">
+
+
+
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <!--皮重-->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginRight="@dimen/dp_10"
+        android:background="@drawable/bg_title_item_1"
+        app:layout_constraintBottom_toTopOf="@+id/gl_h_2"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="@+id/gvline_parent_1"
+        app:layout_constraintTop_toTopOf="@+id/ghline">
+
+        <TextView
+            android:id="@+id/text_tare"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="皮重(kg)"
+            android:textSize="18sp"
+            android:textColor="@color/black"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="5dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <com.wintec.aiposui.view.control.CommonCustomTextView
+            android:id="@+id/tare_value"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginRight="@dimen/ui_10_dp"
+            android:layout_marginLeft="10dp"
+            android:gravity="right"
+            android:text="0.00"
+            android:textSize="65sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/text_tare" />
+        <com.wintec.aiposui.view.control.CommonCustomTextView
+            android:id="@+id/tv_hint_text"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="10dp"
+            android:gravity="center_vertical"
+            android:text=""
+            android:textSize="30sp"
+            android:visibility="gone"
+            android:textColor="@color/swipeColor3"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBottom_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginRight="@dimen/dp_10"
+        android:background="@drawable/bg_title_item_2"
+        app:layout_constraintBottom_toTopOf="@+id/gl_h_2"
+        app:layout_constraintLeft_toLeftOf="@+id/gvline_parent_1"
+        app:layout_constraintRight_toRightOf="@+id/gvline_parent_2"
+        app:layout_constraintTop_toTopOf="@+id/ghline">
+
+        <TextView
+            android:id="@+id/tv_txt_net"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="净重(kg)"
+            android:textSize="18sp"
+            android:textColor="@color/white"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="5dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <com.wintec.aiposui.view.control.CommonCustomTextView
+            android:id="@+id/weigh_value"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginRight="@dimen/ui_10_dp"
+            android:gravity="right"
+            android:text="0.000"
+            android:textSize="65sp"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_txt_net"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:textSize="35sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginRight="@dimen/dp_10"
+        android:background="@drawable/bg_title_item_1"
+        app:layout_constraintBottom_toTopOf="@+id/gl_h_2"
+        app:layout_constraintLeft_toLeftOf="@+id/gvline_parent_2"
+        app:layout_constraintRight_toRightOf="@+id/gvline_parent_3"
+        app:layout_constraintTop_toTopOf="@+id/ghline">
+
+        <TextView
+            android:id="@+id/tv_price_txt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="单价(元/kg)"
+            android:textSize="18sp"
+            android:textColor="@color/black"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="5dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <com.wintec.aiposui.view.control.CommonCustomTextView
+            android:id="@+id/price_value"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginRight="@dimen/ui_10_dp"
+            android:gravity="right"
+            android:text="0.00"
+            android:textColor="#333"
+            android:textSize="65sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_price_txt"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- 右侧净重显示-->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/bg_title_item_3"
+        app:layout_constraintLeft_toLeftOf="@+id/gvline_parent_3"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/gl_h_2"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/tv_total_txt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="总价(元)"
+            android:textSize="18sp"
+            android:textColor="@color/white"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="5dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+
+        <com.wintec.aiposui.view.control.CommonCustomTextView
+            android:id="@+id/total_value"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:gravity="right"
+            android:layout_marginRight="@dimen/ui_10_dp"
+            android:text="0.00"
+            android:textColor="@color/white"
+            android:textSize="65sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_total_txt" />
+
+
+        <TextView
+            android:id="@+id/tv_unit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="15dp"
+            android:gravity="center"
+            android:text="0.000kg"
+            android:visibility="gone"
+            android:textSize="22sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/text_util"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="left"
+        android:layout_marginLeft="10dp"
+        android:layout_marginVertical="@dimen/dp_10"
+        android:text="e=2/5g Min 40g Max 6/15kg T=-5.998kg"
+        android:textColor="@color/Grey400"
+        android:textSize="8sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/gl_h_2"/>
+    <!--结算列表-->
+    <com.wintec.aiposui.view.SecondAccountList
+        android:id="@+id/pre_account_list"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        android:layout_margin="3dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/gl_h_2"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/gvline_parent_1"/>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/tv_good_model"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/gl_h_2"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/gvline_parent_1"
+        android:visibility="invisible"
+        >
+
+<!--        <ImageView-->
+<!--            android:id="@+id/item_preview"-->
+<!--            android:layout_width="300dp"-->
+<!--            android:layout_height="0dp"-->
+<!--            android:src="@drawable/img_def"-->
+<!--            app:layout_constraintBottom_toBottomOf="@+id/ghline_left_1"-->
+<!--            app:layout_constraintDimensionRatio="W,3:2"-->
+<!--            app:layout_constraintLeft_toLeftOf="parent"-->
+<!--            app:layout_constraintRight_toRightOf="parent"-->
+<!--            app:layout_constraintTop_toTopOf="parent"-->
+<!--            app:layout_constraintVertical_bias="0.494" />-->
+<!--        <TextView-->
+<!--            android:id="@+id/item_big_name"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="0dp"-->
+<!--            android:gravity="center"-->
+<!--            android:background="@color/wintec_green"-->
+<!--            android:textColor="@color/white"-->
+<!--            android:layout_margin="5dp"-->
+<!--            android:text="新鲜菜花"-->
+<!--            android:textSize="45sp"-->
+<!--            android:layout_marginTop="2dp"-->
+<!--            android:layout_marginHorizontal="2dp"-->
+<!--            app:layout_constraintBottom_toBottomOf="@+id/ghline_left_1"-->
+<!--            app:layout_constraintLeft_toLeftOf="parent"-->
+<!--            app:layout_constraintRight_toRightOf="parent"-->
+<!--            app:layout_constraintTop_toTopOf="parent"-->
+<!--            />-->
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/ghline_left_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.3" />
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/ghline_left_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.45" />
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/ghline_left_3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.60" />
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/gvline_left_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.02" />
+        <TextView
+            android:id="@+id/name_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/ui_20_dp"
+            android:text="商品名称:"
+            android:textSize="18sp"
+            android:textColor="@color/Grey300"
+            app:layout_constraintBottom_toBottomOf="@+id/ghline_left_2"
+            app:layout_constraintLeft_toLeftOf="@id/gvline_left_1"/>
+        <TextView
+            android:id="@+id/code_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/ui_20_dp"
+            android:textSize="18sp"
+            android:text="商品编码:"
+            android:textColor="@color/Grey300"
+            app:layout_constraintBottom_toBottomOf="@+id/ghline_left_3"
+            app:layout_constraintLeft_toLeftOf="@id/gvline_left_1"/>
+        <TextView
+            android:id="@+id/name_vale"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:layout_marginLeft="@dimen/ui_20_dp"
+            android:gravity="center"
+            android:text="冬瓜"
+            android:textSize="25sp"
+            android:singleLine="false"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintBottom_toBottomOf="@+id/ghline_left_2"
+            app:layout_constraintLeft_toRightOf="@+id/name_text"
+            app:layout_constraintRight_toRightOf="parent"/>
+        <TextView
+            android:id="@+id/code_vale"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/ui_20_dp"
+            android:text="00135"
+            android:textColor="@color/black"
+            android:textSize="25sp"
+            app:layout_constraintBottom_toBottomOf="@+id/ghline_left_3"
+            app:layout_constraintLeft_toRightOf="@+id/code_text"
+            app:layout_constraintRight_toRightOf="parent"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <!--存放图片的ViewPager-->
+    <com.youth.banner.Banner
+        android:id="@+id/mBanner"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintLeft_toRightOf="@id/gvline_parent_1"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/gl_h_2"
+        app:layout_constraintBottom_toBottomOf="parent"
+        >
+    </com.youth.banner.Banner>
+
+<!--    <ImageView-->
+<!--        android:id="@+id/item_preview"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="0dp"-->
+<!--        android:src="@mipmap/kexian"-->
+<!--        app:layout_constraintLeft_toRightOf="@id/gvline_parent_1"-->
+<!--        app:layout_constraintRight_toRightOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/gl_h_2"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"/>-->
+
+</androidx.constraintlayout.widget.ConstraintLayout>

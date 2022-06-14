@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <!--     设置按钮为弧形-->
+    <stroke android:color="@color/Grey400"
+        android:width="2dp" />
+    <solid android:color="@color/Grey150" />
+    <corners android:radius="10dip"/>
+</shape>

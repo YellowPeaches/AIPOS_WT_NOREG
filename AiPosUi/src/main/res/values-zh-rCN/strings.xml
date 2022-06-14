@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<!--    <string name="app_name">英泰睿眼</string>-->
+<!--    <string name="shop_num">门店编码</string>-->
+<!--    <string name="pos_num">POS编码</string>-->
+<!--    <string name="customer_code">租户代码</string>-->
+<!--    <string name="register">注册</string>-->
+<!--    <string name="detect_new_version">检测到新版本，是否立即升级</string>-->
+<!--    <string name="downloading">正在下载</string>-->
+<!--    <string name="pos_not_empty">POS编码不能为空</string>-->
+<!--    <string name="shop_not_empty">门店编码不能为空</string>-->
+<!--    <string name="customer_not_empty">租户代码不能为空</string>-->
+<!--    <string name="authority_request">请同意权限授予</string>-->
+<!--    <string name="register_success">注冊成功</string>-->
+<!--    <string name="wait_approval">请等待审核</string>-->
+<!--    <string name="approvaling">审核中，请联系客服人员</string>-->
+<!--    <string name="start_cut">开始裁剪</string>-->
+<!--    <string name="">设置成功</string>-->
+<!--    <string name="">设置失敗，错误码：</string>-->
+<!--    <string name="">单价(谢克尔/kg)</string>-->
+<!--    <string name="">重量(kg)</string>-->
+<!--    <string name="">总计</string>-->
+<!--    <string name="">净重(kg)</string>-->
+<!--    <string name="">皮重</string>-->
+<!--    <string name=""></string>-->
+<!--    <string name=""></string>-->
+<!--    <string name=""></string>-->
+<!--    <string name=""></string>-->
+<!--    <string name=""></string>-->
+</resources>

@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/Grey200">
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/gl_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.16"/>
+
+    <LinearLayout
+        android:visibility="visible"
+        android:id="@+id/tv_keyPlu"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@color/wintec_blue"
+        app:layout_constraintDimensionRatio="H,8:1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+        <TextView
+            android:id="@+id/tv_keyName"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textSize="20sp"
+            android:text="asasdasdd"
+            />
+        <TextView
+            android:id="@+id/tv_keyPluNo"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textSize="20sp"
+            />
+        <TextView
+            android:id="@+id/tv_keyPrice"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textSize="20sp"
+            />
+    </LinearLayout>
+    <TextView
+        android:id="@+id/tv_keyTitle"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@color/wintec_blue"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:textSize="36sp"
+        app:layout_constraintDimensionRatio="H,8:1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/edit_keyValue"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_margin="5dp"
+        android:background="@drawable/bg_edit_border"
+        android:gravity="center"
+        android:textSize="36sp"
+        app:layout_constraintDimensionRatio="H,6:1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/gl_1" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_keys"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="@+id/gvline"
+        app:layout_constraintTop_toBottomOf="@+id/edit_keyValue" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/ctLayout_right"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="@+id/gvline"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edit_keyValue">
+
+        <TextView
+            android:text="确认"
+            android:id="@+id/tv_rightBtn1"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:textStyle="bold"
+            android:textSize="36sp"
+            android:layout_margin="2dp"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:background="@drawable/btn_print_select"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="@+id/ghline"/>
+
+
+        <TextView
+            android:text="取消"
+            android:id="@+id/tv_rightBtn2"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:textStyle="bold"
+            android:textSize="36sp"
+            android:gravity="center"
+            android:layout_margin="2dp"
+            android:background="@drawable/btn_operate_select"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_rightBtn1"
+            app:layout_constraintBottom_toTopOf="@+id/tv_rightBtn3" />
+        <TextView
+            android:text="清空"
+            android:visibility="gone"
+            android:id="@+id/tv_rightBtn3"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:textStyle="bold"
+            android:textSize="36sp"
+            android:gravity="center"
+            android:layout_margin="2dp"
+            android:background="@drawable/btn_operate_select"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_rightBtn2"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/ghline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.5" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/gvline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.75" />
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

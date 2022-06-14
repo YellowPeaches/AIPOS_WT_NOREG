@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!--横坐标-->
+    <com.wintec.aiposui.view.control.CommonCustomTextView
+        android:id="@+id/txt_attribute_x"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="22sp"
+        android:text="横轴坐标:"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        />
+
+    <EditText
+        android:id="@+id/edt_attribute_x"
+        android:layout_width="200dp"
+        android:layout_height="0dp"
+        android:inputType="number"
+        android:layout_marginLeft="15dp"
+        app:layout_constraintTop_toTopOf="@id/txt_attribute_x"
+        app:layout_constraintLeft_toRightOf="@id/txt_attribute_x"
+        app:layout_constraintBottom_toBottomOf="@id/txt_attribute_x"
+        />
+
+    <!--纵坐标-->
+    <com.wintec.aiposui.view.control.CommonCustomTextView
+        android:id="@+id/txt_attribute_y"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="22sp"
+        android:layout_marginTop="15dp"
+        android:text="纵轴坐标:"
+        app:layout_constraintTop_toBottomOf="@id/txt_attribute_x"
+        app:layout_constraintLeft_toLeftOf="parent"
+        />
+
+    <EditText
+        android:id="@+id/edt_attribute_y"
+        android:layout_width="200dp"
+        android:layout_height="0dp"
+        android:inputType="number"
+        app:layout_constraintTop_toTopOf="@id/txt_attribute_y"
+        app:layout_constraintLeft_toLeftOf="@id/edt_attribute_x"
+        app:layout_constraintBottom_toBottomOf="@id/txt_attribute_y"
+        />
+
+    <!--打印内容-->
+    <com.wintec.aiposui.view.control.CommonCustomTextView
+        android:id="@+id/txt_attribute_print"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="22sp"
+        android:layout_marginTop="15dp"
+        android:text="打印内容:"
+        app:layout_constraintTop_toBottomOf="@id/txt_attribute_y"
+        app:layout_constraintLeft_toLeftOf="parent"
+        />
+
+    <!--单项选择-->
+    <RadioGroup
+        android:id="@+id/rg_print"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="@id/edt_attribute_y"
+        app:layout_constraintTop_toTopOf="@id/txt_attribute_print"
+        app:layout_constraintRight_toRightOf="parent"
+        android:orientation="vertical">
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="仅打印内容"
+            />
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="打印标题和内容"
+            />
+
+    </RadioGroup>
+
+    <!--标题显示-->
+    <TextView
+        android:id="@+id/txt_title_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:text="标题显示:"
+        app:layout_constraintTop_toBottomOf="@id/rg_print"
+        app:layout_constraintLeft_toLeftOf="@id/rg_print"
+        />
+
+    <EditText
+        android:id="@+id/edt_title_content"
+        android:layout_width="200dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toTopOf="@id/txt_title_content"
+        app:layout_constraintLeft_toRightOf="@id/txt_title_content"
+        app:layout_constraintBottom_toBottomOf="@id/txt_title_content"
+        />
+
+    <!--字体大小-->
+    <com.wintec.aiposui.view.control.CommonCustomTextView
+        android:id="@+id/txt_attribute_text_size"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="22sp"
+        android:layout_marginTop="15dp"
+        android:text="字体大小:"
+        app:layout_constraintTop_toBottomOf="@id/txt_title_content"
+        app:layout_constraintLeft_toLeftOf="parent"
+        />
+
+    <Spinner
+        android:id="@+id/sp_text_size"
+        android:layout_width="110dp"
+        android:layout_height="0dp"
+        app:layout_constraintLeft_toLeftOf="@id/edt_attribute_y"
+        app:layout_constraintTop_toTopOf="@id/txt_attribute_text_size"
+        app:layout_constraintBottom_toBottomOf="@id/txt_attribute_text_size"
+        />
+
+    <!--是否加粗-->
+    <com.wintec.aiposui.view.control.CommonCustomTextView
+        android:id="@+id/txt_attribute_text_style"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="22sp"
+        android:layout_marginTop="15dp"
+        android:text="字体加粗:"
+        app:layout_constraintTop_toBottomOf="@id/txt_attribute_text_size"
+        app:layout_constraintLeft_toLeftOf="parent"
+        />
+
+    <Switch
+        android:id="@+id/sw_text_bold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/txt_attribute_text_style"
+        app:layout_constraintLeft_toLeftOf="@id/sp_text_size"
+        app:layout_constraintTop_toBottomOf="@id/txt_attribute_text_style"
+        app:layout_constraintTop_toTopOf="@id/txt_attribute_text_style" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

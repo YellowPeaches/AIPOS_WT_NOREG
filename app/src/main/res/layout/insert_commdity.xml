@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+    <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="新增商品"
+                android:textColor="?attr/qmui_config_color_gray_3"
+                android:textSize="30dp"
+                android:gravity="center"
+                android:layout_marginTop="20dp"/>
+    <GridLayout
+                android:layout_width="400dp"
+                android:layout_height="wrap_content"
+                android:background="@color/qmui_config_color_white"
+                android:columnCount="2"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:layout_margin="@dimen/ui_20_dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/qmui_list_item_height"
+                    android:layout_gravity="fill_horizontal"
+                    android:gravity="center_vertical"
+                    android:text="商品编码： "
+                    android:textColor="?attr/qmui_config_color_gray_1"
+                    android:textSize="?attr/qmui_common_list_item_title_h_text_size"
+                    />
+
+                <EditText
+                    android:id="@+id/commdity_itemcode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="fill"
+                    android:background="@drawable/qmui_divider_bottom_bitmap"
+                    android:hint="请输入商品编码"
+                    android:inputType="phone"
+                    android:maxLength="20"
+                    android:textColor="?attr/qmui_config_color_gray_5"
+                    android:textSize="?attr/qmui_common_list_item_detail_h_text_size" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/qmui_list_item_height"
+                    android:gravity="center_vertical"
+                    android:text="商品名称： "
+                    android:textColor="?attr/qmui_config_color_gray_1"
+                    android:textSize="?attr/qmui_common_list_item_title_h_text_size" />
+
+                <EditText
+                    android:id="@+id/commdity_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="fill"
+                    android:background="@drawable/qmui_divider_bottom_bitmap"
+                    android:hint="请输入商品名称"
+                    android:maxLength="11"
+                    android:textColor="?attr/qmui_config_color_gray_5"
+                    android:textSize="?attr/qmui_common_list_item_detail_h_text_size" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/qmui_list_item_height"
+                    android:layout_gravity="fill_horizontal"
+                    android:gravity="center_vertical"
+                    android:text="商品价格： "
+                    android:textColor="?attr/qmui_config_color_gray_1"
+                    android:textSize="?attr/qmui_common_list_item_title_h_text_size" />
+                <EditText
+                    android:id="@+id/commdity_price"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="fill"
+                    android:background="@drawable/qmui_divider_bottom_bitmap"
+                    android:hint="请输入商品价格"
+                    android:inputType="phone"
+                    android:maxLength="20"
+                    android:textColor="?attr/qmui_config_color_gray_5"
+                    android:textSize="?attr/qmui_common_list_item_detail_h_text_size" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/qmui_list_item_height"
+                    android:layout_gravity="fill_horizontal"
+                    android:gravity="center_vertical"
+                    android:text="计价方式： "
+                    android:textColor="?attr/qmui_config_color_gray_1"
+                    android:textSize="?attr/qmui_common_list_item_title_h_text_size" />
+
+                <Spinner
+                    android:id="@+id/commdity_unit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="fill"
+                    android:background="@drawable/qmui_divider_bottom_bitmap"
+                    android:maxLength="30"
+                    android:entries="@array/unit"
+                    android:theme="@style/spinner" />
+    </GridLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:ignore="MissingConstraints"
+        android:layout_marginTop="10dp">
+
+        <Button
+            android:id="@+id/commdity_insert"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="130px"
+            android:background="@drawable/btn_quit_scale"
+            android:textColor="@color/white"
+            android:textSize="40dp"
+            android:text="确认" />
+        <Button
+            android:id="@+id/commdity_quit"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="130px"
+            android:background="@drawable/btn_quit"
+            android:text="取消"
+            android:textSize="40dp"
+            android:textColor="@color/black" />
+    </LinearLayout>
+
+</LinearLayout>

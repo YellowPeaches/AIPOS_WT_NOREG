@@ -1,0 +1,162 @@
+        apply plugin: 'com.android.application'
+apply plugin: 'org.greenrobot.greendao' // apply plugin
+apply from: 'and_res_guard.gradle'
+
+//获取时间的方法 GMT+8代表北京时间
+static def getNowTime() {
+    return new Date().format("yyyyMMddHHmmss", TimeZone.getTimeZone("GMT+8"));
+}
+android {
+    /**
+     * 重命名APK
+     * defaultConfig.versionName：当前版本名字
+     * defaultConfig.versionCode：当前版本号
+     * getNowTime() ：获取当前时间的方法
+     * variant.name：当前打包默认的模式一般分两种：debug和release
+     * outputFileName：打包后的文件名字
+     */
+    applicationVariants.all { variant ->
+        variant.outputs.all {
+            def fileName = "WintecAiPosWt" + "_${defaultConfig.versionName}_${getNowTime()}_" + variant.name + ".apk"
+            outputFileName = fileName
+        }
+    }
+    compileSdkVersion 30
+    buildToolsVersion "30.0.0"
+    signingConfigs {
+        debug {
+            keyAlias 'S100'
+            storeFile file('D:\\S100-key.jks')
+            storePassword '86667889'
+            keyPassword '86667889'
+        }
+        release {
+            keyAlias 'S100'
+            storeFile file('D:\\S100-key.jks')
+            storePassword '86667889'
+            keyPassword '86667889'
+        }
+    }
+
+    defaultConfig {
+        applicationId "com.wintec.lamp"
+        minSdkVersion 25
+        targetSdkVersion 30
+        versionName "V2.3.8.4.6"
+        versionCode 10213
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        ndk {
+            abiFilters 'armeabi-v7a'
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            signingConfig signingConfigs.release//增加签名
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    repositories {
+        flatDir {
+            dirs 'libs'
+        }
+    }
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    greendao {
+        schemaVersion 8
+        daoPackage 'com.wintec.lamp.dao'//设置DaoMaster、DaoSession、Dao包名
+        targetGenDir 'src/main/java'//设置DaoMaster、DaoSession、Dao目录
+    }
+
+    packagingOptions {
+        exclude 'classes.dex'
+        pickFirst 'lib/arm64-v8a/libc++_shared.so'
+        pickFirst 'lib/armeabi-v7a/libc++_shared.so'
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: "libs", include: ["*.jar"])
+    implementation project(path: ':AiPosUi')
+    // 科大讯飞语音
+    implementation files('libs\\iflytek-voiceads-2.3.jar')
+    implementation 'com.wang.avi:library:1.0.5'
+    implementation 'com.nineoldandroids:library:2.4.0'
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'com.google.android.material:material:1.1.0'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    implementation files('libs\\ojdbc5-11.2.0.1.0.jar')
+//    implementation files('libs\\druid-1.1.10.jar')
+//    implementation files('libs\\jndi-1.2.1.jar')
+    testImplementation 'junit:junit:4.+'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    //注解
+    implementation 'com.jakewharton:butterknife:10.1.0'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:10.1.0'
+    implementation 'com.squareup.okhttp3:okhttp:3.14.9'
+    implementation 'com.squareup.okio:okio:1.12.0'
+    //内存泄漏检测
+    debugImplementation rootProject.ext.dependencies["leakcanary-android"]
+    releaseImplementation rootProject.ext.dependencies["leakcanary-android-no-op"]
+    testImplementation rootProject.ext.dependencies["leakcanary-android-no-op"]
+    //数据库
+    implementation 'org.greenrobot:greendao:3.3.0'
+    //腾讯开源UI库
+    implementation 'com.qmuiteam:qmui:2.0.0-alpha10'
+    //fastjson
+    implementation 'com.alibaba:fastjson:1.2.61'
+    //usb
+    implementation 'com.github.F1ReKing:Android-SerialPort:1.5.1'
+    //BaseRecyclerViewAdapterHelper
+    implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:3.0.4'
+    //Glide
+    implementation 'com.github.bumptech.glide:glide:4.10.0'
+    //RXJAVA2
+    implementation 'io.reactivex.rxjava2:rxjava:2.2.10'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
+    implementation "io.reactivex.rxjava3:rxjava:3.0.0"
+//    implementation "io.reactivex.rxandroid:1.2.1"
+//    implementation "io.reactivex.rxjava:1.2.4"
+    //Retrofit2
+    implementation "com.squareup.retrofit2:retrofit:2.4.0"
+    implementation "com.squareup.retrofit2:adapter-rxjava2:2.4.0"
+    implementation "com.squareup.retrofit2:converter-gson:2.4.0"
+    implementation "com.squareup.okhttp3:logging-interceptor:3.14.9"
+
+    implementation 'me.imid.swipebacklayout.lib:library:1.0.0'
+    implementation 'com.squareup.retrofit2:converter-scalars:2.3.0'
+
+    implementation 'com.github.LuckSiege.PictureSelector:picture_library:v2.5.8'
+
+    implementation 'com.github.tbruyelle:rxpermissions:0.10.2'
+    implementation 'com.tencent:mmkv-static:1.2.1'
+    //元芒sdk
+//    implementation(name: 'WtAISDK_v1.0.35_sdk', ext: 'aar')
+//    implementation(name:'WtAISDK_v1.0.31_sdk', ext:'aar')
+//    implementation(name:'Wintec_AiScaleSDK_3.0.5', ext:'aar')//阈值改变
+    implementation(name:'Wintec_AiScaleSDK_3.0.8', ext:'aar')
+    implementation 'androidx.room:room-runtime:2.2.6'
+    annotationProcessor 'androidx.room:room-compiler:2.2.6'
+    implementation 'com.hjq:http:9.0'
+    implementation 'com.google.code.gson:gson:2.8.6'
+    implementation 'com.hjq.gson:factory:2.2'
+    // 日志
+//    implementation 'com.orhanobut:logger:2.2.0'
+    implementation 'com.common.log:LogUtils:1.0.3'
+    implementation 'com.contrarywind:Android-PickerView:3.2.7'
+
+    implementation 'com.github.yuweiguocn:GreenDaoUpgradeHelper:v2.0.0'
+    implementation 'com.google.zxing:core:3.3.3'
+    implementation 'com.youth.banner:banner:1.4.10'
+}

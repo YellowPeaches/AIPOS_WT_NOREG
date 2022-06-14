@@ -1,0 +1,69 @@
+apply plugin: 'AndResGuard'
+
+
+andResGuard {
+
+    // keep住不混淆的资源原有的物理路径 mappingFile = file("./resource_mapping.txt")；
+    //如果混淆全部的话，设置 mappingFile = null
+    mappingFile = null
+    // 打开这个开关，会keep住所有资源的原始路径，只混淆资源的名字
+    keepRoot = false
+
+    // 设置这个值，会把arsc name列混淆成相同的名字，减少string常量池的大小
+//    fixedResName = "arg"
+
+    // 启用7zip压缩。当你使用v2签名的时候，7zip压缩是无法生效的。
+    // use7zip 为true时，useSign必须为true
+    // 对于发布于 Google Play 的 APP，建议不要使用 7Zip 压缩，因为这个会导致 Google Play 的优化 Patch 算法失效
+    use7zip = false
+
+    // 启用签名，（需要配置signConfig）
+    useSign = true
+
+    // 保留不被混淆的资源文件，只作用于文件名，不会对路径有影响，支持通配符：? * +
+    //  【+】代表1个或多个，【?】代表0个或1个，【*】代表0个或多个。如  "R.id.*",//任意id
+    whiteList = [
+            // for your icon
+            "R.drawable.icon_ai",
+            // for fabric
+            "R.string.com.crashlytics.*",
+            // for google-services
+            "R.string.google_app_id",
+            "R.string.gcm_defaultSenderId",
+            "R.string.default_web_client_id",
+            "R.string.ga_trackingId",
+            "R.string.firebase_database_url",
+            "R.string.google_api_key",
+            "R.string.google_crash_reporting_api_key",
+
+
+
+            "R.string.WtAISDK"
+    ]
+
+// 打包时是否压缩这类文件，支持通配符：? * +
+    compressFilePattern = [
+            "*.png",
+            "*.jpg",
+            "*.jpeg",
+            "*.gif",
+            //如果不是对APK size有极致的需求，请不要把resources.arsc添加进compressFilePattern
+            //"resources.arsc"
+    ]
+
+    //配置7Zip，只需设置 artifact 或 path；支持同时设置，但此时以 path 的值为优先
+    sevenzip {
+        artifact = 'com.tencent.mm:SevenZip:1.2.7'
+//        path = "D:\\Applications\\7zip\\x64\\7za"  //path指本地安装的7za(7zip命令行工具)
+    }
+
+    /**
+     * 可选： 如果不设置则会默认覆盖assemble输出的apk
+     **/
+//    finalApkBackupPath = "${project.rootDir}/final.apk"
+
+    /**
+     *  可选: 指定v1签名时生成jar文件的摘要算法 默认值为“SHA-1”
+     **/
+    // digestalg = "SHA-256"
+}

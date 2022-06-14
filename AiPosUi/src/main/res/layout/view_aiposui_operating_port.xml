@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_operatingBtns"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        />
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/edit_scalesCode"
+            android:layout_width="match_parent"
+            android:layout_height="125dp"
+            android:layout_marginLeft="@dimen/ui_4_dp"
+            android:layout_marginRight="@dimen/ui_4_dp"
+            android:background="@drawable/et_bg_shape"
+            android:gravity="center"
+            android:hint="请输入打秤码"
+            android:textColorHint="#C7C7C7"
+            android:textSize="36sp"
+            android:visibility="gone"
+            tools:ignore="MissingConstraints"/>
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_key_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+             />
+
+        <TextView
+            android:id="@+id/btn_print"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_margin="4dp"
+            android:background="@drawable/btn_print_select"
+            android:gravity="center"
+            android:text="打  印"
+            android:textColor="@color/white"
+            android:textSize="35sp"
+            android:visibility="gone"
+             />
+
+
+</LinearLayout>
+
+    <!--
+    <?xml version="1.0" encoding="utf-8"?>
+
+    <androidx.recyclerview.widget.RecyclerView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/rv_button_list"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        />-->

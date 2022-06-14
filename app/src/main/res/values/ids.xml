@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="logo" type="id" />
+    <item name="zero_setting" type="id" />
+    <item name="peel_off" type="id" />
+    <item name="alter_price" type="id" />
+
+
+    <item name="scroll_height_by_keyboard" type="id" />
+    <item name="bind_keyboard_2_editor" type="id" />
+
+    <item name="anchor_view" type="id" />
+
+    <item name="fake_status_bar_view" type="id" />
+    <item name="price_unit" type="id" />
+</resources>

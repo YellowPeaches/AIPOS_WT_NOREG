@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="30dp"
+    tools:ignore="MissingConstraints">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_close"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/ui_20_dp"
+        android:layout_marginEnd="@dimen/ui_20_dp"
+        android:src="@drawable/qmui_icon_popup_close_with_bg"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_goods_name_dialog"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp"
+
+        android:gravity="center"
+        android:text="正在采集"
+        android:textSize="50sp"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="60dp"
+        android:layout_marginTop="@dimen/ui_20_dp"
+        android:paddingRight="300dp"
+        app:layout_constraintLeft_toRightOf="@+id/iv_img"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_goods_name_dialog">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:lineSpacingExtra="10dp"
+            android:text="1.将商品放在红色托盘内\n2.等待手完全离开屏幕，屏幕内没有干扰\n3.点击注册\n4.多次调整商品位置进行注注册"
+            android:textSize="40sp" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_goods_camera"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:layout_marginTop="@dimen/res_textsize_15dp"
+            android:background="@drawable/bg_blue"
+            android:gravity="center"
+            android:text="拍照"
+            android:textColor="@color/white"
+            android:textSize="30sp"
+            app:layout_constraintTop_toBottomOf="@+id/tv_content" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_goods_submit"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:layout_marginTop="@dimen/ui_20_dp"
+            android:background="@drawable/bg_blue"
+            android:gravity="center"
+            android:text="提交"
+            android:textColor="@color/white"
+            android:textSize="30sp"
+            app:layout_constraintTop_toBottomOf="@+id/tv_goods_camera" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/iv_img"
+        android:layout_width="500dp"
+        android:layout_height="500dp"
+        android:layout_marginTop="@dimen/ui_20_dp"
+        android:layout_marginEnd="@dimen/ui_30_dp"
+        android:background="@color/Grey300"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_goods_name_dialog" />
+
+    <com.wintec.lamp.view.CutView
+        android:id="@+id/cut_view"
+        android:layout_width="500dp"
+        android:layout_height="500dp"
+        android:layout_marginTop="@dimen/ui_20_dp"
+        android:layout_marginEnd="@dimen/ui_30_dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@+id/tv_goods_name_dialog" />
+</androidx.constraintlayout.widget.ConstraintLayout>
