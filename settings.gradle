@@ -1,0 +1,3 @@
+include ':AiPosUi'
+include ':app'
+rootProject.name = "lamp"
