@@ -177,29 +177,29 @@ public class WelcomePresenter<JavaScriptSerializer> extends WelcomeContract.Pres
         comModel.getImgUrl(requestMap, new ModelRequestCallBack<Object>() {
             @Override
             public void onSuccess(HttpResponse<Object> response) {
-//                Map<String, String> imgUrls = new HashMap<>();
                 Object data = response.getData();
                 Map data1 = (Map) data;
                 ThreadPoolManagerUtils.getInstance().execute(() -> {
                     long s1 = System.currentTimeMillis();
                     for (Object o : data1.entrySet()) {
                         String[] split = o.toString().split("=");
-//                        imgUrls.put(split[0], split[1]);
-                        PluDto currentPlu = null;
-                        try {
-                            currentPlu = PluDtoDaoHelper.getCommdityByScalesCodeLocal(split[0]);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                        if (currentPlu != null && StringUtils.isNotEmpty(split[1])) {
-                            currentPlu.setPreviewImage(split[1]);
-                            PluDtoDaoHelper.updateCommdity(currentPlu);
-                            Bitmap currentBitmap = NetWorkUtil.GetImageInputStream(split[1]);
-                            if (currentBitmap != null) {
-                                savaImageToPath(currentBitmap, AiPosListView.ROOT_PATH, (split[0] + ".jpg"));
-                                Log.i("下载图片成功：", split[0]);
-                            } else {
-                                Log.i("下载图片失败：", split[0]);
+                        if (split != null && split.length == 2) {
+                            PluDto currentPlu = null;
+                            try {
+                                currentPlu = PluDtoDaoHelper.getCommdityByScalesCodeLocal(split[0]);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            if (!split[1].equals(currentPlu.getPreviewImage()) && currentPlu != null && StringUtils.isNotEmpty(split[1])) {
+                                currentPlu.setPreviewImage(split[1]);
+                                PluDtoDaoHelper.updateCommdity(currentPlu);
+                                Bitmap currentBitmap = NetWorkUtil.GetImageInputStream(split[1]);
+                                if (currentBitmap != null) {
+                                    savaImageToPath(currentBitmap, AiPosListView.ROOT_PATH, (split[0] + ".jpg"));
+                                    Log.i("下载图片成功：", split[0]);
+                                } else {
+                                    Log.i("下载图片失败：", split[0]);
+                                }
                             }
                         }
                     }
@@ -229,22 +229,15 @@ public class WelcomePresenter<JavaScriptSerializer> extends WelcomeContract.Pres
         stringBuffer.append('[');
         if (pluAll.size() > 0) {
             for (PluDto p : pluAll) {
-//                Map<String, String> map = new HashMap();
-//                map.put("productName", p.getNameTextA());
-//                map.put("organ", "zkyt");
-//                map.put("sn", Const.SN);
-//                map.put("branchCode", Const.getSettingValue(Const.KEY_TER_CODE));
-//                map.put("productCode", p.getPluNo());
-//                String jsonString = JSON.toJSONString(map);
-//                stringBuffer.append(jsonString);
-//                stringBuffer.append(',');
-                MapDepot mapDepot = new MapDepot();
-                mapDepot.setOrgan("zkyt");
-                mapDepot.setSn(Const.SN);
-                mapDepot.setBranchCode(Const.getSettingValue(Const.KEY_BRANCH_ID));
-                mapDepot.setProductName(p.getNameTextA());
-                mapDepot.setProductCode(p.getPluNo());
-                depots.add(mapDepot);
+                if (StringUtils.isEmpty(p.getPreviewImage())){
+                    MapDepot mapDepot = new MapDepot();
+                    mapDepot.setOrgan("zkyt");
+                    mapDepot.setSn(Const.SN);
+                    mapDepot.setBranchCode(Const.getSettingValue(Const.KEY_BRANCH_ID));
+                    mapDepot.setProductName(p.getNameTextA());
+                    mapDepot.setProductCode(p.getPluNo());
+                    depots.add(mapDepot);
+                }
             }
             String tempAns = JSON.toJSONString(depots);
             stringBuffer.append(']');

@@ -24,6 +24,7 @@ import com.wintec.lamp.base.BaseActivity;
 import com.wintec.lamp.base.Const;
 import com.wintec.lamp.data.EditType;
 import com.wintec.lamp.entity.EditEntity;
+import com.wintec.lamp.presenter.WelcomePresenter;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -85,6 +86,8 @@ public class WeightSettingActivity extends BaseActivity {
 //        addSettingItem(Const.ROTATION_SETTING, "回转距离(单位 1/8mm)", height, true);
         addSettingItem(Const.VOIDCE_BROADCAST_FLAG, "语音播报", height, true);
         addSettingItem(Const.PREVIEW_FLAG, "商品预览图", height, true);
+        addSettingItem("UpPLUS", "上传商品匹配", height, true);
+        addSettingItem("DownLoadIMG", "下载商品预览图", height, true);
         addSettingItem(Const.SEARCH_LENGHT, "模糊搜索位数", height, true);
 
         addSettingItem(Const.KEY_MODE, "收银模式", height, true);
@@ -212,6 +215,19 @@ public class WeightSettingActivity extends BaseActivity {
                 })
                 .addItemView(itemViewMap.get(Const.PREVIEW_FLAG), v -> {
                     prviewSwith.getSwitch().performClick();
+                })
+                .addItemView(itemViewMap.get("UpPLUS"), v -> {
+                    //todo
+                    aiTipDialog.showLoading("正在上传商品信息", mContext);
+//                    new WelcomePresenter().upPLUDto();
+                    aiTipDialog.dismiss();
+
+                })
+                .addItemView(itemViewMap.get("DownLoadIMG"), v -> {
+                    //todo
+                    aiTipDialog.showLoading("正在下载预览图", mContext);
+//                    new WelcomePresenter().getImgUrl();
+                    aiTipDialog.dismiss();
                 })
                 .addItemView(itemViewMap.get(Const.SEARCH_LENGHT), v -> {
                     startEdit(Const.SEARCH_LENGHT, "模糊搜索位数", Const.getSettingValue(Const.SEARCH_LENGHT), EditType.Edit_TYPE_INTEGER);
