@@ -1658,7 +1658,7 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
             dialog.dismiss();
             return;
         }
-        if (code == null || code.equals("")) {
+        if (code == null || code.equals("") || code.contains(".")) {
             return;
         }
         int number = Integer.valueOf(code);
