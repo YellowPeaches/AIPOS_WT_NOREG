@@ -219,9 +219,13 @@ public class WeightSettingActivity extends BaseActivity {
                 .addItemView(itemViewMap.get("UpPLUS"), v -> {
                     //todo
                     aiTipDialog.showLoading("正在上传商品信息", mContext);
-//                    new WelcomePresenter().upPLUDto();
+                    new WelcomePresenter().upPLUDto();
+                    try {
+                        Thread.sleep(2000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                     aiTipDialog.dismiss();
-
                 })
                 .addItemView(itemViewMap.get("DownLoadIMG"), v -> {
                     //todo

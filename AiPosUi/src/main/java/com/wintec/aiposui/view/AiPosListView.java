@@ -105,10 +105,10 @@ public class AiPosListView extends AiPosLayout {
         txt_status.setVisibility(View.INVISIBLE);
         img_background = view.findViewById(R.id.img_background);
         tv_describe = view.findViewById(R.id.txt_describe);
-        if(isLandscape) {
+        if (isLandscape) {
             logo_image = view.findViewById(R.id.logo_image);
             File file = new File(LOGO_PATH + "logo.jpg");
-            if(file.exists()){
+            if (file.exists()) {
                 logo_image.setImageBitmap(getLoacalBitmap(LOGO_PATH + "logo.jpg"));
             }
         }
@@ -134,31 +134,32 @@ public class AiPosListView extends AiPosLayout {
                 }
 
             }
-            // 非多点使用这个逻辑
 
-                        @Override
+            // 非多点使用这个逻辑
+            @Override
             protected void convert(BaseViewHolder helper, GoodsModel item) {
                 String icon = ROOT_PATH + item.getGoodsId() + ".jpg";
                 String icon1 = ROOT_PATH + item.getItemNo() + ".jpg";
-                if(new File(icon1).exists())
-                {
+                if (new File(icon1).exists()) {
                     icon = icon1;
                 }
                 if ("".equals(item.getPreviewFlag())
                         || "0".equals(item.getPreviewFlag())
                         || item.getPreviewFlag() == null
-                        || !new File(icon).exists()){
+                        || !new File(icon).exists()) {
                     helper.getView(R.id.item_big_name).setVisibility(VISIBLE);
                     helper.getView(R.id.iv_goods).setVisibility(INVISIBLE);
                     helper.setText(R.id.item_big_name, item.getGoodsName());
-                }else{
+                } else {
                     helper.getView(R.id.item_big_name).setVisibility(INVISIBLE);
                     helper.getView(R.id.iv_goods).setVisibility(VISIBLE);
                     Glide.with(mContext)
                             .asBitmap()
                             .format(DecodeFormat.PREFER_RGB_565)
+//                            .skipMemoryCache(true)
+                            .diskCacheStrategy(DiskCacheStrategy.NONE)
                             .skipMemoryCache(false)
-                            .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+//                            .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                             .dontAnimate()
                             .load(icon)
                             .into(new SimpleTarget<Bitmap>() {
@@ -170,31 +171,28 @@ public class AiPosListView extends AiPosLayout {
 
                 }
                 helper.setText(R.id.tv_scales_code, item.getScalesCode());
-                helper.setText(R.id.tv_goods_name,item.getGoodsName());
-                helper.setText(R.id.tv_goods_total,  item.getTotal());
-                if(item.isKg())
-                {
+                helper.setText(R.id.tv_goods_name, item.getGoodsName());
+                helper.setText(R.id.tv_goods_total, item.getTotal());
+                if (item.isKg()) {
                     helper.setText(R.id.tv_goods_price, item.getPrice());
                     helper.setText(R.id.tv_goods_unit, "/kg");
-                }else {
-                    helper.setText(R.id.tv_goods_price, CommUtils.Float2String(Float.parseFloat(item.getPrice())/2,2));
+                } else {
+                    helper.setText(R.id.tv_goods_price, CommUtils.Float2String(Float.parseFloat(item.getPrice()) / 2, 2));
                     helper.setText(R.id.tv_goods_unit, "/500g");
                 }
-                if(item.getUnitId() == 1)
-                {
+                if (item.getUnitId() == 1) {
                     helper.setText(R.id.tv_goods_price, item.getPrice());
                     helper.setText(R.id.tv_goods_unit, "/件");
-                    helper.setText(R.id.tv_goods_total,  "--.--");
+                    helper.setText(R.id.tv_goods_total, "--.--");
                 }
-                if(item.getIsFirst())
-                {
+                if (item.getIsFirst()) {
                     helper.setBackgroundResource(R.id.iv_goods_layout_main, R.drawable.edge);
-                }else {
+                } else {
                     helper.setBackgroundResource(R.id.iv_goods_layout_main, 0);
                 }
             }
         };
-            // 多点使用以下代码
+        // 多点使用以下代码
 //            @Override
 //            protected void convert(BaseViewHolder helper, GoodsModel item) {
 //
@@ -466,7 +464,7 @@ public class AiPosListView extends AiPosLayout {
         void onLongClick(GoodsModel model, View view, int position);
     }
 
-    public  Bitmap getLoacalBitmap(String url) {
+    public Bitmap getLoacalBitmap(String url) {
         try {
             FileInputStream fis = new FileInputStream(url);
             return BitmapFactory.decodeStream(fis);

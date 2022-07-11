@@ -44,7 +44,7 @@ public class CommUtils {
     }
 
     public static String priceToString(float value) {
-        Log.i("test", "价格 " + value);
+//        Log.i("test", "价格 " + value);
         BigDecimal bigDecimal = new BigDecimal(value + "");
         boolean flag = false;
         switch (Const.getSettingValue(Const.TOTAL_PRICE_MODE)) {
@@ -77,7 +77,7 @@ public class CommUtils {
                 break;
         }
         String price = decimalFormat.format(bigDecimal);
-        Log.i("test", "格式后价格 " + price);
+//        Log.i("test", "格式后价格 " + price);
         if (!flag) {
             price = price + "0";
         }

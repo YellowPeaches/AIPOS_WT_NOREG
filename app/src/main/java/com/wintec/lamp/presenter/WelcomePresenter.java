@@ -11,6 +11,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.asm.Type;
+import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.reflect.TypeToken;
@@ -144,24 +145,31 @@ public class WelcomePresenter<JavaScriptSerializer> extends WelcomeContract.Pres
         stringBuffer.append('[');
         if (pluAll.size() > 0) {
             for (PluDto p : pluAll) {
-                MapDepot mapDepot = new MapDepot();
-                mapDepot.setOrgan("zkyt");
-                mapDepot.setSn(Const.SN);
-                mapDepot.setBranchCode(Const.getSettingValue(Const.KEY_BRANCH_ID));
-                mapDepot.setProductName(p.getNameTextA());
-                mapDepot.setProductCode(p.getPluNo());
-                depots.add(mapDepot);
+                if (StringUtils.isNotEmpty(p.getPreviewImage())) {
+                    continue;
+                } else {
+                    MapDepot mapDepot = new MapDepot();
+                    mapDepot.setOrgan("zkyt");
+                    mapDepot.setSn(Const.SN);
+                    mapDepot.setBranchCode(Const.getSettingValue(Const.KEY_BRANCH_ID));
+                    mapDepot.setProductName(p.getNameTextA());
+                    mapDepot.setProductCode(p.getPluNo());
+                    depots.add(mapDepot);
+                    if (depots.size() > 1000) {
+                        break;
+                    }
+                }
             }
             String tempAns = JSON.toJSONString(depots);
             comModel.upplus(tempAns, new ModelRequestCallBack<String>() {
                 @Override
                 public void onSuccess(HttpResponse<String> response) {
-                    String s = "ss";
+                    Log.w("TAG", "上传plu成功");
                 }
 
                 @Override
                 public void onFail() {
-                    int aa = 0;
+                    Log.w("TAG", "onFail: 上传plu失败");
                 }
             });
         }
@@ -187,10 +195,13 @@ public class WelcomePresenter<JavaScriptSerializer> extends WelcomeContract.Pres
                             PluDto currentPlu = null;
                             try {
                                 currentPlu = PluDtoDaoHelper.getCommdityByScalesCodeLocal(split[0]);
+                                if (currentPlu == null) {
+                                    continue;
+                                }
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
-                            if (!split[1].equals(currentPlu.getPreviewImage()) && currentPlu != null && StringUtils.isNotEmpty(split[1])) {
+                            if (currentPlu != null && !split[1].equals(currentPlu.getPreviewImage()) && StringUtils.isNotEmpty(split[1])) {
                                 currentPlu.setPreviewImage(split[1]);
                                 PluDtoDaoHelper.updateCommdity(currentPlu);
                                 Bitmap currentBitmap = NetWorkUtil.GetImageInputStream(split[1]);
@@ -225,11 +236,9 @@ public class WelcomePresenter<JavaScriptSerializer> extends WelcomeContract.Pres
     public void upPLUDto() {
         List<MapDepot> depots = new ArrayList<>();
         List<PluDto> pluAll = PluDtoDaoHelper.getCommdityByItemCode();
-        StringBuffer stringBuffer = new StringBuffer();
-        stringBuffer.append('[');
         if (pluAll.size() > 0) {
             for (PluDto p : pluAll) {
-                if (StringUtils.isEmpty(p.getPreviewImage())){
+                if (StringUtils.isEmpty(p.getPreviewImage())) {
                     MapDepot mapDepot = new MapDepot();
                     mapDepot.setOrgan("zkyt");
                     mapDepot.setSn(Const.SN);
@@ -237,13 +246,17 @@ public class WelcomePresenter<JavaScriptSerializer> extends WelcomeContract.Pres
                     mapDepot.setProductName(p.getNameTextA());
                     mapDepot.setProductCode(p.getPluNo());
                     depots.add(mapDepot);
+                    if (depots.size() > 2000) {
+                        String tempAns = JSON.toJSONString(depots);
+                        HttpUtil.postJson(Const.BASE_URL + "pos/mapDepot/uploading", tempAns);
+                        depots.clear();
+                    }
                 }
             }
-            String tempAns = JSON.toJSONString(depots);
-            stringBuffer.append(']');
-            String ans = stringBuffer.toString();
-            ans = ans.replace(",]", "]");
-            HttpUtil.postJson(Const.BASE_URL + "pos/mapDepot/uploading", tempAns);
+            if (depots.size() >= 1) {
+                String tempAns = JSON.toJSONString(depots);
+                HttpUtil.postJson(Const.BASE_URL + "pos/mapDepot/uploading", tempAns);
+            }
         }
 
     }

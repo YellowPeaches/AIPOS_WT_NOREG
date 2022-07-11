@@ -123,8 +123,19 @@ public class WelcomeActivity extends BaseMvpActivity<WelcomePresenter> implement
         schedulerProvider = SchedulerProvider.getInstance();
         //权限
         requestPermissions();
-//        mPresenter.upplus();
-//        mPresenter.getImgUrl();
+
+        if (Const.getSettingValue(Const.PREVIEW_FLAG).equals("1") && NetWorkUtil.isNetworkAvailable(this)) {
+//            mPresenter.upplus();
+            new WelcomePresenter().upPLUDto();
+        }
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        if (Const.getSettingValue(Const.PREVIEW_FLAG).equals("1") && NetWorkUtil.isNetworkAvailable(this)) {
+            mPresenter.getImgUrl();
+        }
     }
 
     @Override

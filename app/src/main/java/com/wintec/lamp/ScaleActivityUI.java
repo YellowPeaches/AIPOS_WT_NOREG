@@ -35,6 +35,7 @@ import android.widget.PopupWindow;
 import android.widget.Toast;
 
 import com.bigkoo.pickerview.TimePickerView;
+import com.google.gson.Gson;
 import com.luck.picture.lib.tools.BitmapUtils;
 import com.luck.picture.lib.tools.StringUtils;
 import com.qmuiteam.qmui.skin.QMUISkinManager;
@@ -1191,8 +1192,8 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
 //                    aiPosAllView.getListView().idle();
 //                }
                 if (aiPosAllView.mIsLandscape) {
-//                    popupsShow(view, new String[]{"锁定", "按份计价", "切换单位"}, model);
-                    popupsShow(view, new String[]{"锁定",}, model);
+                    popupsShow(view, new String[]{"锁定", "按份计价", "切换单位"}, model);
+//                    popupsShow(view, new String[]{"锁定",}, model);
                 } else {
                     //  popupsShow(view, new String[]{"更换预览图"}, model);
                 }
@@ -1360,6 +1361,8 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
 
                 @Override
                 public void pluList(List<DataBean> dataBeans) {
+//                    String Json = new Gson().toJson(dataBeans);
+//                    Log.e("json",Json);
                     insert(dataBeans);
                 }
             }, Const.getSettingValue(Const.KEY_SCALE_PORT) == null || "".equals(Const.getSettingValue(Const.KEY_SCALE_PORT)) ? 3001 : Integer.valueOf(Const.getSettingValue(Const.KEY_SCALE_PORT)));
