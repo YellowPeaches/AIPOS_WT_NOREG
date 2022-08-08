@@ -22,7 +22,7 @@ android {
         }
     }
     compileSdkVersion 30
-    buildToolsVersion "30.0.0"
+    buildToolsVersion '30.0.2'
     signingConfigs {
         debug {
             keyAlias 'S100'
@@ -42,7 +42,7 @@ android {
         applicationId "com.wintec.lamp"
         minSdkVersion 25
         targetSdkVersion 30
-        versionName "V2.3.8.6"
+        versionName "V2.3.8.6.1"
         versionCode 10213
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         ndk {

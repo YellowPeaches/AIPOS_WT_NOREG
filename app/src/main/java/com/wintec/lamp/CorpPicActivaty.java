@@ -86,7 +86,6 @@ public class CorpPicActivaty extends CamSupportActivity implements View.OnClickL
                             @Override
                             public void run() {
                                 CameraSetting scaleSetting = new CameraSetting(left, top, width, height);
-
                                 int code = WtAISDK.api_SaveCameraParam(scaleSetting);
                                 if (code == 0) {
                                     Intent settingIntent = getIntent();

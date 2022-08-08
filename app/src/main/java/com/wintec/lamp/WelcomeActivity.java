@@ -25,6 +25,7 @@ import com.google.gson.Gson;
 import com.wang.avi.BuildConfig;
 import com.wintec.aiposui.view.AiPosLayout;
 import com.wintec.aiposui.view.dialog.AiTipDialog;
+import com.wintec.detection.bean.CameraSetting;
 import com.wintec.detection.http.OnRegSDKListener;
 import com.wintec.lamp.base.BaseMvpActivity;
 import com.wintec.lamp.base.Const;
@@ -655,7 +656,7 @@ public class WelcomeActivity extends BaseMvpActivity<WelcomePresenter> implement
         WtAISDK.api_regSDK(branchCode, pos, companyCode, snCode, new OnRegSDKListener() {
             @Override
             public void regFail(int i, String s) {
-                aiTipDialog.showLoading(s, mContext);
+                aiTipDialog.showLoading(s+i, mContext);
             }
 
             @Override

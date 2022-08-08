@@ -87,7 +87,7 @@ public class WeightSettingActivity extends BaseActivity {
         addSettingItem(Const.VOIDCE_BROADCAST_FLAG, "语音播报", height, true);
         addSettingItem(Const.PREVIEW_FLAG, "商品预览图", height, true);
         addSettingItem("UpPLUS", "上传商品匹配", height, true);
-        addSettingItem("DownLoadIMG", "下载商品预览图", height, true);
+//        addSettingItem("DownLoadIMG", "下载商品预览图", height, true);
         addSettingItem(Const.SEARCH_LENGHT, "模糊搜索位数", height, true);
 
         addSettingItem(Const.KEY_MODE, "收银模式", height, true);
@@ -163,7 +163,8 @@ public class WeightSettingActivity extends BaseActivity {
                 .addItemView(itemViewMap.get(Const.KEY_MODE), v -> {
                     String[] listItems = new String[]{
                             "价签模式",
-                            "收银台模式",
+                            "收银台模式(ttySAC4)",
+                            "收银台模式(ttySAC3)",
                     };
                     // popupsShow(v,listItems,Constants.WEIGHT_UNIT, itemViewMap.get(Constants.WEIGHT_UNIT));
                     showSimpleBottomSheetList(
@@ -227,12 +228,12 @@ public class WeightSettingActivity extends BaseActivity {
                     }
                     aiTipDialog.dismiss();
                 })
-                .addItemView(itemViewMap.get("DownLoadIMG"), v -> {
-                    //todo
-                    aiTipDialog.showLoading("正在下载预览图", mContext);
-//                    new WelcomePresenter().getImgUrl();
-                    aiTipDialog.dismiss();
-                })
+//                .addItemView(itemViewMap.get("DownLoadIMG"), v -> {
+//                    //todo
+//                    aiTipDialog.showLoading("正在下载预览图", mContext);
+////                    new WelcomePresenter().getImgUrl();
+//                    aiTipDialog.dismiss();
+//                })
                 .addItemView(itemViewMap.get(Const.SEARCH_LENGHT), v -> {
                     startEdit(Const.SEARCH_LENGHT, "模糊搜索位数", Const.getSettingValue(Const.SEARCH_LENGHT), EditType.Edit_TYPE_INTEGER);
                 })

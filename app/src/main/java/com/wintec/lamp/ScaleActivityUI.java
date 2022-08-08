@@ -1192,8 +1192,8 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
 //                    aiPosAllView.getListView().idle();
 //                }
                 if (aiPosAllView.mIsLandscape) {
-                    popupsShow(view, new String[]{"锁定", "按份计价", "切换单位"}, model);
-//                    popupsShow(view, new String[]{"锁定",}, model);
+//                    popupsShow(view, new String[]{"锁定", "按份计价", "切换单位"}, model);
+                    popupsShow(view, new String[]{"锁定",}, model);
                 } else {
                     //  popupsShow(view, new String[]{"更换预览图"}, model);
                 }
@@ -2473,7 +2473,7 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
                 Log.i("test", barcode);
                 comIO.send(barcode + "\r");
                 break;
-            case "收银台模式":
+            case "收银台模式(ttySAC4)":
                 //是否语音播报
                 if ("1".equals(Const.getSettingValue(Const.VOIDCE_BROADCAST_FLAG))) {
                     TTSpeaker.getInstance(mContext).speak(co.getNameTextA());
@@ -2487,6 +2487,21 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
                 String barcode1 = WintecServiceSingleton.getInstance().createBarCode(co, total.getTotal(), net, Integer.valueOf(count), total.getPrice());
                 Log.i("test", barcode1);
                 comIO.send(barcode1 + "\r");
+                break;
+            case "收银台模式(ttySAC3)":
+                //是否语音播报
+                if ("1".equals(Const.getSettingValue(Const.VOIDCE_BROADCAST_FLAG))) {
+                    TTSpeaker.getInstance(mContext).speak(co.getNameTextA());
+                }
+                if (comIO == null) {
+                    this.comIO = new ComIO("/dev/ttySAC3", 9600);
+                }
+                if (!comIO.isOpen()) {
+                    comIO.open();
+                }
+                String barcode2 = WintecServiceSingleton.getInstance().createBarCode(co, total.getTotal(), net, Integer.valueOf(count), total.getPrice());
+                Log.i("test", barcode2);
+                comIO.send(barcode2 + "\r");
                 break;
         }
         String settingValue = Const.getSettingValue(Const.RESULT_DISPLAY);
@@ -2700,6 +2715,7 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
         }
         if (tradeMode == MODE_CHANGE_TOTAL_TRADE) {
             total = tempTotal;
+            price = Float.valueOf(String.format("%.2f", total / net));
         }
         String mTotal = CommUtils.priceToString(Float.valueOf(CommUtils.Float2String(total, totalPricePoint)));
         String discountPrice = String.valueOf(price);
