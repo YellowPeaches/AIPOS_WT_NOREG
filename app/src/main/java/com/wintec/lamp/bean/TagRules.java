@@ -77,6 +77,17 @@ public class TagRules implements Serializable {
 
     private int digits;
 
+    //计件码前缀
+    private String pieceWork;
+
+    public String getPieceWork() {
+        return pieceWork;
+    }
+
+    public void setPieceWork(String pieceWork) {
+        this.pieceWork = pieceWork;
+    }
+
     public int getDigits() {
         return digits;
     }

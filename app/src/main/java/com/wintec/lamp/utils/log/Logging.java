@@ -33,7 +33,7 @@ public class Logging {
                 .setUseLogCatAppender(true)
                 .setLogCatPattern("%m%n")
                 .setFileName(ROOT_PATH + "//aipos_log//" + getLogFileName())
-                .setUseFileAppender(false)
+                .setUseFileAppender(true)
                 .setMaxFileSize(524288L)
                 .setMaxBackupSize(5)
                 .setUseDailyFileAppender(true)

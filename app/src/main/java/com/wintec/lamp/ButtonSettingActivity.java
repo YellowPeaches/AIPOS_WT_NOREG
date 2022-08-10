@@ -349,26 +349,27 @@ public class ButtonSettingActivity extends BaseActivity {
                     JSONObject jsonObject = JSONObject.parseObject(result);
                     String snCode = jsonObject.get("data") + ""; // 激活码(密钥)
                     String tenant = Const.getSettingValue(Const.KEY_ACCOUNT); //租户号
-                    String code =Const.getSettingValue(Const.KEY_POS_ID);   //POS编号
+                    String code = Const.getSettingValue(Const.KEY_POS_ID);   //POS编号
                     if (snCode != null && !"".equals(snCode)) {
 //                        //自研SDK解绑，自研SDK密钥长度包含- 共32位； 元芒密钥包含 - 共36位
 //                        if (snCode.replace(" ", "").length() != 36) {
 //                            ToastUtils.showToast("解绑成功");
 ////                            jumpToWelcomeActivity();
 //                        } else {
-                            WtAISDK.api_unregSDK(snCode, code,new OnUnRegSDKListener() {
-                                @Override
-                                public void unregFail(int i, String s) {
-                                    ToastUtils.showToast(i+"");
-                                }
+                        WtAISDK.api_unregSDK(snCode, code, new OnUnRegSDKListener() {
+                            @Override
+                            public void unregFail(int i, String s) {
+                                ToastUtils.showToast(i + "");
+                                ToastUtils.showToast("解绑失败，未查到机器信息，请联系客服人员" + i);
+                            }
 
-                                @Override
-                                public void unregSuccess() {
-                                    WtAISDK.api_clearTrainedData();
-                                    jumpToWelcomeActivity();
-                                }
+                            @Override
+                            public void unregSuccess() {
+                                WtAISDK.api_clearTrainedData();
+                                jumpToWelcomeActivity();
+                            }
 
-                            });
+                        });
 //                        }
                     } else {
                         ToastUtils.showToast("解绑失败，未查到机器信息，请联系客服人员");

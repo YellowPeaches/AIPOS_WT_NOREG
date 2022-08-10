@@ -91,6 +91,7 @@ public class WeightSettingActivity extends BaseActivity {
         addSettingItem(Const.SEARCH_LENGHT, "模糊搜索位数", height, true);
 
         addSettingItem(Const.KEY_MODE, "收银模式", height, true);
+        addSettingItem(Const.GET_WEIGHT_PORT, "秤台取重串口", height, true);
         QMUICommonListItemView resultDisplaySwith = setSwith(Const.RESULT_DISPLAY);
         QMUICommonListItemView voidceBroadcastSwith = setSwith(Const.VOIDCE_BROADCAST_FLAG);
         QMUICommonListItemView prviewSwith = setSwith(Const.PREVIEW_FLAG);
@@ -234,6 +235,20 @@ public class WeightSettingActivity extends BaseActivity {
 ////                    new WelcomePresenter().getImgUrl();
 //                    aiTipDialog.dismiss();
 //                })
+                .addItemView(itemViewMap.get(Const.GET_WEIGHT_PORT), v -> {
+                    String[] listItems = new String[]{
+                            "/dev/ttySAC0",
+                            "/dev/ttySAC1",
+                            "/dev/ttySAC2",
+                            "/dev/ttySAC3",
+                            "/dev/ttySAC4",
+                            "/dev/ttySAC5",
+                            "/dev/ttySAC6",
+                    };
+                    showSimpleBottomSheetList(
+                            true, false, "选择串口",
+                            listItems, true, false, Const.GET_WEIGHT_PORT, itemViewMap.get(Const.GET_WEIGHT_PORT));
+                })
                 .addItemView(itemViewMap.get(Const.SEARCH_LENGHT), v -> {
                     startEdit(Const.SEARCH_LENGHT, "模糊搜索位数", Const.getSettingValue(Const.SEARCH_LENGHT), EditType.Edit_TYPE_INTEGER);
                 })

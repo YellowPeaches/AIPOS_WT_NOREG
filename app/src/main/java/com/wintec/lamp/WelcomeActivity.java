@@ -482,6 +482,8 @@ public class WelcomeActivity extends BaseMvpActivity<WelcomePresenter> implement
 
         //识别阈值默认值
         Const.setSettingValue(Const.DETECT_THRESHOLD, "0.65");
+        //获取称重串口
+        Const.setSettingValue(Const.GET_WEIGHT_PORT, "/dev/ttySAC1");
 
     }
 

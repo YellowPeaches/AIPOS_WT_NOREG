@@ -69,14 +69,14 @@ public class CorpPicActivaty extends CamSupportActivity implements View.OnClickL
                 rlCrop.setVisibility(View.VISIBLE);
                 final ScaleBitmap clearestScaleBitmap = api_getScaleBitmap(false);
                 Bitmap raw = clearestScaleBitmap.getRaw();
-                final String path = SaveBitmapUtils.savePhotoToSDCard(raw);
+//                final String path = SaveBitmapUtils.savePhotoToSDCard(raw);
 //                LogUtils.i(path);
                 if (raw != null) {
                     if (raw.isRecycled()) {
                         raw.recycle();
                     }
                 }
-                cropImg.setImageBitmap(BitmapFactory.decodeFile(path));
+                cropImg.setImageBitmap(raw);
                 break;
             case R.id.tv_sure:
                 cropImg.cropImage(new CropView.OnCropListener() {

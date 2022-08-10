@@ -1,5 +1,7 @@
 package com.wintec.lamp.service;
 
+import android.app.Activity;
+import android.app.Service;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -81,7 +83,7 @@ public class WintecServiceSingleton {
         return SingletonHolder.INSTANCE;
     }
 
-    protected final static String SCALES_DEVICES = "/dev/ttySAC1";
+    protected final static String SCALES_DEVICES = Const.getSettingValue("GET_WEIGHT_PORT");
     private WintecManagerService wintecManagerService;  // wintec服务
     private LabelPrinterService labelPrinterService;    // 标签打印机服务
     private ScaleService scaleService;
@@ -114,7 +116,7 @@ public class WintecServiceSingleton {
      * @param scalesCallback
      */
     public void init(Context context, Handler hander, WintecServiceSingleton.ScalesCallback scalesCallback) {
-        logging = new Logging(context);
+//        logging = new Logging(context);
         this.scalesCallback = scalesCallback;
         mhandler = hander;
         mContext = context;
@@ -141,7 +143,7 @@ public class WintecServiceSingleton {
 
             @Override
             public void onServiceDisconnected(ComponentName name) {
-                logging.i("服务中断");
+                Log.i("秤数据通信", "onServiceDisconnected: 关闭");
             }
         };
 
@@ -152,7 +154,10 @@ public class WintecServiceSingleton {
             Intent intent = new Intent();
             intent.setPackage("cn.wintec.sdk");
             intent.setAction("cn.wintec.SERVICE");
-            mContext.bindService(intent, connection, BIND_AUTO_CREATE);
+//            ComponentName componentName = new ComponentName("cn.wintec.sdk",
+//                    "cn.wintec.SERVICE");
+//            mContext.bindService(intent, connection, Service.BIND_AUTO_CREATE);
+            boolean isBindService = mContext.bindService(intent, connection, BIND_AUTO_CREATE);
         }
     }
 

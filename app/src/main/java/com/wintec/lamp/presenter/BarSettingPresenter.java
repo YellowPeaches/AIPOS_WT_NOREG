@@ -1,5 +1,6 @@
 package com.wintec.lamp.presenter;
 
+import com.wintec.detection.utils.StringUtils;
 import com.wintec.lamp.api.ComModel;
 import com.wintec.lamp.base.Const;
 import com.wintec.lamp.dao.entity.TagMiddle;
@@ -56,7 +57,8 @@ public class BarSettingPresenter extends BarSettingContart.Presenter {
                 } else {
                     Const.setSettingValue(Const.BAR_CODE_LENGTH, "18位");
                 }
-                Const.setSettingValue(Const.BAR_CODE_PREFIX, tagRules.getPrefix());
+                Const.setSettingValue(Const.BAR_CODE_PREFIX, StringUtils.isNotEmpty(tagRules.getPrefix()) ? tagRules.getPrefix() : "28");
+                Const.setSettingValue(Const.BAR_CODE_PREFIX_PIECE, StringUtils.isNotEmpty(tagRules.getPieceWork()) ? tagRules.getPieceWork() : "28");
                 switch (tagRules.getDigits()) {
                     case 0:
                         Const.setSettingValue(Const.BAR_CODE_PLU_COORDINATE, "3");
@@ -79,10 +81,10 @@ public class BarSettingPresenter extends BarSettingContart.Presenter {
                         Const.setSettingValue(Const.BAR_CODE_PLU_LENGTH, "五位");
                         break;
                 }
-                try{
+                try {
                     Const.setSettingValue(Const.BAR_CODE_FORMAT, listItems[tagRules.getFormat()]);
                     getView().saveData(Const.getSettingValue(Const.BAR_CODE_FORMAT));
-                }catch (Exception e){
+                } catch (Exception e) {
                     logging.i(e.getMessage());
                 }
 

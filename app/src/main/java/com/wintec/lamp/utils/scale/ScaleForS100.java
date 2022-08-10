@@ -68,7 +68,7 @@ public class ScaleForS100 extends ScalesObject {
                 }
             } catch (Exception e) {
 //                Log.i("test", e.toString());
-//                logging.i(e.toString());
+                logging.i(e.toString());
                 if (e.toString().contains("OL")) {
                     callback.getData(15.000f, 15.000f, 0, "OL");
                 }

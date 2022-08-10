@@ -112,7 +112,7 @@
             android:layout_width="0dp"
             android:layout_height="70dp"
             android:gravity="center_vertical"
-            android:text="pos编号"
+            android:text="@string/hint_pos"
             android:textColor="@color/black"
             android:textSize="30sp"
             app:layout_constraintLeft_toLeftOf="@+id/tv_branch_code"
@@ -174,7 +174,6 @@
 
 
             <TextView
-                android:visibility="gone"
                 android:id="@+id/tv_group_code"
                 android:layout_width="wrap_content"
                 android:layout_height="70dp"
@@ -188,7 +187,6 @@
                 android:layout_marginTop="40dp"/>
 
             <EditText
-                android:visibility="gone"
                 android:id="@+id/account_company"
                 android:layout_width="0dp"
                 android:layout_height="70dp"
@@ -212,7 +210,7 @@
             android:layout_gravity="center"
             android:background="@drawable/bg_login_btn"
             android:gravity="center"
-            android:text="激活"
+            android:text="激活睿眼"
             android:textColor="@color/white"
             android:textSize="36sp"
             android:layout_marginHorizontal="20dp"

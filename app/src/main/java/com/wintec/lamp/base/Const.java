@@ -2,6 +2,12 @@ package com.wintec.lamp.base;
 
 import com.wintec.lamp.utils.SPUtils;
 
+import java.io.FileInputStream;
+import java.lang.reflect.Method;
+import java.net.NetworkInterface;
+import java.util.Collections;
+import java.util.List;
+
 public class Const {
     //服务器IP
     public final static String KEY_BASE_IP = "KEY_BASE_IP";
@@ -106,6 +112,8 @@ public class Const {
 
     //重量单位
     public final static String WEIGHT_UNIT = "WEIGHT_UNIT";
+    //获取称重串口
+    public final static String GET_WEIGHT_PORT = "GET_WEIGHT_PORT";
     //总价小数点
     public final static String TOTAL_PRICE_POINT = "TOTAL_PRICE_POINT";
     //单价小数点
@@ -188,7 +196,7 @@ public class Const {
 
     // 服务器IP
     public static String BASE_URL = "http://114.115.174.123:8090/";//云服务器
-//    public static String BASE_URL = "http://192.168.2.64:8090/";
+//    public static String BASE_URL = "http://192.168.31.160:8090/";
     // 长连接端口号
     public static int Port = 8090;
     // web端口号
@@ -207,6 +215,7 @@ public class Const {
     public static String versionName = "2.0.0";
     // SN
     public static String SN = android.os.Build.SERIAL;
+    public static String MAC = getLocalMacAddress();
     // 数据更新
     public static String UPDATE_URL = "/sku/queryList";
     // 软件更新
@@ -258,4 +267,49 @@ public class Const {
     public static void setSettingValue(String key, String value) {
         SPUtils.getInstance(MyApp.getContext()).putString(key, value);
     }
+
+    //通过反射获取SN,Android11可用
+    public static String getDeviceSN(){
+        String serial = null;
+        try {
+            Class<?> c =Class.forName("android.os.SystemProperties");
+            Method get =c.getMethod("get", String.class);
+            serial = (String)get.invoke(c, "ro.serialno");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return serial;
+    }
+
+    /**
+     * 通过网络接口取mac,Android11可用
+     * @return
+     */
+    public static String getLocalMacAddress() {
+        String mac = "";
+        try {
+            String path = "sys/class/net/eth0/address";
+            FileInputStream fis_name = new FileInputStream(path);
+            byte[] buffer_name = new byte[1024 * 8];
+            int byteCount_name = fis_name.read(buffer_name);
+            if (byteCount_name > 0) {
+                mac = new String(buffer_name, 0, byteCount_name, "utf-8");
+            }
+
+            if (mac.length() == 0) {
+                path = "sys/class/net/eth0/wlan0";
+                FileInputStream fis = new FileInputStream(path);
+                byte[] buffer = new byte[1024 * 8];
+                int byteCount = fis.read(buffer);
+                if (byteCount > 0) {
+                    mac = new String(buffer, 0, byteCount, "utf-8");
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return mac.trim();
+    }
+
 }

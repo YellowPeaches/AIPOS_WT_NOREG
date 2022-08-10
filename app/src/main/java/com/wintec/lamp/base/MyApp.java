@@ -14,6 +14,7 @@ import com.wintec.lamp.utils.ContextUtils;
 import com.wintec.lamp.utils.CrashHandler;
 import com.wintec.detection.WtAISDK;
 import com.wintec.detection.utils.LogUtils;
+import com.wintec.lamp.utils.log.LogcatHelper;
 
 public class MyApp extends BaseApp {
 
@@ -26,6 +27,7 @@ public class MyApp extends BaseApp {
         super.onCreate();
 //        NUtil.init(this);
         ContextUtils.init(this);
+//        LogcatHelper.getInstance(this).start();
         setupDatabase();
         //初始化日志
 //        initLogger();
