@@ -777,6 +777,7 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
                     @Override
                     public void run() {
                         WintecServiceSingleton.getInstance().roll();
+
                         if ("批量取数".equals(Const.getSettingValue(Const.KEY_GET_DATA_MODE)) ||
                                 "在线取数".equals(Const.getSettingValue(Const.KEY_GET_DATA_MODE))) {
                             getDataOnline();
@@ -2204,8 +2205,6 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
         }
         super.finish();
     }
-
-
     /**
      * 处理折扣
      *

@@ -489,22 +489,14 @@ public class WelcomeActivity extends BaseMvpActivity<WelcomePresenter> implement
 
     public void jumpToMainActivity() {
         try {
-            Thread.sleep(8000);
-//            List<TagMiddle> tagMiddles = TagMiddleHelper.selectToLable();
-//            if (tagMiddles == null || tagMiddles.size() == 0){
-//                if(!"".equals(Const.getSettingValue(Const.KEY_BRANCH_ID))||Const.getSettingValue(Const.KEY_BRANCH_ID)!=null){
-//
-//                }
-//            }
+            int countFeature = WtAISDK.api_getFeatureCount();
+            double sleepTime = (36000.0 / 18000 * countFeature) + 1000;
+            Thread.sleep((int) sleepTime);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
         if (WtAISDK.api_getCameraSetting()) {
-            //startActivity(new Intent(this, ScaleActivityUI.class));
             Intent intent = new Intent(this, ScaleActivityUI.class);
-            /*intent.setAction(Intent.ACTION_MAIN);
-            intent.addCategory(Intent.CATEGORY_LAUNCHER);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);*/
             startActivity(intent);
         } else {
             startActivity(new Intent(this, CorpPicActivaty.class));
@@ -673,7 +665,6 @@ public class WelcomeActivity extends BaseMvpActivity<WelcomePresenter> implement
                 Const.setSettingValue(Const.KEY_IS_BIND, "1");
                 jumpToMainActivity();
             }
-
         });
     }
 

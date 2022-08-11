@@ -49,11 +49,12 @@ public class AiPosOperatingView extends AiPosLayout implements View.OnClickListe
     private RecyclerView rv_operatingBtns;
 
     private AppCompatEditText edit_scalesCode;
-    private KeyBoardEditText  keyBoardEditText;
+    private KeyBoardEditText keyBoardEditText;
     private TextView btn_print;
     private TextView btn_clear;
     private TextView btn_kb_print;
     private TextView myTime;
+    private View myTimeBackGroundView;
 
     public AiPosOperatingView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -65,13 +66,14 @@ public class AiPosOperatingView extends AiPosLayout implements View.OnClickListe
      * 添加操作按钮
      */
     public void addOperatingBtn(String title, int icon, OnClickListener listener) {
-        operatingAdapter.addData(new OperatingBtn(title, icon,listener));
+        operatingAdapter.addData(new OperatingBtn(title, icon, listener));
     }
 
 
     public void addOperatingBtn(String title, OnClickListener listener, OnLongClickListener longClickListener) {
         operatingAdapter.addData(new OperatingBtn(title, listener, longClickListener));
     }
+
     public void getOperatingBtn(String name) {
         List<OperatingBtn> data = operatingAdapter.getData();
 
@@ -111,7 +113,7 @@ public class AiPosOperatingView extends AiPosLayout implements View.OnClickListe
     }
 
     public void setInputListner(InputListner listner) {
-        if (mIsLandscape){
+        if (mIsLandscape) {
             keyBoardEditText.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -129,8 +131,7 @@ public class AiPosOperatingView extends AiPosLayout implements View.OnClickListe
                     listner.onInput(s.toString().trim());
                 }
             });
-        }
-        else{
+        } else {
             edit_scalesCode.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -174,21 +175,20 @@ public class AiPosOperatingView extends AiPosLayout implements View.OnClickListe
         btn_clear = view.findViewById(R.id.tv_clear);
         btn_kb_print = view.findViewById(R.id.tv_print);
         rv_operatingBtns = view.findViewById(R.id.rv_operatingBtns);
-        if (isLandscape){
-            keyBoardEditText= view.findViewById(R.id.edit_scalesCode);
+        if (isLandscape) {
+            keyBoardEditText = view.findViewById(R.id.edit_scalesCode);
             myTime = view.findViewById(R.id.mytime);
+            myTimeBackGroundView = view.findViewById(R.id.mytimeBackGround);
             new TimeThread().start();
-        }
-        else{
+        } else {
             edit_scalesCode = view.findViewById(R.id.edit_scalesCode);
         }
         btn_clear.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isLandscape){
+                if (isLandscape) {
                     keyBoardEditText.setText("");
-                }
-                else{
+                } else {
                     edit_scalesCode.setText("");
                 }
             }
@@ -200,23 +200,22 @@ public class AiPosOperatingView extends AiPosLayout implements View.OnClickListe
             }
         });
 
-        operatingAdapter = new CommonViewItemAdapter<OperatingBtn>(isLandscape?R.layout.item_operate_btn:R.layout.item_operate_btn_port) {
+        operatingAdapter = new CommonViewItemAdapter<OperatingBtn>(isLandscape ? R.layout.item_operate_btn : R.layout.item_operate_btn_port) {
             @Override
             protected void convert(BaseViewHolder helper, OperatingBtn item) {
 //                TextView tv = helper.getView(R.id.tv_keyBtn);
-                helper.setText(R.id.tv_keyBtn,item.getTitle());
+                helper.setText(R.id.tv_keyBtn, item.getTitle());
                 helper.getView(R.id.op_btn).setOnClickListener(item.getListener());
 
-                if (item.isSelected()){
+                if (item.isSelected()) {
                     helper.getView(R.id.op_btn).setBackground(getResources().getDrawable(R.drawable.btn_operate_selected));
                     helper.setTextColor(R.id.tv_keyBtn, Color.WHITE);
-                }
-                else{
+                } else {
                     helper.getView(R.id.op_btn).setBackground(getResources().getDrawable(R.drawable.keyboard_bg));
                     helper.setTextColor(R.id.tv_keyBtn, Color.BLACK);
                 }
 
-                if (item.getIcon()!=0){
+                if (item.getIcon() != 0) {
                     helper.setImageBitmap(R.id.op_icon, BitmapFactory.decodeResource(getResources(), item.getIcon()));
                 }
 
@@ -228,13 +227,13 @@ public class AiPosOperatingView extends AiPosLayout implements View.OnClickListe
                 helper.setText(R.id.tv_keyBtn, item);
             }
         };
-        rv_key_btn.setLayoutManager(new GridLayoutManager(mContext, 3){
+        rv_key_btn.setLayoutManager(new GridLayoutManager(mContext, 3) {
             @Override
             public boolean canScrollVertically() {
                 return false;
             }
         });
-        rv_operatingBtns.setLayoutManager(new GridLayoutManager(mContext, isLandscape?4:4){
+        rv_operatingBtns.setLayoutManager(new GridLayoutManager(mContext, isLandscape ? 4 : 4) {
             @Override
             public boolean canScrollVertically() {
                 return false;
@@ -256,11 +255,11 @@ public class AiPosOperatingView extends AiPosLayout implements View.OnClickListe
                 case 8:
                 case 9:
                 case 10:
-                    if (isLandscape){
+                    if (isLandscape) {
                         String text = keyBoardEditText.getText().toString() + adapter.getItem(position);
                         keyBoardEditText.setText(text);
                         keyBoardEditText.setSelection(text.length());//将光标移至文字末尾
-                    }else{
+                    } else {
                         String text = edit_scalesCode.getText().toString() + adapter.getItem(position);
                         edit_scalesCode.setText(text);
                         edit_scalesCode.setSelection(text.length());//将光标移至文字末尾
@@ -274,13 +273,12 @@ public class AiPosOperatingView extends AiPosLayout implements View.OnClickListe
 //                    else{
 //                        edit_scalesCode.setText("");
 //                    }
-                    if (isLandscape){
+                    if (isLandscape) {
                         String value = keyBoardEditText.getText().toString().trim();
                         if (value.length() > 0) {
                             keyBoardEditText.setText(value.substring(0, value.length() - 1));
                         }
-                    }
-                    else{
+                    } else {
                         String value = edit_scalesCode.getText().toString().trim();
                         if (value.length() > 0) {
                             edit_scalesCode.setText(value.substring(0, value.length() - 1));
@@ -291,7 +289,7 @@ public class AiPosOperatingView extends AiPosLayout implements View.OnClickListe
             }
         });
         // 竖屏下隐藏输入框 键盘 打印按钮
-        if (!isLandscape){
+        if (!isLandscape) {
             rv_key_btn.setVisibility(View.GONE);
             btn_print.setVisibility(View.GONE);
             edit_scalesCode.setVisibility(View.GONE);
@@ -299,8 +297,8 @@ public class AiPosOperatingView extends AiPosLayout implements View.OnClickListe
 
     }
 
-    public void setButtonSelected(int position,int ... prositions){
-        try{
+    public void setButtonSelected(int position, int... prositions) {
+        try {
            /* if (position==4){
                 operatingAdapter.getItem(4).setSelected(true);
                 operatingAdapter.getItem(5).setSelected(false);
@@ -324,7 +322,7 @@ public class AiPosOperatingView extends AiPosLayout implements View.OnClickListe
             }
             operatingAdapter.notifyDataSetChanged();
 
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -339,10 +337,9 @@ public class AiPosOperatingView extends AiPosLayout implements View.OnClickListe
     }
 
     public void clearInput() {
-        if (mIsLandscape){
+        if (mIsLandscape) {
             keyBoardEditText.setText("");
-        }
-        else{
+        } else {
             edit_scalesCode.setText("");
         }
 
@@ -358,29 +355,29 @@ public class AiPosOperatingView extends AiPosLayout implements View.OnClickListe
         return R.layout.view_aiposui_operating_port;
     }
 
-    public  TextView getBtn_print(){
+    public TextView getBtn_print() {
         return btn_print;
     }
 
     public class TimeThread extends Thread {
         @Override
-        public void run () {
+        public void run() {
             do {
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(10000);
                     Message msg = new Message();
                     msg.what = msgKey1;
                     mHandler.sendMessage(msg);
-                }
-                catch (InterruptedException e) {
+                } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-            } while(true);
+            } while (true);
         }
     }
+
     private Handler mHandler = new Handler() {
         @Override
-        public void handleMessage (Message msg) {
+        public void handleMessage(Message msg) {
             super.handleMessage(msg);
             switch (msg.what) {
                 case msgKey1:
@@ -391,32 +388,36 @@ public class AiPosOperatingView extends AiPosLayout implements View.OnClickListe
             }
         }
     };
+
     //获得当前年月日时分秒星期
-    public String getTime(){
+    public String getTime() {
         final Calendar c = Calendar.getInstance();
-        c.setTimeZone(TimeZone.getTimeZone("GMT+8:00"));
+        c.setTimeZone(TimeZone.getDefault());
         String mYear = String.valueOf(c.get(Calendar.YEAR)); // 获取当前年份
         String mMonth = String.valueOf(c.get(Calendar.MONTH) + 1);// 获取当前月份
         String mDay = String.valueOf(c.get(Calendar.DAY_OF_MONTH));// 获取当前月份的日期号码
         String mWay = String.valueOf(c.get(Calendar.DAY_OF_WEEK));
-        String mHour = String.valueOf(c.get(Calendar.HOUR_OF_DAY));//时
-        String mMinute = String.valueOf(c.get(Calendar.MINUTE));//分
-        String mSecond = String.valueOf(c.get(Calendar.SECOND));//秒
-        if("1".equals(mWay)){
-            mWay ="天";
-        }else if("2".equals(mWay)){
-            mWay ="一";
-        }else if("3".equals(mWay)){
-            mWay ="二";
-        }else if("4".equals(mWay)){
-            mWay ="三";
-        }else if("5".equals(mWay)){
-            mWay ="四";
-        }else if("6".equals(mWay)){
-            mWay ="五";
-        }else if("7".equals(mWay)){
-            mWay ="六";
+//        String mHour = String.valueOf(c.get(Calendar.HOUR_OF_DAY));//时
+        String mHour = String.format("%02d", c.get(Calendar.HOUR_OF_DAY));//时
+//        String mMinute = String.valueOf(c.get(Calendar.MINUTE));//分
+        String mMinute = String.format("%02d", c.get(Calendar.MINUTE));//分
+//        String mSecond = String.format("%02d", c.get(Calendar.SECOND));//秒
+        if ("1".equals(mWay)) {
+            mWay = "天";
+        } else if ("2".equals(mWay)) {
+            mWay = "一";
+        } else if ("3".equals(mWay)) {
+            mWay = "二";
+        } else if ("4".equals(mWay)) {
+            mWay = "三";
+        } else if ("5".equals(mWay)) {
+            mWay = "四";
+        } else if ("6".equals(mWay)) {
+            mWay = "五";
+        } else if ("7".equals(mWay)) {
+            mWay = "六";
         }
-        return mYear + "年" + mMonth + "月" + mDay+"日"+" "+"星期"+mWay+" "+mHour+":"+mMinute+":"+mSecond;
+//        return mYear + "年" + mMonth + "月" + mDay+"日"+" "+"星期"+mWay+" "+mHour+":"+mMinute+":"+mSecond;
+        return mYear + "年" + mMonth + "月" + mDay + "日" + " " + "星期" + mWay + " " + mHour + ":" + mMinute;
     }
 }

@@ -149,7 +149,7 @@ public class WelcomePresenter<JavaScriptSerializer> extends WelcomeContract.Pres
                     continue;
                 } else {
                     MapDepot mapDepot = new MapDepot();
-                    mapDepot.setOrgan("zkyt");
+                    mapDepot.setOrgan(Const.getSettingValue(Const.KEY_ACCOUNT)); //租户号
                     mapDepot.setSn(Const.SN);
                     mapDepot.setBranchCode(Const.getSettingValue(Const.KEY_BRANCH_ID));
                     mapDepot.setProductName(p.getNameTextA());
@@ -180,7 +180,7 @@ public class WelcomePresenter<JavaScriptSerializer> extends WelcomeContract.Pres
     public void getImgUrl() {
         Map<String, String> requestMap = new HashMap<>();
         requestMap.put("PosSn", Const.SN);
-        requestMap.put("organ", "zkyt");
+        requestMap.put("organ", Const.getSettingValue(Const.KEY_ACCOUNT)); //租户号
         requestMap.put("branchCode", Const.getSettingValue(Const.KEY_BRANCH_ID));
         comModel.getImgUrl(requestMap, new ModelRequestCallBack<Object>() {
             @Override
@@ -240,7 +240,7 @@ public class WelcomePresenter<JavaScriptSerializer> extends WelcomeContract.Pres
             for (PluDto p : pluAll) {
                 if (StringUtils.isEmpty(p.getPreviewImage())) {
                     MapDepot mapDepot = new MapDepot();
-                    mapDepot.setOrgan("zkyt");
+                    mapDepot.setOrgan(Const.getSettingValue(Const.KEY_ACCOUNT)); //租户号
                     mapDepot.setSn(Const.SN);
                     mapDepot.setBranchCode(Const.getSettingValue(Const.KEY_BRANCH_ID));
                     mapDepot.setProductName(p.getNameTextA());

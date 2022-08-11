@@ -1,7 +1,5 @@
 package com.wintec.lamp.service;
 
-import android.app.Activity;
-import android.app.Service;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -19,7 +17,7 @@ import android.os.RemoteException;
 import android.util.Log;
 
 import androidx.annotation.RequiresApi;
-import androidx.constraintlayout.widget.ConstraintLayout;
+
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.common.BitMatrix;
@@ -28,7 +26,6 @@ import com.google.zxing.oned.EAN13Writer;
 import com.google.zxing.oned.OneDimensionalCodeWriter;
 import com.wintec.ThreadCacheManager;
 import com.wintec.aiposui.model.GoodsModel;
-import com.wintec.lamp.R;
 import com.wintec.lamp.base.Const;
 import com.wintec.lamp.dao.entity.AccDto;
 import com.wintec.lamp.dao.entity.PluDto;
@@ -45,7 +42,6 @@ import com.wintec.lamp.utils.PriceUtils;
 import com.wintec.lamp.utils.StrToBrCode;
 import com.wintec.lamp.utils.log.Logging;
 
-import java.math.BigDecimal;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -58,7 +54,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
-import java.util.Locale;
 
 import cn.wintec.aidl.LabelPrinterService;
 import cn.wintec.aidl.ScaleInstructionListener;
@@ -154,9 +149,6 @@ public class WintecServiceSingleton {
             Intent intent = new Intent();
             intent.setPackage("cn.wintec.sdk");
             intent.setAction("cn.wintec.SERVICE");
-//            ComponentName componentName = new ComponentName("cn.wintec.sdk",
-//                    "cn.wintec.SERVICE");
-//            mContext.bindService(intent, connection, Service.BIND_AUTO_CREATE);
             boolean isBindService = mContext.bindService(intent, connection, BIND_AUTO_CREATE);
         }
     }
@@ -273,37 +265,25 @@ public class WintecServiceSingleton {
     }
 
     public void roll() {
-        if (tagMiddles == null) {
-            tagMiddles = TagMiddleHelper.selectToLable();
-        }
-        if (tagMiddles.size() <= 0) {
-            return;
-        }
-        int width = (tagMiddles.get(0).getLengths() - 2) * 8;
-        int height = (tagMiddles.get(0).getBreadths() - 2) * 8;
         try {
-            Thread.sleep(300);
-            labelPrinterService.PRN_SetPageModePrintArea(460, height - height % 10 + 10);
+            labelPrinterService.PRN_SetPageModePrintArea(10, 10);
         } catch (RemoteException e) {
             e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+            logging.e(e.toString());
         }
         try {
             if ("宁致打印机".equals(Const.getSettingValue(Const.PRINT_SETTING))) {
-
-                // labelPrinterService.PRN_Hex(new byte[]{0x1E,0x52, 0x01, (byte) i});
-                labelPrinterService.PRN_Hex(new byte[]{0x1F, 0x11, (byte) 0x81});
-                labelPrinterService.PRN_print(false);
+                //老版本sdk2.1.8使用
+//                labelPrinterService.PRN_Hex(new byte[]{0x1F, 0x11, (byte) 0x81});
                 labelPrinterService.PRN_Hex(new byte[]{0x1D, 0x0C});
-                labelPrinterService.PRN_Hex(new byte[]{0x1F, 0x11, (byte) 0x80});
-
+                //老版本sdk2.1.8使用
+//                labelPrinterService.PRN_Hex(new byte[]{0x1F, 0x11, (byte) 0x80});
             } else {
                 labelPrinterService.PRN_print(true);
                 labelPrinterService.PRN_Hex(ByteUtils.hexToByteArr("0C"));
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logging.e(e.toString());
         }
 
     }
@@ -334,40 +314,6 @@ public class WintecServiceSingleton {
             throw new Exception("校验错误");
         }
         return str1;
-    }
-
-    /**
-     * 打印条形码
-     *
-     * @param bitmap
-     * @param width
-     * @param height
-     * @param code
-     */
-    public void printPriceTag(Bitmap bitmap, int width, int height, String code) {
-        try {
-
-            Thread.sleep(300);
-            labelPrinterService.PRN_SetPageModePrintArea(460, height);
-            labelPrinterService.PRN_PrintBitmap(bitmap, 0, 0, width, height, 0);
-            List<TagMiddle> tagMiddles = TagMiddleHelper.selectBarCode();
-            if (tagMiddles.size() == 1) {
-                Integer barLeft = tagMiddles.get(0).getAbscissa();
-                Integer barTop = tagMiddles.get(0).getOrdinate();
-                Integer barWidth = tagMiddles.get(0).getLength();
-                Integer barHeight = tagMiddles.get(0).getBreadth();
-                if ("13位".equals(Const.getSettingValue(Const.BAR_CODE_LENGTH))) {
-                    labelPrinterService.PRN_PrintBarCode(code, 67, barLeft, barTop, barWidth, barHeight, 0);
-                    // labelPrinterService.PRN_PrintBarCode(code, 67, 30, 150, 280, 25, 0);//13位 EAN13
-                } else {
-                    labelPrinterService.PRN_PrintBarCode(code, 73, barLeft, barTop, barWidth, barHeight, 0);
-                }
-            }
-            labelPrinterService.PRN_print(true);
-            labelPrinterService.PRN_Hex(ByteUtils.hexToByteArr("0C"));
-        } catch (RemoteException | InterruptedException e) {
-            e.printStackTrace();
-        }
     }
 
     /**
@@ -411,11 +357,6 @@ public class WintecServiceSingleton {
         long node = 0;
         long total = 0;
         for (int i = barcode.length() - 1; i >= 0; i--) {
-//            if(!Common.StringValidate.IsInt(barcode[i].ToString()))
-//            {
-//                continue;
-//            }
-//            numb = Convert.ToInt32(barcode[i].ToString());
             numb = Long.parseLong(barcode.toCharArray()[i] + "");
             if (isOdd) {
                 //ODD
@@ -435,7 +376,6 @@ public class WintecServiceSingleton {
 
             total += node;
         }
-
         long checksum = total % 10;
         if (checksum == 0) {
             return "0";
@@ -444,21 +384,6 @@ public class WintecServiceSingleton {
         }
     }
 
-    public String toEightSun(String s) {
-        String r = "";
-        byte cmd[] = new byte[s.length() / 2];
-        int i = 0;
-        String subs;
-        for (int k = 0; k < s.length() / 2; k++) {
-
-            cmd[k] = Integer.valueOf(s.substring(i, i + 2), 10).byteValue();
-            i += 2;
-
-        }
-        subs = new String(cmd);
-
-        return subs;
-    }
 
     public WintecManagerService getWintecManagerService() {
         return wintecManagerService;
@@ -546,7 +471,6 @@ public class WintecServiceSingleton {
                 barCode[i] = prefix.charAt(i);
             }
         }
-
         jointBarCode(barCode, Const.BAR_CODE_PLU_COORDINATE, Const.BAR_CODE_PLU_LENGTH, PriceUtils.toCodeBarPLU(commdity.getPluNo()));
         jointBarCode(barCode, Const.BAR_CODE_TOTAL_COORDINATE, Const.BAR_CODE_TOTAL_LENGTH, PriceUtils.toPrinterPrice(total));
         jointBarCode(barCode, Const.BAR_CODE_WEIGHT_COORDINATE, Const.BAR_CODE_WEIGHT_LENGTH, PriceUtils.toPrinterWeight(netStr));
@@ -562,7 +486,6 @@ public class WintecServiceSingleton {
             }
         }
         String check = "";
-
         if ("18位".equals(Const.getSettingValue(Const.BAR_CODE_LENGTH))) {
             if ("1".equals(Const.getSettingValue(Const.BAR_CODE_IS_CHECK))) {
                 if ("奇校验".equals(Const.getSettingValue(Const.KEY_ODD_EVEN_CHECK))) {
@@ -574,7 +497,6 @@ public class WintecServiceSingleton {
         } else {
             check = String.valueOf(getChecksum(charArrayToString(barCode)));
         }
-
         return charArrayToString(barCode) + check;
     }
 
@@ -597,102 +519,6 @@ public class WintecServiceSingleton {
         bitmap.setPixels(rawData, 0, w, 0, 0, w, h);
         return bitmap;
     }
-
-    /**
-     * 利用打印机打印价签
-     *
-     * @param commdity
-     * @param total
-     * @param num
-     * @param discountPrice
-     * @param isKg
-     * @param status
-     * @param tare
-     * @param mNet
-     */
-    public void printLable(PluDto commdity, String total, int num, String discountPrice, boolean isKg, int status, String tare, float mNet) {
-        String code = "";
-        selectCacheLableTag(commdity.getLabelNoA());
-        try {
-            code = WintecServiceSingleton.getInstance().getTagCode(commdity, total, mNet, num, discountPrice);
-        } catch (Exception e) {
-            e.printStackTrace();
-            Message msg = mhandler.obtainMessage();
-            msg.what = SHOW_FAIL;
-            msg.obj = "校验错误";
-            mhandler.sendMessage(msg);
-            return;
-        }
-        //打印文字
-
-        if (tagMiddles == null || tagMiddles.size() == 0) {
-            Message msg = mhandler.obtainMessage();
-            msg.what = SHOW_FAIL;
-            msg.obj = "条码格式不存在";
-            mhandler.sendMessage(msg);
-            return;
-        }
-        int width = (tagMiddles.get(0).getLengths() - 2) * 8;
-        int height = (tagMiddles.get(0).getBreadths() - 2) * 8;
-        try {
-            Thread.sleep(300);
-            labelPrinterService.PRN_SetPageModePrintArea(460, height - height % 10 + 10);
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        tagMiddles.forEach(item -> {
-            String lable1 = getLable(commdity, total, mNet + "", num, discountPrice, isKg, status, tare, item);
-            if ("drag1".equals(item.getDivId())) {
-                if (lable1.length() * item.getFontSize() > width) {
-                    item.setFontSize(width / lable1.length());
-                }
-            }
-            try {
-                labelPrinterService.PRN_PrintText(lable1, item.getAbscissa(), item.getOrdinate(), item.getFontSize(), item.getUnderline(), item.getOverstriking() == 1);
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
-        });
-        if (tagMiddles1.size() == 1) {
-            Integer barLeft = tagMiddles1.get(0).getAbscissa();
-            Integer barTop = tagMiddles1.get(0).getOrdinate();
-            Integer barWidth = tagMiddles1.get(0).getLength();
-            Integer barHeight = tagMiddles1.get(0).getBreadth();
-            try {
-                if ("13位".equals(Const.getSettingValue(Const.BAR_CODE_LENGTH))) {
-                    labelPrinterService.PRN_PrintBarCode(code, 67, barLeft, barTop, barWidth, barHeight, tagMiddles1.get(0).getUnderline());
-                    // labelPrinterService.PRN_PrintBarCode(code, 67, 30, 150, 280, 25, 0);//13位 EAN13
-                } else {
-                    labelPrinterService.PRN_PrintBarCode(code, 73, barLeft, barTop, barWidth, barHeight, tagMiddles1.get(0).getUnderline());
-                }
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
-        }
-        try {
-            //凝脂打印机回转
-            if ("宁致打印机".equals(Const.getSettingValue(Const.PRINT_SETTING))) {
-//                String settingValue = Const.getSettingValue(Const.ROTATION_SETTING);
-//                if (settingValue != null && !"".equals(settingValue)) {
-//                    int i = Integer.parseInt(settingValue);
-                // labelPrinterService.PRN_Hex(new byte[]{0x1E,0x52, 0x01, (byte) i});
-                labelPrinterService.PRN_Hex(new byte[]{0x1F, 0x11, (byte) 0x81});
-                labelPrinterService.PRN_print(false);
-                labelPrinterService.PRN_Hex(new byte[]{0x1D, 0x0C});
-                labelPrinterService.PRN_Hex(new byte[]{0x1F, 0x11, (byte) 0x80});
-                // }
-            } else {
-                labelPrinterService.PRN_print(true);
-                labelPrinterService.PRN_Hex(ByteUtils.hexToByteArr("0C"));
-            }
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
-
-    }
-
 
     /**
      * 利用图片打印价签
@@ -736,7 +562,6 @@ public class WintecServiceSingleton {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         int width = tagMiddles.get(0).getLengths() * 8;
         int height = (tagMiddles.get(0).getBreadths() - 2) * 8;
         bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
@@ -988,7 +813,6 @@ public class WintecServiceSingleton {
         }
     }
 
-
     /**
      * 打印二维码
      *
@@ -1009,7 +833,6 @@ public class WintecServiceSingleton {
         } else {
             return;
         }
-
         bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
         canvasTag = new Canvas(bitmap);
         int finalWidth = width;
@@ -1102,8 +925,6 @@ public class WintecServiceSingleton {
         if (bitmap != null) {
             bitmap.recycle();
         }
-
-
     }
 
     private String getLableMuch(List<GoodsModel> goodModels, TagMiddle item) {
@@ -1204,15 +1025,10 @@ public class WintecServiceSingleton {
 
         // bitmap = BmpUtil.scaleBitmap(bitmap,0.5f);
         try {
-
-            Thread.sleep(300);
             labelPrinterService.PRN_SetPageModePrintArea(460, height);
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
-
         try {
             Log.i("大小", "大小" + bitmap.getWidth() + "+" + bitmap.getHeight());
             if ("逆向打印".equals(Const.getSettingValue(Const.TAG_DIRECTION))) {
@@ -1228,13 +1044,14 @@ public class WintecServiceSingleton {
             }
 
             if ("宁致打印机".equals(Const.getSettingValue(Const.PRINT_SETTING))) {
-
-                labelPrinterService.PRN_Hex(new byte[]{0x1F, 0x11, (byte) 0x81});
+                //老版本sdk2.1.8使用
+//                labelPrinterService.PRN_Hex(new byte[]{0x1F, 0x11, (byte) 0x81}); //设置回转
                 boolean printSuccess = labelPrinterService.PRN_print(false);
                 if (printSuccess) {
-                    labelPrinterService.PRN_Hex(new byte[]{0x1D, 0x0C});
+                    labelPrinterService.PRN_Hex(new byte[]{0x1D, 0x0C});//走到下一纸缝
                 }
-                labelPrinterService.PRN_Hex(new byte[]{0x1F, 0x11, (byte) 0x80});
+                //老版本sdk2.1.8使用
+//                labelPrinterService.PRN_Hex(new byte[]{0x1F, 0x11, (byte) 0x80});
             } else {
                 boolean printSuccess = labelPrinterService.PRN_print(false);
                 if (printSuccess) {
@@ -1245,8 +1062,6 @@ public class WintecServiceSingleton {
                 RemoteException e) {
             e.printStackTrace();
         }
-
-
     }
 
     public String getLable(PluDto commdity, String total, String thisnet, int num, String discountPrice, boolean isKg, int tradeMode, String tare, TagMiddle item) {
