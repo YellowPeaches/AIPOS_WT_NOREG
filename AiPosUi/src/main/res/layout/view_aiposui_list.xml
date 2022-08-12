@@ -81,6 +81,7 @@
         app:layout_constraintGuide_percent="0.80" />
     <ImageView
         android:id="@+id/logo_image"
+        android:src="@drawable/wintec_logo"
         android:layout_width="400dp"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@+id/ghline_1"

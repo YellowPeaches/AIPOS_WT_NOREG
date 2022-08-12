@@ -2055,12 +2055,12 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
 //            isCanDetectWithoutZero = false;
             isZeroAfterPrint = true;
             aiPosAllView.getTitleView().setWeight(CommUtils.Float2String(net, point) + "", 1);
+            aiPosAllView.getTitleView().setScalesStatusZero();
             //title的文字没有商品时 置空
             if (isCanClear.get()) {
                 itemReadyToPrint = null;
                 isItemReadyToPrint = false;
                 isCanClear.set(false);
-                aiPosAllView.getTitleView().setScalesStatusZero();
                 aiPosAllView.getTitleView().setGoods(null, "0", 0, null, isKg);
 
                 mPresentation.setGoods(null, "0", 0, "0", isKg, aiPosAllView.getTitleView().getTareBySecend());

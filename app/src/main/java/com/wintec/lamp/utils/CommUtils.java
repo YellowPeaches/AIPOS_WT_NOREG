@@ -64,7 +64,7 @@ public class CommUtils {
                 decimalFormat = new DecimalFormat("#0.0");
                 decimalFormat.setRoundingMode(RoundingMode.UP);
                 break;
-            case "四舍五入(18.22)":
+            case "四舍五入(18.17)":
                 decimalFormat = new DecimalFormat("#0.00");
                 decimalFormat.setRoundingMode(RoundingMode.HALF_UP);
 //                bigDecimal = new BigDecimal(value + "");

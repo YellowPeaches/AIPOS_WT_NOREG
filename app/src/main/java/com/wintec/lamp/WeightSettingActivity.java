@@ -178,11 +178,11 @@ public class WeightSettingActivity extends BaseActivity {
                             "四舍五入(18.2)",
                             "强舍(18.1)",
                             "强入(18.2)",
-                            "四舍五入(18.22)"
+                            "四舍五入(18.17)"
                     };
                     // popupsShow(v,listItems,Constants.TOTAL_PRICE_MODE, itemViewMap.get(Constants.TOTAL_PRICE_MODE));
                     showSimpleBottomSheetList(
-                            true, false, "总价圆整(18.16)",
+                            true, false, "总价圆整(18.165)",
                             listItems, true, false, Const.TOTAL_PRICE_MODE, itemViewMap.get(Const.TOTAL_PRICE_MODE));
                 })
                 .addItemView(itemViewMap.get(Const.DELECT_WEIGHT), v -> {
