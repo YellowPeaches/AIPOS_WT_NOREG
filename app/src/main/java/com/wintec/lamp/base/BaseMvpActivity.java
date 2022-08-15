@@ -1,5 +1,6 @@
 package com.wintec.lamp.base;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -29,15 +30,16 @@ public abstract class BaseMvpActivity<T extends BaseMvpPresenter> extends BaseAc
     protected T mPresenter;
     private Unbinder bind;
 
+    @SuppressLint("ResourceType")
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 //        this.requestWindowFeature(View.SYSTEM_UI_FLAG_FULLSCREEN);
         // 隐藏标题栏
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
+//        requestWindowFeature(Window.FEATURE_NO_TITLE);
         // 隐藏状态栏
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+//        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+//                WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
 //        StatusBarUtils.setColor(this,0x000000);
 //        StatusBarUtils.setTextDark(this,true);

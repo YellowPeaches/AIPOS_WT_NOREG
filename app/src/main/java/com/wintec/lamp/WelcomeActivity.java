@@ -64,6 +64,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import butterknife.BindView;
+import io.reactivex.annotations.Nullable;
 import io.reactivex.disposables.Disposable;
 import okhttp3.RequestBody;
 
@@ -489,9 +490,7 @@ public class WelcomeActivity extends BaseMvpActivity<WelcomePresenter> implement
 
     public void jumpToMainActivity() {
         try {
-            int countFeature = WtAISDK.api_getFeatureCount();
-            double sleepTime = (36000.0 / 18000 * countFeature) + 1000;
-            Thread.sleep((int) sleepTime);
+            Thread.sleep(500);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

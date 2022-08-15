@@ -214,8 +214,9 @@ public class Const {
     // 版本名
     public static String versionName = "2.0.0";
     // SN
-    public static String SN = android.os.Build.SERIAL;
-    public static String MAC = getLocalMacAddress();
+//    public static String SN = android.os.Build.SERIAL;
+    public static String SN = getDeviceSN();
+//    public static String MAC = getLocalMacAddress();
     // 数据更新
     public static String UPDATE_URL = "/sku/queryList";
     // 软件更新

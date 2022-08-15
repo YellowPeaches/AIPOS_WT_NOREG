@@ -5,4 +5,20 @@
         <item name="android:textColor">?attr/qmui_config_color_gray_5</item>
         <item name="android:textSize">?attr/qmui_common_list_item_detail_h_text_size</item>
     </style>
+    <style name="BTransparentTheme" parent="AppTheme">
+<!--        <item name="android:windowIsTranslucent">true</item>-->
+        <item name="android:windowBackground">@android:color/holo_red_dark</item>
+    </style>
+
+    <style name="BlueBG" parent="AppTheme">
+<!--        <item name="android:windowIsTranslucent">true</item>-->
+        <item name="android:windowBackground">@android:color/holo_blue_dark</item>
+
+    </style>
+    <style name="Transparent" parent="android:Theme.Light">
+        <!--将Activity的Theme设置成透明-->
+        <item name="android:windowIsTranslucent">true</item>
+    </style>
+
+
 </resources>

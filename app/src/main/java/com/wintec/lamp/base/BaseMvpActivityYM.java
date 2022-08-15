@@ -7,6 +7,8 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.wintec.detection.WtAISDK;
+import com.wintec.lamp.R;
 import com.wintec.lamp.utils.TextTools;
 import com.wintec.lamp.utils.ToastUtils;
 
@@ -40,6 +42,7 @@ public abstract class BaseMvpActivityYM<T extends BaseMvpPresenter> extends Base
 
 //        StatusBarUtils.setColor(this,0x000000);
 //        StatusBarUtils.setTextDark(this,true);
+        setTheme(R.style.BlueBG);
         setContentView(contentResId());
         ButterKnife.bind(this);
         mPresenter = createPresenter();
@@ -50,6 +53,13 @@ public abstract class BaseMvpActivityYM<T extends BaseMvpPresenter> extends Base
         initData();
         initEvent();
         loadData();
+        try {
+            int countFeature = WtAISDK.api_getFeatureCount();
+            double sleepTime = (22000.0 / 18000 * countFeature) + 1000;
+            Thread.sleep((int) sleepTime);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         hideBottomUIMenu();
         getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
             @Override

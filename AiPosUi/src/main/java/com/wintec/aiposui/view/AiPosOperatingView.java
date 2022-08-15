@@ -364,7 +364,7 @@ public class AiPosOperatingView extends AiPosLayout implements View.OnClickListe
         public void run() {
             do {
                 try {
-                    Thread.sleep(10000);
+                    Thread.sleep(1000);
                     Message msg = new Message();
                     msg.what = msgKey1;
                     mHandler.sendMessage(msg);
@@ -401,7 +401,7 @@ public class AiPosOperatingView extends AiPosLayout implements View.OnClickListe
         String mHour = String.format("%02d", c.get(Calendar.HOUR_OF_DAY));//时
 //        String mMinute = String.valueOf(c.get(Calendar.MINUTE));//分
         String mMinute = String.format("%02d", c.get(Calendar.MINUTE));//分
-//        String mSecond = String.format("%02d", c.get(Calendar.SECOND));//秒
+        String mSecond = String.format("%02d", c.get(Calendar.SECOND));//秒
         if ("1".equals(mWay)) {
             mWay = "天";
         } else if ("2".equals(mWay)) {
@@ -417,7 +417,7 @@ public class AiPosOperatingView extends AiPosLayout implements View.OnClickListe
         } else if ("7".equals(mWay)) {
             mWay = "六";
         }
-//        return mYear + "年" + mMonth + "月" + mDay+"日"+" "+"星期"+mWay+" "+mHour+":"+mMinute+":"+mSecond;
-        return mYear + "年" + mMonth + "月" + mDay + "日" + " " + "星期" + mWay + " " + mHour + ":" + mMinute;
+        return mYear + "年" + mMonth + "月" + mDay+"日"+" "+"星期"+mWay+" "+mHour+":"+mMinute+":"+mSecond;
+//        return mYear + "年" + mMonth + "月" + mDay + "日" + " " + "星期" + mWay + " " + mHour + ":" + mMinute;
     }
 }

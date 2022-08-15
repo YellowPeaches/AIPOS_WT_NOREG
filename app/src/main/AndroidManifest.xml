@@ -27,6 +27,7 @@
         <activity android:name=".ShowInfo" />
         <activity
             android:name=".ScaleActivityUI"
+            android:theme="@style/Transparent"
             android:alwaysRetainTaskState="true"
             android:configChanges="orientation|keyboardHidden"
             android:launchMode="singleTask"
@@ -34,6 +35,7 @@
         <activity android:name=".EditActivity" />
         <activity
             android:name=".WelcomeActivity"
+            android:theme="@style/BlueBG"
             android:alwaysRetainTaskState="true"
             android:launchMode="singleTask">
             <intent-filter>
