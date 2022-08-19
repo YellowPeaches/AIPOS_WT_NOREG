@@ -2,7 +2,6 @@ package com.wintec.lamp.base;
 
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -53,13 +52,24 @@ public abstract class BaseMvpActivityYM<T extends BaseMvpPresenter> extends Base
         initData();
         initEvent();
         loadData();
-        try {
-            int countFeature = WtAISDK.api_getFeatureCount();
-            double sleepTime = (22000.0 / 18000 * countFeature) + 1000;
-            Thread.sleep((int) sleepTime);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+
+        int countFeature = WtAISDK.api_getFeatureCount();
+        double sleepTime = (26000.0 / 18000 * countFeature) + 1000;
+        Const.DATA_LOADING_TIME = (int) sleepTime;
+        new Thread() {
+            @Override
+            public void run() {
+                super.run();
+                try {
+                    Thread.sleep((int) sleepTime);//休眠
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                Const.DATA_LOADING_OK = true;
+            }
+        }.start();
+
+
         hideBottomUIMenu();
         getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
             @Override

@@ -10,11 +10,11 @@
         android:icon="@drawable/icon_ai"
         android:label="@string/app_name"
         android:largeHeap="true"
+        android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        android:usesCleartextTraffic="true"
-        android:requestLegacyExternalStorage="true">
+        android:usesCleartextTraffic="true">
         <activity
             android:name=".GetPluSettingActivty"
             android:exported="true" />
@@ -27,17 +27,17 @@
         <activity android:name=".ShowInfo" />
         <activity
             android:name=".ScaleActivityUI"
-            android:theme="@style/Transparent"
             android:alwaysRetainTaskState="true"
             android:configChanges="orientation|keyboardHidden"
             android:launchMode="singleTask"
+            android:theme="@style/Transparent"
             android:windowSoftInputMode="adjustUnspecified|stateHidden" />
         <activity android:name=".EditActivity" />
         <activity
             android:name=".WelcomeActivity"
-            android:theme="@style/BlueBG"
             android:alwaysRetainTaskState="true"
-            android:launchMode="singleTask">
+            android:launchMode="singleTask"
+            android:theme="@style/BlueBG">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -93,13 +93,18 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
-    <uses-permission android:name="android.permission.WRITE_SETTINGS" tools:ignore="ProtectedPermissions" />
+    <uses-permission
+        android:name="android.permission.WRITE_SETTINGS"
+        tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
     <uses-permission android:name="android.permission.EXPAND_STATUS_BAR" />
     <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
 
-<!--    安卓11添加，否则无法调用bindService-->
+    <!--    安卓11添加，否则无法调用bindService-->
     <queries>
         <package android:name="cn.wintec.sdk" />
     </queries>

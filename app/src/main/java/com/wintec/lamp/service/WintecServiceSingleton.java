@@ -1,5 +1,7 @@
 package com.wintec.lamp.service;
 
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -14,10 +16,10 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.RemoteException;
+import android.util.Base64;
 import android.util.Log;
 
 import androidx.annotation.RequiresApi;
-
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.common.BitMatrix;
@@ -42,18 +44,19 @@ import com.wintec.lamp.utils.PriceUtils;
 import com.wintec.lamp.utils.StrToBrCode;
 import com.wintec.lamp.utils.log.Logging;
 
+import java.io.ByteArrayOutputStream;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Set;
 
 import cn.wintec.aidl.LabelPrinterService;
 import cn.wintec.aidl.ScaleInstructionListener;
@@ -565,6 +568,7 @@ public class WintecServiceSingleton {
         int width = tagMiddles.get(0).getLengths() * 8;
         int height = (tagMiddles.get(0).getBreadths() - 2) * 8;
         bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+//        bitmap.eraseColor(Color.parseColor("#FFFAFA"));//填充颜色
         canvasTag = new Canvas(bitmap);
         // 画文字
         String finalTotal = total;
@@ -806,6 +810,7 @@ public class WintecServiceSingleton {
         if ("逆向打印".equals(Const.getSettingValue(Const.TAG_DIRECTION))) {
             bitmap = BmpUtil.rotateBitmap(bitmap, 180);
         }
+//        String s = bitmapToString(bitmap, 100);
         printBitMap(width, height, bitmap);
         //   return bitmap;
         if (bitmap != null) {
@@ -1052,16 +1057,86 @@ public class WintecServiceSingleton {
                 }
                 //老版本sdk2.1.8使用
 //                labelPrinterService.PRN_Hex(new byte[]{0x1F, 0x11, (byte) 0x80});
-            } else {
+            } else if ("普瑞特打印机".equals(Const.getSettingValue(Const.PRINT_SETTING))) {
                 boolean printSuccess = labelPrinterService.PRN_print(false);
                 if (printSuccess) {
                     labelPrinterService.PRN_Hex(ByteUtils.hexToByteArr("0C"));
                 }
+            } else {
+//                if(Const.isConnetFirst){
+//                    List<String> pairedData = getPairedData();
+//                    String blueToothAddr = pairedData.get(0);
+//                    Const.toothAddress = blueToothAddr.substring(blueToothAddr.length() - 17);
+//                    Const.isConnetFirst=false;
+//                }
+//
+//                try {
+//                    if(HPRTPrinterHelper.IsOpened()){
+//                        Log.i("MainActivity", "蓝牙设备已连接，无需重连");
+//
+//                    }else {
+//                        int portOpen = HPRTPrinterHelper.PortOpen("Bluetooth," + Const.toothAddress);
+//                        if (portOpen == 0) {
+//                            Log.i("MainActivity：", "蓝牙设备连接成功 状态码" + portOpen);
+//                        } else {
+//                            Log.i("MainActivity：", "蓝牙设备连接失败  状态码" + portOpen);
+//                            return;
+//                        }
+//                    }
+//
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//                try {
+//                    HPRTPrinterHelper.printAreaSize("60","40");//标签高度要设置比图片的高度长
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//                try {
+//                    HPRTPrinterHelper.CLS();
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//                String str = "iVBORw0KGgoAAAANSUhEUgAAAfAAAAFGCAYAAACVP82OAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAACnvSURBVHhe7d3Bji5LktTxfsl+SiRYsAAxCxYIISEYWCANO3a8RkPdmbj8x3Dz9MjKyvvFPfaTTDrlbpFVferkFxr1jOYvf4uIiIhj/Mf/9r9+Sy7wiIiIg+QCj4iIOFAu8IiIiAPlAo+IiDhQLvCIiIgD5QKPiIg4UC7wiIiIA+UCj4iIONC/+Lf/+W//8t/9l1zgERERJ8kFHhERcaBc4BEREQfKBR4REXGgXOAREREHygUeERFxoFzgERERB8oFHhERcaBc4BEREQfKBR4REXGgXOAREREHygUeERFxoN8u8L/LBR4REXGUXOAREREHygUeERFxoFzgERERB8oFHhERcaBc4BEREQfKBR4REXGgXOAREREHygUeERFxoFzgERERB8oFHhERcaBc4BEREQfKBR4REXGgXOAREREH+scL/L/mAo+IiDhJLvCIiIgD5QKPiIg4UC7wiIiIA+UCj4iIOFAu8IiIiAPlAo+IiDhQLvCIiIgD5QKPiIg40NcF/q9ygUdERJwlF3hERMSBcoFHREQcKBd4RETEgXKBR0REHCgXeERExIFygUdERBwoF3hERMSBcoFHREQcKBd4RETEgXKBR0REHCgXeERExIFygUdERBwoF3hERMSBcoFHREQcKBd4RETEgXKBR0REHCgXeERExIFygUdERBwoF3hERMSBcoFHREQcKBd4RETEgXKBR0REHCgXeERExIFygUdERBwoF3hERMSBcoFHREQcKBd4RETEgXKBR0REHCgXeERExIFygUdERBwoF3hERMSBcoFH/JO//OUvo0xVZ6tMVOeq7KjOV5mqzlaZqs5WmajOVbnju+e/8Bldpqqzmh3V+SpT1dkqnaq/m9PlAo9f3s4Lza7rTzpfJr2r/cLeU90/Q+9qv7B31VV3z33h2e78n6E36dBuv/Pksz5JLvD4pT39Ut95njvj5p2rM1f7Snem2zndmW7nuDNu3nnrzJc757oz3c7pznQ7pzvT7Zw7Z+i75z9dLvD45T35kt95ljvj5t9x55ndmW7ndGe6nePOuPnT7n6fO+e6M93O6c50O+fqzNWedrrEc7tn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qqtxXIfzbrfLneVcM1Gd01C1X6Hd+Rtygcdx3Aszmetuwp11c2KnC1V7jdP13JzYcSE3V+y5kJsTO13oqbliz4XcnNjROFVX47gO591ulzvLuWaiOqehar9Cu/M35AKP47gXZjLX3YQ76+bETheq9hqn67k5seNCbq7YcyE3J3a60FNzxZ4LuTmxo3GqrsZxHc673S53lnPNRHVOQ9V+hXbnb8gFHsdxL8xkrrsJd9bNiZ0uVO01Ttdzc2LHhdxcsedCbk7sdKGn5oo9F3JzYkfjVF2N4zqcd7td7iznmonqnIaq/Qrtzt+QCzyO416YyVx3E+6smxM7Xajaa5yu5+bEjgu5uWLPhdyc2OlCT80Vey7k5sSOxqm6Gsd1OO92u9xZzjUT1TkNVfsV2p2/IRd4HMe9MJO57ibcWTcndrpQtdc4Xc/NiR0XcnPFngu5ObHThZ6aK/ZcyM2JHY1TdTWO63De7Xa5s5xrJqpzGqr2K7Q7f0Mu8DiOe2Emc91NuLNuTux0oWqvcbqemxM7LuTmij0XcnNipws9NVfsuZCbEzsap+pqHNfhvNvtcmc510xU5zRU7Vdod/6GXOAREREHygUeERFxoFzgERERB8oFHhERcaBc4BEREQfKBR4REXGgXOAREREHygUeERFxoFzgERERB8oFHhERcaBc4BEREQfKBR4REXGgXOAREREHygUeERFxoFzgERERB8oFHhERcaBc4BEREQfKBR4REXGgXOAREREHygUeERFxoFzgERERB8oFHhERcaBc4BEREQfKBR4REXGgXOAREREHygUeERFxoFzgERERB8oFHhERcaBc4BEREQfKBR4REXGgXOAREREHygUeERFxoFzgEQ/4y1/+8s8SEfHTcoFHfINe3JqIiJ+SCzziG9xFnQs8In5aLvCIm64u6VzgEfGTcoFH3JT/KTsi/ki5wCNu4gW+/swZdbsv3U5dPWthr+tO91e9eM+d38m0e+eZ0348Kxd4xE388HIhN//i5pWr7tq7qKu5S7yv+j2sXHm692WnG8/LBR5x0/rwqj7AnppXrrpuf3VOPfWceE71d79mV7+TSWfXTzwz5nKBR9zUfXitne6v5leuemtfdbqd6rrdLn5O9/c++X1MOjuefl7sywUecdPVB5jbrzl3rquuet/dL089J57z3d/J1X7X08+LfbnAI266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";
+//                byte[] imageByte = Base64.decode(str,Base64.DEFAULT);
+//                bitmap = BitmapFactory.decodeByteArray(imageByte,0,imageByte.length);
+////                String url = Environment.getExternalStoragePublicDirectory("logoImg").getPath() + "//logo.jpg";
+//                try {
+//                    HPRTPrinterHelper.printImage("10","10",bitmap,true);
+////                    HPRTPrinterHelper.printBarcode("20","20","128","100","1","0","1","2","2805048000032");
+////                    HPRTPrinterHelper.printImage("5","5",url,false);
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//                try {
+//                    HPRTPrinterHelper.Print("1","1");
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
             }
         } catch (
                 RemoteException e) {
             e.printStackTrace();
         }
+    }
+
+    //取得已经配对的蓝牙信息,用来加载到ListView中去
+    public List<String> getPairedData() {
+        List<String> data = new ArrayList<String>();
+        //默认的蓝牙适配器
+        BluetoothAdapter mBtAdapter = BluetoothAdapter.getDefaultAdapter();
+        // 得到当前的一个已经配对的蓝牙设备
+        Set<BluetoothDevice> pairedDevices = mBtAdapter.getBondedDevices();
+        if (pairedDevices.size() > 0) {
+            for (BluetoothDevice device : pairedDevices) //遍历
+            {
+                data.add(device.getName() + "\n" + device.getAddress());
+            }
+        } else {
+            String noDevices = "no";//getResources().getText(R.string.activity_devicelist_none_paired).toString();
+            data.add(noDevices);
+        }
+        return data;
     }
 
     public String getLable(PluDto commdity, String total, String thisnet, int num, String discountPrice, boolean isKg, int tradeMode, String tare, TagMiddle item) {
@@ -1394,4 +1469,14 @@ public class WintecServiceSingleton {
         return null;
     }
 
+    private String bitmapToString(Bitmap bitmap, int bitmapQuality) {
+
+        // 将 Bitmap 转换成字符串
+        String string = null;
+        ByteArrayOutputStream bStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, bitmapQuality, bStream);
+        byte[] bytes = bStream.toByteArray();
+        string = Base64.encodeToString(bytes, Base64.DEFAULT);
+        return string;
+    }
 }

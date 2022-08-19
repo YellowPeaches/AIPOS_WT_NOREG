@@ -7,25 +7,18 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Matrix;
-import android.graphics.Paint;
-import android.graphics.Path;
-import android.media.MediaRouter;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
-import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
-import android.view.Display;
-import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -34,10 +27,10 @@ import android.widget.ArrayAdapter;
 import android.widget.PopupWindow;
 import android.widget.Toast;
 
+import androidx.annotation.RequiresApi;
+import androidx.core.app.ActivityCompat;
+
 import com.bigkoo.pickerview.TimePickerView;
-import com.google.gson.Gson;
-import com.luck.picture.lib.tools.BitmapUtils;
-import com.luck.picture.lib.tools.StringUtils;
 import com.qmuiteam.qmui.skin.QMUISkinManager;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.widget.dialog.QMUIBottomSheet;
@@ -48,7 +41,6 @@ import com.wintec.ScaleTranceferListener;
 import com.wintec.ThreadCacheManager;
 import com.wintec.aiposui.model.BtnType;
 import com.wintec.aiposui.model.GoodsModel;
-import com.wintec.aiposui.utils.ImageUtils;
 import com.wintec.aiposui.utils.RxBus;
 import com.wintec.aiposui.view.AiPosAccountList;
 import com.wintec.aiposui.view.AiPosAllView;
@@ -58,24 +50,21 @@ import com.wintec.aiposui.view.control.NUIKeyView;
 import com.wintec.aiposui.view.dialog.AiTipDialog;
 import com.wintec.aiposui.view.dialog.NUIKeyDialog;
 import com.wintec.aiposui.view.keyboard.KeyBoardEditText;
-import com.wintec.detection.http.OnUnRegSDKListener;
+import com.wintec.detection.WtAISDK;
+import com.wintec.detection.bean.DetectResult;
 import com.wintec.domain.Acc;
 import com.wintec.domain.DataBean;
 import com.wintec.domain.Plu;
 import com.wintec.lamp.base.BaseMvpActivityYM;
 import com.wintec.lamp.base.Const;
-import com.wintec.lamp.base.MyApp;
 import com.wintec.lamp.contract.ScaleContract;
-import com.wintec.lamp.dao.TraceabilityCodeDao;
 import com.wintec.lamp.dao.entity.AccDto;
 import com.wintec.lamp.dao.entity.Commdity;
 import com.wintec.lamp.dao.entity.PluDto;
 import com.wintec.lamp.dao.entity.TraceabilityCode;
 import com.wintec.lamp.dao.helper.AccDtoHelper;
 import com.wintec.lamp.dao.helper.PluDtoDaoHelper;
-import com.wintec.lamp.dao.helper.TagMiddleHelper;
 import com.wintec.lamp.dao.helper.TraceabilityCodeHelper;
-import com.wintec.lamp.entity.DuoDianPlu;
 import com.wintec.lamp.entity.Total;
 import com.wintec.lamp.network.schedulers.BaseSchedulerProvider;
 import com.wintec.lamp.network.schedulers.SchedulerProvider;
@@ -83,32 +72,21 @@ import com.wintec.lamp.network.yunnetwork.HttpRequestClient;
 import com.wintec.lamp.presenter.ScalePresenter;
 import com.wintec.lamp.server.DuoDianSocketHandler;
 import com.wintec.lamp.server.SocketHandler;
-import com.wintec.lamp.service.WintecService;
 import com.wintec.lamp.service.WintecServiceSingleton;
-import com.wintec.lamp.utils.BmpUtil;
 import com.wintec.lamp.utils.ComIO;
 import com.wintec.lamp.utils.CommUtils;
-import com.wintec.lamp.utils.Constant;
 import com.wintec.lamp.utils.DBUtil;
 import com.wintec.lamp.utils.DateUtils;
 import com.wintec.lamp.utils.FileUtil;
-import com.wintec.lamp.utils.GlideCacheUtil;
 import com.wintec.lamp.utils.NetWorkUtil;
-import com.wintec.lamp.utils.PriceUtils;
-import com.wintec.lamp.utils.Printer;
 import com.wintec.lamp.utils.RSAUtils;
-import com.wintec.lamp.utils.SaveBitmapUtils;
-import com.wintec.lamp.utils.StrToBrCode;
 import com.wintec.lamp.utils.TTS.TTSpeaker;
 import com.wintec.lamp.utils.ThreadPoolManagerUtils;
 import com.wintec.lamp.utils.ToastUtils;
 import com.wintec.lamp.utils.UserManager;
 import com.wintec.lamp.utils.log.Logging;
 import com.wintec.lamp.utils.pinyin.PinyinUtil;
-import com.wintec.lamp.utils.scale.ScaleForS100;
-import com.wintec.lamp.utils.scale.ScalesForAipos20;
 import com.wintec.lamp.utils.scale.ScalesForTuoLiDuo;
-import com.wintec.lamp.utils.scale.ScalesObject;
 import com.wintec.lamp.utils.sound.SoundManager;
 import com.wintec.lamp.view.FormDialog;
 import com.wintec.lamp.view.GoodsRegisterDialog;
@@ -116,63 +94,29 @@ import com.wintec.lamp.view.ImgDialog;
 import com.wintec.lamp.view.NUIBottomSheet;
 import com.wintec.lamp.view.PresentationWrapper;
 import com.wintec.lamp.view.PrintDialog;
-import com.wintec.lamp.view.SecondScreenPresentation;
-import com.wintec.detection.WtAISDK;
-import com.wintec.detection.aicore.WtAISDKEngine;
-import com.wintec.detection.bean.DetectModelResult;
-import com.wintec.detection.bean.DetectResult;
-import com.wintec.detection.bean.ScaleBitmap;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.net.Inet4Address;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketException;
 import java.security.NoSuchAlgorithmException;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.InvalidKeySpecException;
-import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.PluralsRes;
-import androidx.annotation.RequiresApi;
-import androidx.annotation.UiThread;
-import androidx.core.app.ActivityCompat;
-import androidx.viewpager.widget.ViewPager;
-
-
 import butterknife.BindView;
-import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
-import io.reactivex.ObservableOnSubscribe;
-import io.reactivex.Observer;
-import io.reactivex.Scheduler;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
@@ -268,7 +212,6 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
     private boolean isZero = false;
     private boolean isCanRefreshTotal = false;  // 控制是否可以刷新总价
     private boolean isItemReadyToPrint = false; // 标识是否有待打印商品
-    private Printer printer;
     private GoodsModel itemReadyToPrint = null; // 待打印商品
 
     //输入框搜索模块
@@ -357,19 +300,28 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
                     mPresenter.detect(detectRe, aiPosAllView.getListView(), mNet, tradeMode, discount, tempPrice, tempTotal, maxDetectNum);
                     break;
                 case SCALES_DETECT:
-                    aiPosAllView.getListView().recognizing();
-                    resetPage();
-                    if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                        aiPosAllView.getListView().noResult();
-                        return;
-                    }
-                    DetectResult detectResult = api_Detect();
-                    if (detectResult.getErrorCode() == 0) {
-                        detectRe = detectResult;
-                        scalesHandler.sendEmptyMessage(SCALES_SHOW_PLU);
+                    long starttime = System.currentTimeMillis();
+                    if (!Const.DATA_LOADING_OK) {
+                        if (Const.IS_NOT_LOADING) {
+                            Const.IS_NOT_LOADING = false;
+                            aiTipDialog.dataLoading("正在加载识别数据", aiPosAllView, Const.DATA_LOADING_TIME);
+                        }
                     } else {
-                        aiPosAllView.getListView().noResult();
+                        aiPosAllView.getListView().recognizing();
+                        resetPage();
+                        if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                            aiPosAllView.getListView().noResult();
+                            return;
+                        }
+                        DetectResult detectResult = api_Detect();
+                        if (detectResult.getErrorCode() == 0) {
+                            detectRe = detectResult;
+                            scalesHandler.sendEmptyMessage(SCALES_SHOW_PLU);
+                        } else {
+                            aiPosAllView.getListView().noResult();
+                        }
                     }
+                    Log.i("识别耗时：", "" + (System.currentTimeMillis() - starttime) + "ms");
                     break;
                 case SHOW_FAIL:
                     String str = (String) msg.obj;
@@ -2205,6 +2157,7 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
         }
         super.finish();
     }
+
     /**
      * 处理折扣
      *

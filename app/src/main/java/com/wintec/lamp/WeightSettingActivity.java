@@ -10,6 +10,8 @@ import android.widget.CompoundButton;
 import android.widget.PopupWindow;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
+
 import com.qmuiteam.qmui.skin.QMUISkinManager;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.util.QMUIResHelper;
@@ -31,8 +33,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import androidx.annotation.Nullable;
 
 import butterknife.BindView;
 
@@ -221,12 +221,14 @@ public class WeightSettingActivity extends BaseActivity {
                 .addItemView(itemViewMap.get("UpPLUS"), v -> {
                     //todo
                     aiTipDialog.showLoading("正在上传商品信息", mContext);
+                    Toast.makeText(WeightSettingActivity.this, "正在上传商品信息", Toast.LENGTH_LONG).show();
                     new WelcomePresenter().upPLUDto();
                     try {
-                        Thread.sleep(2000);
+                        Thread.sleep(200);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
+                    Toast.makeText(WeightSettingActivity.this, "开启预览图后重启软件将自动下载图片", Toast.LENGTH_LONG).show();
                     aiTipDialog.dismiss();
                 })
 //                .addItemView(itemViewMap.get("DownLoadIMG"), v -> {

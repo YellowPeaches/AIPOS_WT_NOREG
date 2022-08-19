@@ -4,9 +4,6 @@ import com.wintec.lamp.utils.SPUtils;
 
 import java.io.FileInputStream;
 import java.lang.reflect.Method;
-import java.net.NetworkInterface;
-import java.util.Collections;
-import java.util.List;
 
 public class Const {
     //服务器IP
@@ -196,7 +193,7 @@ public class Const {
 
     // 服务器IP
     public static String BASE_URL = "http://114.115.174.123:8090/";//云服务器
-//    public static String BASE_URL = "http://192.168.31.160:8090/";
+    //    public static String BASE_URL = "http://192.168.31.160:8090/";
     // 长连接端口号
     public static int Port = 8090;
     // web端口号
@@ -216,7 +213,7 @@ public class Const {
     // SN
 //    public static String SN = android.os.Build.SERIAL;
     public static String SN = getDeviceSN();
-//    public static String MAC = getLocalMacAddress();
+    //    public static String MAC = getLocalMacAddress();
     // 数据更新
     public static String UPDATE_URL = "/sku/queryList";
     // 软件更新
@@ -255,6 +252,15 @@ public class Const {
     //是否键盘输入
     public static Boolean keyFromInput = false;
 
+    public static Boolean DATA_LOADING_OK = false;
+    public static int DATA_LOADING_TIME = 0;
+    public static boolean IS_NOT_LOADING = true;
+
+    //快麦打印机相关
+    public static boolean isConnet = false;
+    public static boolean isConnetFirst = true;
+    public static String toothAddress = "";
+
     //根据KEY获取设置项
     public static String getSettingValue(String key) {
         return SPUtils.getInstance(MyApp.getContext()).getString(key, "");
@@ -270,12 +276,12 @@ public class Const {
     }
 
     //通过反射获取SN,Android11可用
-    public static String getDeviceSN(){
+    public static String getDeviceSN() {
         String serial = null;
         try {
-            Class<?> c =Class.forName("android.os.SystemProperties");
-            Method get =c.getMethod("get", String.class);
-            serial = (String)get.invoke(c, "ro.serialno");
+            Class<?> c = Class.forName("android.os.SystemProperties");
+            Method get = c.getMethod("get", String.class);
+            serial = (String) get.invoke(c, "ro.serialno");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -284,6 +290,7 @@ public class Const {
 
     /**
      * 通过网络接口取mac,Android11可用
+     *
      * @return
      */
     public static String getLocalMacAddress() {

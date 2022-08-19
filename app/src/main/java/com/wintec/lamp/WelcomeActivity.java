@@ -23,49 +23,33 @@ import androidx.core.content.ContextCompat;
 
 import com.google.gson.Gson;
 import com.wang.avi.BuildConfig;
-import com.wintec.aiposui.view.AiPosLayout;
 import com.wintec.aiposui.view.dialog.AiTipDialog;
-import com.wintec.detection.bean.CameraSetting;
+import com.wintec.detection.WtAISDK;
 import com.wintec.detection.http.OnRegSDKListener;
 import com.wintec.lamp.base.BaseMvpActivity;
 import com.wintec.lamp.base.Const;
 import com.wintec.lamp.bean.VersionBean;
 import com.wintec.lamp.bean.registerBean;
 import com.wintec.lamp.contract.WelcomeContract;
-import com.wintec.lamp.dao.entity.Commdity;
-import com.wintec.lamp.dao.entity.TagMiddle;
-import com.wintec.lamp.dao.helper.CommdityHelper;
-import com.wintec.lamp.dao.helper.TagMiddleHelper;
 import com.wintec.lamp.httpdownload.DownInfo;
 import com.wintec.lamp.httpdownload.HttpDownManager;
 import com.wintec.lamp.httpdownload.downloadlistener.HttpProgressOnNextListener;
-import com.wintec.lamp.network.NetWorkManager;
-import com.wintec.lamp.network.response.ResponseTransformer;
 import com.wintec.lamp.network.schedulers.BaseSchedulerProvider;
 import com.wintec.lamp.network.schedulers.SchedulerProvider;
-import com.wintec.lamp.presenter.BarSettingPresenter;
 import com.wintec.lamp.presenter.WelcomePresenter;
-import com.wintec.lamp.service.WintecService;
 import com.wintec.lamp.utils.ApkUtils;
 import com.wintec.lamp.utils.CommUtils;
 import com.wintec.lamp.utils.GeneratePassword;
 import com.wintec.lamp.utils.NetWorkUtil;
 import com.wintec.lamp.utils.StrUtils;
-import com.wintec.lamp.utils.ThreadPoolManagerUtils;
 import com.wintec.lamp.utils.UserManager;
 import com.wintec.lamp.view.DownLoadApkDialog;
 import com.wintec.lamp.view.UploadVersionDialog;
-import com.wintec.detection.WtAISDK;
-import com.wintec.detection.http.OnUnRegSDKListener;
-
 
 import java.io.File;
 import java.util.HashMap;
-import java.util.List;
 
 import butterknife.BindView;
-import io.reactivex.annotations.Nullable;
-import io.reactivex.disposables.Disposable;
 import okhttp3.RequestBody;
 
 public class WelcomeActivity extends BaseMvpActivity<WelcomePresenter> implements WelcomeContract.IView {
@@ -131,7 +115,7 @@ public class WelcomeActivity extends BaseMvpActivity<WelcomePresenter> implement
             new WelcomePresenter().upPLUDto();
         }
         try {
-            Thread.sleep(3000);
+            Thread.sleep(2000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -389,7 +373,8 @@ public class WelcomeActivity extends BaseMvpActivity<WelcomePresenter> implement
                                 Manifest.permission.WRITE_SETTINGS,
                                 Manifest.permission.READ_EXTERNAL_STORAGE,
                                 Manifest.permission.RECORD_AUDIO,
-                                Manifest.permission.READ_CONTACTS,}, 1);
+                                Manifest.permission.READ_CONTACTS,
+                                android.Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
             } else {
 //                jumpToMainActivity();
             }
@@ -649,7 +634,7 @@ public class WelcomeActivity extends BaseMvpActivity<WelcomePresenter> implement
         WtAISDK.api_regSDK(branchCode, pos, companyCode, snCode, new OnRegSDKListener() {
             @Override
             public void regFail(int i, String s) {
-                aiTipDialog.showLoading(s+i, mContext);
+                aiTipDialog.showLoading(s + i, mContext);
             }
 
             @Override
