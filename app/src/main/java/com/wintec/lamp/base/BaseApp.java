@@ -12,6 +12,7 @@ import android.util.Log;
 import com.tencent.mmkv.MMKV;
 
 import java.security.SecureRandom;
+import java.security.cert.X509Certificate;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -21,8 +22,6 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
-
-import java.security.cert.X509Certificate;
 
 public class BaseApp extends Application {
     private static final String TAG = "LampBaseApp";

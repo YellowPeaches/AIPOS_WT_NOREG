@@ -5,6 +5,8 @@ import android.hardware.camera2.CameraCharacteristics;
 
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
+import com.wintec.detection.WtAISDK;
+import com.wintec.detection.utils.LogUtils;
 import com.wintec.detection.utils.StringUtils;
 import com.wintec.lamp.dao.DaoMaster;
 import com.wintec.lamp.dao.DaoSession;
@@ -12,9 +14,6 @@ import com.wintec.lamp.dao.helper.GreenDaoUpgradeHelper;
 import com.wintec.lamp.network.NetWorkManager;
 import com.wintec.lamp.utils.ContextUtils;
 import com.wintec.lamp.utils.CrashHandler;
-import com.wintec.detection.WtAISDK;
-import com.wintec.detection.utils.LogUtils;
-import com.wintec.lamp.utils.log.LogcatHelper;
 
 public class MyApp extends BaseApp {
 
@@ -44,6 +43,7 @@ public class MyApp extends BaseApp {
         }
 //        int code = WtAISDK.api_InitSDK(this, false);
         int code = WtAISDK.api_InitSDK(this, false, 1, minScore, showNum);
+//        int code = WtAISDK.api_InitSDK(this, false, 1, minScore, showNum,true);
         LogUtils.d("code:" + code);
 
         // 初始化网络框架

@@ -28,6 +28,7 @@ import com.google.zxing.oned.EAN13Writer;
 import com.google.zxing.oned.OneDimensionalCodeWriter;
 import com.wintec.ThreadCacheManager;
 import com.wintec.aiposui.model.GoodsModel;
+import com.wintec.detection.utils.StringUtils;
 import com.wintec.lamp.base.Const;
 import com.wintec.lamp.dao.entity.AccDto;
 import com.wintec.lamp.dao.entity.PluDto;
@@ -81,7 +82,7 @@ public class WintecServiceSingleton {
         return SingletonHolder.INSTANCE;
     }
 
-    protected final static String SCALES_DEVICES = Const.getSettingValue("GET_WEIGHT_PORT");
+    protected static String SCALES_DEVICES = Const.getSettingValue("GET_WEIGHT_PORT");
     private WintecManagerService wintecManagerService;  // wintec服务
     private LabelPrinterService labelPrinterService;    // 标签打印机服务
     private ScaleService scaleService;
@@ -175,6 +176,9 @@ public class WintecServiceSingleton {
     public void openScale() {
         try {
             scaleService.SCL_Close();
+            if (StringUtils.isEmpty(SCALES_DEVICES)) {
+                SCALES_DEVICES = "/dev/ttySAC1";
+            }
             scaleService.SCL_Open(SCALES_DEVICES, new ScaleListener.Stub() {
                 @Override
                 public void onWeightResult(double v, double v1, boolean b, int i, boolean b1, boolean b2) throws RemoteException {
@@ -205,7 +209,6 @@ public class WintecServiceSingleton {
                         } else {
                             status = "EM";
                         }
-
                     }
                     // 超载
                     else if (i == 1) {
@@ -223,7 +226,7 @@ public class WintecServiceSingleton {
             });
         } catch (Exception e) {
             e.printStackTrace();
-            logging.i(e.toString());
+//            logging.i(e.toString());
         }
 
     }
@@ -232,7 +235,7 @@ public class WintecServiceSingleton {
         try {
             scaleService.SCL_send_zero(new ScaleInstructionListener.Stub() {
                 @Override
-                public void onResult(int i) throws RemoteException {
+                public void onResult(int i) {
 
                 }
             });
@@ -245,7 +248,7 @@ public class WintecServiceSingleton {
         try {
             scaleService.SCL_send_tare(new ScaleInstructionListener.Stub() {
                 @Override
-                public void onResult(int i) throws RemoteException {
+                public void onResult(int i) {
 
                 }
             });
@@ -312,11 +315,11 @@ public class WintecServiceSingleton {
      */
     public String getTagCode(PluDto commdity, String total, float net, int num, String discountPrice) throws Exception {
 
-        String str1 = createBarCode(commdity, total, net, num, discountPrice);
-        if (str1.length() == 0) {
+        String barCode = createBarCode(commdity, total, net, num, discountPrice);
+        if (barCode.length() == 0) {
             throw new Exception("校验错误");
         }
-        return str1;
+        return barCode;
     }
 
     /**
@@ -452,8 +455,8 @@ public class WintecServiceSingleton {
     }
 
     public String createBarCode(PluDto commdity, String total, float net, int num, String discountPrice) {
-        int weightPoint = Integer.valueOf(Const.getSettingValue(Const.WEIGHT_POINT));
-        String netStr = com.wintec.lamp.utils.CommUtils.weightToString(net);
+//        int weightPoint = Integer.valueOf(Const.getSettingValue(Const.WEIGHT_POINT));
+        String currentNet = com.wintec.lamp.utils.CommUtils.weightToString(net);
         char[] barCode;
         if ("13位".equals(Const.getSettingValue(Const.BAR_CODE_LENGTH))) {
             barCode = new char[13];
@@ -476,7 +479,7 @@ public class WintecServiceSingleton {
         }
         jointBarCode(barCode, Const.BAR_CODE_PLU_COORDINATE, Const.BAR_CODE_PLU_LENGTH, PriceUtils.toCodeBarPLU(commdity.getPluNo()));
         jointBarCode(barCode, Const.BAR_CODE_TOTAL_COORDINATE, Const.BAR_CODE_TOTAL_LENGTH, PriceUtils.toPrinterPrice(total));
-        jointBarCode(barCode, Const.BAR_CODE_WEIGHT_COORDINATE, Const.BAR_CODE_WEIGHT_LENGTH, PriceUtils.toPrinterWeight(netStr));
+        jointBarCode(barCode, Const.BAR_CODE_WEIGHT_COORDINATE, Const.BAR_CODE_WEIGHT_LENGTH, PriceUtils.toPrinterWeight(currentNet));
         jointBarCode(barCode, Const.BAR_CODE_PRICE_COORDINATE, Const.BAR_CODE_PRICE_LENGTH, PriceUtils.toPrinterPrice(discountPrice));
         jointBarCode(barCode, Const.BAR_CODE_ARTNO_COORDINATE, Const.BAR_CODE_ARTNO_LENGTH, PriceUtils.toItemNo(commdity.getItemNo()));
         if (commdity.getPriceUnitA() != 0) {

@@ -5,16 +5,7 @@ import android.graphics.Bitmap;
 import android.os.Environment;
 import android.util.Log;
 
-import androidx.room.util.StringUtil;
-
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.asm.Type;
-import com.bumptech.glide.Glide;
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.reflect.TypeToken;
 import com.wintec.aiposui.view.AiPosListView;
 import com.wintec.detection.utils.StringUtils;
 import com.wintec.lamp.BuildConfig;
@@ -36,7 +27,6 @@ import com.wintec.lamp.utils.updateapp.DownloadUtil;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -268,7 +258,7 @@ public class WelcomePresenter<JavaScriptSerializer> extends WelcomeContract.Pres
      * @param path     保存路径
      * @param fileName 保存的文件名
      */
-    public void savaImageToPath(Bitmap bitmap, String path, String fileName) {
+    public static void savaImageToPath(Bitmap bitmap, String path, String fileName) {
         File file = new File(path);
         FileOutputStream fileOutputStream = null;
         //文件夹不存在，则创建它

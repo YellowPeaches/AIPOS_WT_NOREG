@@ -81,7 +81,7 @@
             android:layout_width="wrap_content"
             android:layout_height="70dp"
             android:gravity="center_vertical"
-            android:text="门店号"
+            android:text="@string/hint_branch"
             android:textColor="@color/black"
             android:textSize="30sp"
             android:layout_marginStart="40dp"

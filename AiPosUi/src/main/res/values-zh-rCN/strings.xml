@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="hint_branch">门店编号</string>
 <!--    <string name="app_name">英泰睿眼</string>-->
 <!--    <string name="shop_num">门店编码</string>-->
 <!--    <string name="pos_num">POS编码</string>-->

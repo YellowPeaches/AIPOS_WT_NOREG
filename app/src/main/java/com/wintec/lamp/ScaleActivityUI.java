@@ -2394,7 +2394,10 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
                         TTSpeaker.getInstance(mContext).speak(co.getNameTextA());
                     }
                     //副屏展示信息
+                    float unitprice =co.getUnitPriceA();
+                    co.setUnitPriceA(Float.parseFloat(total.getPrice()));
                     mPresentation.setGoods(co.parse(), mNet + "", Integer.valueOf(count), total.getTotal(), isKg, aiPosAllView.getTitleView().getTareBySecend());
+                    co.setUnitPriceA(unitprice);
 
 //                    Bitmap bitmap1 = WintecServiceSingleton.getInstance().printImgLable(co, total.getTotal(), Integer.valueOf(count), total.getPrice(), isKg, tradeMode, aiPosAllView.getTitleView().getTare(), mNet);
 //                    imageView.setImageBitmap(bitmap1);

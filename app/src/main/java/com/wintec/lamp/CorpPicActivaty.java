@@ -2,7 +2,6 @@ package com.wintec.lamp;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.TextureView;
 import android.view.View;
@@ -10,18 +9,17 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.wintec.lamp.base.BaseActivity;
-import com.wintec.lamp.base.BaseActivityNew;
-import com.wintec.lamp.utils.SaveBitmapUtils;
-import com.wintec.lamp.view.CropView;
 import com.wintec.detection.WtAISDK;
-import com.wintec.detection.bean.ScaleBitmap;
-//import com.wmdigit.wmpos.bean.ScaleSetting;
 import com.wintec.detection.bean.CameraSetting;
+import com.wintec.detection.bean.ScaleBitmap;
 import com.wintec.detection.camera.support.CamSupportActivity;
+import com.wintec.lamp.base.BaseActivityNew;
+import com.wintec.lamp.view.CropView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+//import com.wmdigit.wmpos.bean.ScaleSetting;
 
 public class CorpPicActivaty extends CamSupportActivity implements View.OnClickListener {
 
@@ -99,11 +97,13 @@ public class CorpPicActivaty extends CamSupportActivity implements View.OnClickL
                                             Toast.makeText(CorpPicActivaty.this, "设置成功", Toast.LENGTH_SHORT).show();
                                             Intent intent = new Intent(CorpPicActivaty.this, ScaleActivityUI.class);
                                             startActivity(intent);
+                                            finish();
                                         }
                                     } else {
                                         Toast.makeText(CorpPicActivaty.this, "设置成功", Toast.LENGTH_SHORT).show();
                                         Intent intent = new Intent(CorpPicActivaty.this, ScaleActivityUI.class);
                                         startActivity(intent);
+                                        finish();
                                     }
 
 
