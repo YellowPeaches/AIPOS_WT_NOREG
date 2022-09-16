@@ -2394,7 +2394,7 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
                         TTSpeaker.getInstance(mContext).speak(co.getNameTextA());
                     }
                     //副屏展示信息
-                    float unitprice =co.getUnitPriceA();
+                    float unitprice = co.getUnitPriceA();
                     co.setUnitPriceA(Float.parseFloat(total.getPrice()));
                     mPresentation.setGoods(co.parse(), mNet + "", Integer.valueOf(count), total.getTotal(), isKg, aiPosAllView.getTitleView().getTareBySecend());
                     co.setUnitPriceA(unitprice);
@@ -2668,12 +2668,12 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
             disCountAppand(flag, price + "", count, co);
 
         }
+        String discountPrice = String.format("%.2f", price);
         if (tradeMode == MODE_CHANGE_TOTAL_TRADE) {
             total = tempTotal;
-            price = Float.valueOf(String.format("%.2f", total / net));
+            discountPrice = String.format("%.2f", total / net);
         }
         String mTotal = CommUtils.priceToString(Float.valueOf(CommUtils.Float2String(total, totalPricePoint)));
-        String discountPrice = String.valueOf(price);
         return new Total(mTotal, discountPrice, tradeMode);
     }
 
