@@ -67,8 +67,6 @@ public class CorpPicActivaty extends CamSupportActivity implements View.OnClickL
                 rlCrop.setVisibility(View.VISIBLE);
                 final ScaleBitmap clearestScaleBitmap = api_getScaleBitmap(false);
                 Bitmap raw = clearestScaleBitmap.getRaw();
-//                final String path = SaveBitmapUtils.savePhotoToSDCard(raw);
-//                LogUtils.i(path);
                 if (raw != null) {
                     if (raw.isRecycled()) {
                         raw.recycle();
@@ -83,6 +81,11 @@ public class CorpPicActivaty extends CamSupportActivity implements View.OnClickL
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+                                try {
+                                    Thread.sleep(200);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
                                 CameraSetting scaleSetting = new CameraSetting(left, top, width, height);
                                 int code = WtAISDK.api_SaveCameraParam(scaleSetting);
                                 if (code == 0) {
@@ -105,12 +108,8 @@ public class CorpPicActivaty extends CamSupportActivity implements View.OnClickL
                                         startActivity(intent);
                                         finish();
                                     }
-
-
-                                    // finish();
                                 } else {
-                                    Toast.makeText(CorpPicActivaty.this, "设置失敗，错误码：" + code, Toast.LENGTH_SHORT).show();
-
+                                    Toast.makeText(CorpPicActivaty.this, "设置失败，错误码：" + code, Toast.LENGTH_SHORT).show();
                                 }
                             }
                         });

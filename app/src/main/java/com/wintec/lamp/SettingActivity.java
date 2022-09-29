@@ -1,9 +1,7 @@
 package com.wintec.lamp;
 
 
-import android.app.backup.BackupDataInputStream;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -23,7 +21,6 @@ import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.util.QMUIResHelper;
 import com.qmuiteam.qmui.widget.QMUITopBarLayout;
 import com.qmuiteam.qmui.widget.dialog.QMUIBottomSheet;
-import com.qmuiteam.qmui.widget.dialog.QMUIDialog;
 import com.qmuiteam.qmui.widget.grouplist.QMUICommonListItemView;
 import com.qmuiteam.qmui.widget.grouplist.QMUIGroupListView;
 import com.qmuiteam.qmui.widget.popup.QMUIFullScreenPopup;
@@ -35,10 +32,8 @@ import com.wintec.aiposui.view.dialog.NUIKeyDialog;
 import com.wintec.lamp.base.BaseMvpActivity;
 import com.wintec.lamp.base.Const;
 import com.wintec.lamp.contract.SettingContract;
-import com.wintec.lamp.dao.entity.Commdity;
 import com.wintec.lamp.dao.entity.PluDto;
 import com.wintec.lamp.dao.helper.AccDtoHelper;
-import com.wintec.lamp.dao.helper.CommdityHelper;
 import com.wintec.lamp.dao.helper.PluDtoDaoHelper;
 import com.wintec.lamp.data.EditType;
 import com.wintec.lamp.entity.EditEntity;
@@ -429,7 +424,7 @@ public class SettingActivity extends BaseMvpActivity<SettingPresenter> implement
 
         Calendar selectedDate = Calendar.getInstance();//系统当前时间
         Calendar startDate = Calendar.getInstance();
-        startDate.set(2019, 0, 1);
+        startDate.set(2020, 0, 1);
         Calendar endDate = Calendar.getInstance();
         endDate.set(year_int, mouth_int - 1, day_int);
 

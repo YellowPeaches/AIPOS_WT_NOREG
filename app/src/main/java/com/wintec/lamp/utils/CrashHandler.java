@@ -1,16 +1,15 @@
 package com.wintec.lamp.utils;
 
 import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Process;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.wintec.lamp.api.AppRetrofitApi;
-import com.wintec.lamp.api.ComModel;
 import com.wintec.lamp.base.Const;
-import com.wintec.lamp.network.RetrofitClient;
-import com.wintec.lamp.network.RetrofitSubscriber;
-import com.wintec.lamp.result.HttpResponse;
+import com.wintec.lamp.mvp.ModelImpl;
 import com.wintec.lamp.utils.log.Logging;
 
 import java.io.ByteArrayInputStream;
@@ -18,25 +17,23 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
-import okhttp3.MediaType;
 import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
 
 public class CrashHandler implements Thread.UncaughtExceptionHandler {
     private static CrashHandler sInstance = new CrashHandler();
     private Thread.UncaughtExceptionHandler mDefaultCrashHandler;
     private Context mContext;
+    protected ModelImpl modelImpl;
 
     public static CrashHandler getInstance() {
         return sInstance;
@@ -64,24 +61,18 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
      */
     @Override
     public void uncaughtException(Thread thread, Throwable ex) {
-////        LogUtils.e("程序崩溃异常："+ex.getMessage());
-//        StringBuffer b=new StringBuffer();
-//        //获取错误信息
-//        b.append(ex.getMessage());
-//        b.append("\n");
-//        b.append(ex.toString());
-//        //拿到的错误信息
-//
-//        for (StackTraceElement te:ex.getStackTrace()){
-//            b.append("Class:"+te.getClassName()+";LineNumber:"+te.getLineNumber()+"\n");
-//        }
-////        LogUtils.e(b.toString());
-//        uploadExceptionToServer(b.toString(),false);
-//        ex.printStackTrace();
+        StringBuffer logInfo = new StringBuffer();
+        logInfo.append("\n");
         Log.e("程序出现异常了", "Thread = " + thread.getName() + "\nThrowable = " + ex.getMessage());
-        String stackTraceInfo = getStackTraceInfo(ex);
-        Log.e("stackTraceInfo", stackTraceInfo);
-        saveThrowableMessage(stackTraceInfo);
+        for (Map.Entry<String, String> entry : obtainSimpleInfo(mContext).entrySet()) {
+            String key = entry.getKey();
+            String value = entry.getValue();
+            logInfo.append(key).append(" = ").append(value).append("\n");
+        }
+        logInfo.append(obtainExceptionInfo(ex));
+        String errorMessage = new Date() + logInfo.toString();
+        //保存日志到本地
+        saveErrorLogLocal(errorMessage, false);
 
         //如果系统提供了默认的异常处理器，则交给系统去结束程序，否则就由自己结束自己
         if (mDefaultCrashHandler != null) {
@@ -145,50 +136,26 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
         }).start();
     }
 
-    private void saveThrowableMessage(String errorMessage) {
+
+    /**
+     * 保存日至到本地
+     *
+     * @param errorMessage
+     * @param flag
+     */
+    private void saveErrorLogLocal(String errorMessage, boolean flag) {
         if (TextUtils.isEmpty(errorMessage)) {
             return;
         }
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        String format = simpleDateFormat.format(new Date());
-        File file = new File(Logging.ROOT_PATH + "//aipos_log//" + format + ".txt");
-
-        //writeStringToFile(errorMessage, file);
-        errorMessage = new Date() + errorMessage;
-        uploadExceptionToServer(errorMessage, false);
-
-    }
-
-
-    private void uploadExceptionToServer(String b, boolean flag) {
         List<MultipartBody.Part> partList = new ArrayList<>();
-        String mediaType = "image/jpeg";
+        String mediaType = "text/plain";
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String format = simpleDateFormat.format(new Date());
-        writeFile(Logging.ROOT_PATH + "//aipos_log//" + format + ".txt", b);
-        File file = new File(Logging.ROOT_PATH + "//aipos_log//" + format + ".txt");
-        if (file.exists()) {
-            RequestBody requestFile = RequestBody.create(MediaType.parse(mediaType), file);
-            MultipartBody.Part part = MultipartBody.Part.createFormData("imgFile", file.getName(), requestFile);
-            partList.add(part);
-        }
-        if (!flag) {
-            return;
-        }
-        AppRetrofitApi retrofitApi = RetrofitClient.getInstance().createService(AppRetrofitApi.class);
-        retrofitApi.upLog(partList.get(0), file.getName(), Const.SN)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new RetrofitSubscriber<HttpResponse<String>>(null) {
-                    @Override
-                    protected void onSuccess(HttpResponse<String> response) {
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        super.onError(e);
-                    }
-                });
+        writeFile(Logging.ROOT_PATH + "//aipos_log//" + format + ".txt", errorMessage);
+        //error标记
+        Const.setSettingValue("ERROR_LOG_FLAG", "1");
+        //error路径
+        Const.setSettingValue("ERROR_LOG_PATH", Logging.ROOT_PATH + "//aipos_log//" + format + ".txt");
     }
 
     /**
@@ -219,5 +186,44 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
                 }
             }
         }
+    }
+
+    /**
+     * 获取一些简单的信息,软件版本，手机版本，型号等信息存放在HashMap中
+     *
+     * @return
+     */
+    private HashMap<String, String> obtainSimpleInfo(Context context) {
+        HashMap<String, String> map = new HashMap<>();
+        PackageManager mPackageManager = context.getPackageManager();
+        PackageInfo mPackageInfo = null;
+        try {
+            mPackageInfo = mPackageManager.getPackageInfo(
+                    context.getPackageName(), PackageManager.GET_ACTIVITIES);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        map.put("versionName", mPackageInfo.versionName);
+        map.put("versionCode", "" + mPackageInfo.versionCode);
+        map.put("MODEL", "" + Build.MODEL);
+        map.put("SDK_INT", "" + Build.VERSION.SDK_INT);
+        map.put("PRODUCT", "" + Build.PRODUCT);
+        map.put("SN ", Const.SN);
+        return map;
+    }
+
+    /**
+     * 获取系统未捕捉的错误信息
+     *
+     * @param throwable
+     * @return
+     */
+
+    private String obtainExceptionInfo(Throwable throwable) {
+        StringWriter stringWriter = new StringWriter();
+        PrintWriter printWriter = new PrintWriter(stringWriter);
+        throwable.printStackTrace(printWriter);
+        printWriter.close();
+        return stringWriter.toString();
     }
 }

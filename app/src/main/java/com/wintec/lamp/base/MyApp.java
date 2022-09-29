@@ -24,14 +24,13 @@ public class MyApp extends BaseApp {
     @Override
     public void onCreate() {
         super.onCreate();
-//        NUtil.init(this);
+//        ExceptionCrashHandler.getInstance().init(this);
         ContextUtils.init(this);
 //        LogcatHelper.getInstance(this).start();
         setupDatabase();
-        //初始化日志
-//        initLogger();
         //程序奔溃异常
         CrashHandler.getInstance().init(this);
+
         refWatcher = setupLeakCanary();
         float minScore = 0.65F;   //置信度
         int showNum = 5;          //回传结果个数
@@ -50,7 +49,6 @@ public class MyApp extends BaseApp {
         NetWorkManager.getInstance().init();
         //字体
 //        TypefaceUtil.replaceSystemDefaultFont(this,"fonts/msyh.ttf");
-
 //        xcrash.XCrash.init(this);
 //        LogUtils.i("程序启动"+ WintecDevInfo.getDevSn());
 

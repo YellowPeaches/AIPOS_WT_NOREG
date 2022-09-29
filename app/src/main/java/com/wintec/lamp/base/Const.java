@@ -191,9 +191,13 @@ public class Const {
     //模式     收银模式/价签秤模式
     public static final String KEY_MODE = "KEY_MODE";
 
+    public static final String ERROR_LOG_FLAG = "ERROR_LOG_FLAG";
+    public static final String ERROR_LOG_PATH = "ERROR_LOG_PATH";
+
+
     // 服务器IP
     public static String BASE_URL = "http://114.115.174.123:8090/";//云服务器
-    //    public static String BASE_URL = "http://192.168.31.160:8090/";
+//        public static String BASE_URL = "http://192.168.23.130:8090/";
     // 长连接端口号
     public static int Port = 8090;
     // web端口号

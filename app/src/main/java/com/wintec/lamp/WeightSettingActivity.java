@@ -80,7 +80,7 @@ public class WeightSettingActivity extends BaseActivity {
         addSettingItem(Const.RESULT_DISPLAY, "显示结果", height, true);
         addSettingItem(Const.RESULT_DISPLAY_TIME, "结果显示时间", height, true);
         addSettingItem(Const.DELECT_WEIGHT, "识别触发重量(g)", height, true);
-        addSettingItem(Const.PRINT_SETTING, "打印机设置", height, true);
+//        addSettingItem(Const.PRINT_SETTING, "打印机设置", height, true);
         addSettingItem(Const.IMAGE_PRE_TIME, "轮播图间隔时间", height, true);
         addSettingItem(Const.DETECT_THRESHOLD, "识别阈值", height, true);
 //        addSettingItem(Const.ROTATION_SETTING, "回转距离(单位 1/8mm)", height, true);
@@ -194,16 +194,16 @@ public class WeightSettingActivity extends BaseActivity {
                 .addItemView(itemViewMap.get(Const.RESULT_DISPLAY_TIME), v -> {
                     startEdit(Const.RESULT_DISPLAY_TIME, "展示时间", Const.getSettingValue(Const.RESULT_DISPLAY_TIME), EditType.Edit_TYPE_NUMBER);
                 })
-                .addItemView(itemViewMap.get(Const.PRINT_SETTING), v -> {
-                    String[] listItems = new String[]{
-                            "普瑞特打印机",
-                            "宁致打印机",
-                    };
-                    // popupsShow(v,listItems,Constants.TOTAL_PRICE_MODE, itemViewMap.get(Constants.TOTAL_PRICE_MODE));
-                    showSimpleBottomSheetList(
-                            true, false, "打印机设置",
-                            listItems, true, false, Const.PRINT_SETTING, itemViewMap.get(Const.PRINT_SETTING));
-                })
+//                .addItemView(itemViewMap.get(Const.PRINT_SETTING), v -> {
+//                    String[] listItems = new String[]{
+//                            "普瑞特打印机",
+//                            "宁致打印机",
+//                    };
+//                    // popupsShow(v,listItems,Constants.TOTAL_PRICE_MODE, itemViewMap.get(Constants.TOTAL_PRICE_MODE));
+//                    showSimpleBottomSheetList(
+//                            true, false, "打印机设置",
+//                            listItems, true, false, Const.PRINT_SETTING, itemViewMap.get(Const.PRINT_SETTING));
+//                })
 //                .addItemView(itemViewMap.get(Const.ROTATION_SETTING), v -> {
 //                    if(!"宁致打印机".equals(Const.getSettingValue(Const.PRINT_SETTING)))
 //                    {

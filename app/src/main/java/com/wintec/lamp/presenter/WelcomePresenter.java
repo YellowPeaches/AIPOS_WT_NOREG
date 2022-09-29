@@ -42,6 +42,7 @@ import okhttp3.RequestBody;
  */
 public class WelcomePresenter<JavaScriptSerializer> extends WelcomeContract.Presenter {
 
+    private static final String TAG = "WelcomePresenter";
     private ComModel comModel;
 
     @Override
@@ -208,6 +209,22 @@ public class WelcomePresenter<JavaScriptSerializer> extends WelcomeContract.Pres
                     Log.i("下载图片花费：", (s2 - s1) + "");
                 });
 
+            }
+
+            @Override
+            public void onFail() {
+
+            }
+        });
+    }
+
+    @Override
+    public void upLogTxt(File file, String fileName, String code) {
+        comModel.upLog(file, fileName, code, new ModelRequestCallBack<String>() {
+            @Override
+            public void onSuccess(HttpResponse<String> response) {
+                Const.setSettingValue(Const.ERROR_LOG_FLAG, "0");
+                Log.i(TAG, "日志上传成功");
             }
 
             @Override

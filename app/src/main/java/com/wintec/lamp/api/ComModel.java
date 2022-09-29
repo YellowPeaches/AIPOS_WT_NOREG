@@ -2,11 +2,11 @@ package com.wintec.lamp.api;
 
 import com.wintec.lamp.base.BaseMvpModel;
 import com.wintec.lamp.bean.DiscernData;
-import com.wintec.lamp.dao.entity.TagMiddle;
 import com.wintec.lamp.bean.TagRules;
 import com.wintec.lamp.bean.VersionBean;
 import com.wintec.lamp.bean.registerBean;
 import com.wintec.lamp.dao.entity.PluDto;
+import com.wintec.lamp.dao.entity.TagMiddle;
 import com.wintec.lamp.httpdownload.DownInfo;
 import com.wintec.lamp.mvp.ModelImpl;
 import com.wintec.lamp.network.ModelRequestCallBack;
@@ -19,13 +19,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
-import retrofit2.http.Query;
 
 /**
  * Created by Android Studio.

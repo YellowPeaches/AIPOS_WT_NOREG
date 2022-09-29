@@ -139,6 +139,7 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
     private final static int SCALES_DETECT = 13;    // 通知识别
     private final static int FLUSH_TOTAL = 15;    // 刷新总价
     public final static int SHOW_FAIL = 16;    // 展示失败
+    public final static int CREATE_BARCODE_ERROR = 17;    // 条码生成错误
 
 
     private Logging logging;
@@ -326,6 +327,10 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
                 case SHOW_FAIL:
                     String str = (String) msg.obj;
                     aiTipDialog.showFail(str, aiPosAllView);
+                    break;
+                case CREATE_BARCODE_ERROR:
+                    String msgError = (String) msg.obj;
+                    aiTipDialog.showFail(msgError, aiPosAllView);
                     break;
             }
         }
@@ -890,7 +895,7 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
         });
         nuiBottomSheet = new NUIBottomSheet(mContext);
         logging = new Logging(mContext);
-        logging.d("初始化");
+        logging.d("软件初始化");
 //        printer = new Printer(mContext);
         if (TextUtils.isEmpty(Const.versionName)) {
             aiPosAllView.getListView().setVersion("v:");
@@ -2366,8 +2371,9 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
         } else {
             co = PluDtoDaoHelper.getCommdityByScalesCode(goodsModel.getGoodsId());
         }
-//        switch (Const.getSettingValue(Const.KEY_SCALE)) {
-//            case "S100C 15.6寸":
+//        int[] tests =new int[3];
+//        tests[1]=23;
+//        tests[3]=9;
         switch (Const.getSettingValue(Const.KEY_MODE)) {
             case "价签模式":
                 prePrintNet = mNet;

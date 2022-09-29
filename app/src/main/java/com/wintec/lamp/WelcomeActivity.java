@@ -82,7 +82,6 @@ public class WelcomeActivity extends BaseMvpActivity<WelcomePresenter> implement
     AiTipDialog aiTipDialog;
 
     private BaseSchedulerProvider schedulerProvider;
-    //   private List<Commdity> commdityListByNetFlag;
 
     private UploadVersionDialog dialog;
     private DownLoadApkDialog downLoadApkDialog;
@@ -115,13 +114,19 @@ public class WelcomeActivity extends BaseMvpActivity<WelcomePresenter> implement
             new WelcomePresenter().upPLUDto();
         }
         try {
-            Thread.sleep(2000);
+            Thread.sleep(1000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
         if (Const.getSettingValue(Const.PREVIEW_FLAG).equals("1") && NetWorkUtil.isNetworkAvailable(this)) {
             mPresenter.getImgUrl();
         }
+        if (NetWorkUtil.isNetworkAvailable(this) && Const.getSettingValue(Const.ERROR_LOG_FLAG).equals("1")) {
+            Toast.makeText(this, "正在上传日志", Toast.LENGTH_LONG).show();
+            File file = new File(Const.getSettingValue(Const.ERROR_LOG_PATH));
+            mPresenter.upLogTxt(file, file.getName(), Const.SN);
+        }
+
     }
 
     @Override
@@ -355,7 +360,6 @@ public class WelcomeActivity extends BaseMvpActivity<WelcomePresenter> implement
      * 请求权限
      */
     public void requestPermissions() {
-
         // 加载默认配置
         SharedPreferences setting = getSharedPreferences("First.ini", 0);
         boolean isfirst = setting.getBoolean("FIRST", true);
@@ -470,6 +474,7 @@ public class WelcomeActivity extends BaseMvpActivity<WelcomePresenter> implement
         Const.setSettingValue(Const.DETECT_THRESHOLD, "0.65");
         //获取称重串口
         Const.setSettingValue(Const.GET_WEIGHT_PORT, "/dev/ttySAC1");
+        Const.setSettingValue(Const.ERROR_LOG_FLAG, "0");
 
     }
 
@@ -484,7 +489,6 @@ public class WelcomeActivity extends BaseMvpActivity<WelcomePresenter> implement
             startActivity(intent);
         } else {
             startActivity(new Intent(this, CorpPicActivaty.class));
-
         }
         finish();
 

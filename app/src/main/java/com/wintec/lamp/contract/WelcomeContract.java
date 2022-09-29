@@ -7,7 +7,6 @@ import com.wintec.lamp.base.BaseMvpView;
 import com.wintec.lamp.bean.VersionBean;
 import com.wintec.lamp.bean.registerBean;
 import com.wintec.lamp.httpdownload.DownInfo;
-import com.wintec.lamp.network.ModelRequestCallBack;
 
 import java.io.File;
 
@@ -58,5 +57,7 @@ public interface WelcomeContract {
         public abstract void upplus();
 
         public abstract void getImgUrl();
+
+        public abstract void upLogTxt(File file, String fileName, String code);
     }
 }

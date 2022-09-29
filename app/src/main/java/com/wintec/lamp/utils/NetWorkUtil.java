@@ -7,9 +7,18 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+
+import okhttp3.Call;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 /**
  * @author 赵冲
@@ -62,4 +71,27 @@ public class NetWorkUtil {
         }
         return bitmap;
     }
+
+    public static void UpLoadFile(String url, File file) {
+        File file1 = file;
+        if (!file1.exists())
+            return;
+        MultipartBody multipartBody = new MultipartBody.Builder()
+                .addFormDataPart("file", file1.getName(), RequestBody.create(MediaType.parse("text/plain"), file1))
+                .addFormDataPart("a","test")
+                .build();
+        OkHttpClient okHttpClient = new OkHttpClient();
+        Request request = new Request.Builder().url(url)
+                .post(multipartBody)
+                .build();
+        Call call = okHttpClient.newCall(request);
+        try {
+            Response response =call.execute();
+            System.out.println(response.body().string());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
 }
