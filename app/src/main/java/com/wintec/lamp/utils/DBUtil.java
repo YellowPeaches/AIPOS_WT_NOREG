@@ -42,15 +42,15 @@ public class DBUtil {
      * 创建数据库对象
      */
     public static Connection getSQLConnection() throws SQLException, ClassNotFoundException {
-        if (con == null || "批量取数".equals(Const.getSettingValue(Const.KEY_GET_DATA_MODE))) {
-            if (con != null) {
+        if (Const.con == null || "批量取数".equals(Const.getSettingValue(Const.KEY_GET_DATA_MODE))) {
+            if (Const.con != null) {
                 try {
-                    con.close();
+                    Const.con.close();
                 } catch (SQLException throwables) {
                     throwables.printStackTrace();
                 }
             }
-            con = null;
+            Const.con = null;
             if ("oracle".equals(Const.getSettingValue(Const.KEY_GET_DATA_DB))) {
                 String url = "jdbc:oracle:thin:@" + IP + ":" + PORT + ":" + DBName;
                 String user = USER;
@@ -59,7 +59,7 @@ public class DBUtil {
                     Class.forName("oracle.jdbc.driver.OracleDriver");//加载数据驱动
                     DriverManager.setLoginTimeout(1);
                     Log.w("sql", "开始getConnection(url,user,password)/" + url + "/" + user + "/" + password);
-                    con = DriverManager.getConnection(url, user, password);// 连接数据库
+                    Const.con = DriverManager.getConnection(url, user, password);// 连接数据库
                     Log.w("sql", "getSQLConnection()完成");
                 } catch (ClassNotFoundException e) {
                     e.printStackTrace();
@@ -75,7 +75,7 @@ public class DBUtil {
                 //加上 useunicode=true;characterEncoding=UTF-8 防止中文乱码
                 DriverManager.setLoginTimeout(3);
                 try {
-                    con = DriverManager.getConnection("jdbc:jtds:sqlserver://" + IP + ":" + PORT + "/" + DBName + ";useunicode=true;characterEncoding=UTF-8;connectTimeout=1000&socketTimeout=60000", USER, PWD);
+                    Const.con = DriverManager.getConnection("jdbc:jtds:sqlserver://" + IP + ":" + PORT + "/" + DBName + ";useunicode=true;characterEncoding=UTF-8;connectTimeout=1000&socketTimeout=60000", USER, PWD);
                     Log.w("sql", "getSQLConnection()完成");
                 } catch (SQLException throwables) {
                     Log.w("sql", "获得连接失败 -" + throwables.getMessage());
@@ -84,7 +84,7 @@ public class DBUtil {
             }
             reGetConnection = false;
         }
-        return con;
+        return Const.con;
     }
 
     /**
@@ -95,12 +95,13 @@ public class DBUtil {
      * @throws
      */
     //region 传入sql,返回转换成List(查询)
-    public static List Query(String sql) {
+    public static List Query(String sql) throws SQLException {
         List result = null;
+        Connection conn = null;
         try {
             result = new ArrayList();
             ResultSet rs = null;
-            Connection conn = getSQLConnection();
+            conn = getSQLConnection();
             if (conn == null) {
 
             }
@@ -112,7 +113,8 @@ public class DBUtil {
             stmt.close();
 //            conn.close();
         } catch (SQLException e) {
-            Log.w("sql", "连接异常1" + e.getMessage());
+            Const.con = null;
+            Log.w("sql", "连接异常1  " + e.getMessage());
             Message msg = handler.obtainMessage();
             msg.what = ScaleActivityUI.SHOW_FAIL;
             msg.obj = "查询数据异常1";

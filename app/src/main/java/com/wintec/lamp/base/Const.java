@@ -4,6 +4,9 @@ import com.wintec.lamp.utils.SPUtils;
 
 import java.io.FileInputStream;
 import java.lang.reflect.Method;
+import java.sql.Connection;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Const {
     //服务器IP
@@ -197,7 +200,7 @@ public class Const {
 
     // 服务器IP
     public static String BASE_URL = "http://114.115.174.123:8090/";//云服务器
-//        public static String BASE_URL = "http://192.168.23.130:8090/";
+    //        public static String BASE_URL = "http://192.168.23.130:8090/";
     // 长连接端口号
     public static int Port = 8090;
     // web端口号
@@ -253,6 +256,14 @@ public class Const {
     public static String KEY_GET_TASK_ID = "KEY_GET_TASK_ID";
     //局域网同步学习标志
     public static String LAN_SYNCHRONIZATION = "LAN_SYNCHRONIZATION";
+    public static Boolean fromClick = false; //
+
+
+    public static Map<String, Float> pulAndPricesMap = new HashMap<>();
+    public static Boolean pulAndPricesMapOk = false;
+    public static Connection con = null;
+    public static boolean NetworkReachable = false;
+
     //是否键盘输入
     public static Boolean keyFromInput = false;
 

@@ -103,6 +103,7 @@ import java.net.Socket;
 import java.security.NoSuchAlgorithmException;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.InvalidKeySpecException;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -245,6 +246,9 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
 
     private Canvas canvasTag;
     private Bitmap bitmap;
+    //当前co,避免在线取数时重复查，减少耗时
+    PluDto currentCo = null;
+
     public static int flag = 0;    //
     public static int quantityOfLockNum = 1;    //锁定连打几个
 
@@ -316,9 +320,16 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
                         }
                         long starttime = System.currentTimeMillis();
                         DetectResult detectResult = api_Detect();
-                        Log.i("识别耗时：", "" + (System.currentTimeMillis() - starttime) + "ms");
+                        String detectTime = (System.currentTimeMillis() - starttime) + "ms";
+                        Log.i("识别耗时：", detectTime);
+                        logging.i(detectResult.getTaskId() + "识别耗时：" + detectTime);
                         if (detectResult.getErrorCode() == 0) {
                             detectRe = detectResult;
+                            if ("在线取数".equals(Const.getSettingValue(Const.KEY_GET_DATA_MODE)) && NetWorkUtil.isNetworkAvailable(context)) {
+                                ThreadPoolManagerUtils.getInstance().execute(() -> {
+                                    getPriceBypluList(detectResult.getGoodsIds());
+                                });
+                            }
                             scalesHandler.sendEmptyMessage(SCALES_SHOW_PLU);
                         } else {
                             aiPosAllView.getListView().noResult();
@@ -1131,8 +1142,13 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
         aiPosAllView.getListView().setClickListener(new com.wintec.aiposui.view.AiPosListView.ClickListener() {
             @Override
             public void onItemClick(GoodsModel model, View view, int position) {
+                Const.fromClick = true;
                 disTempModel = model;
+                long start = System.currentTimeMillis();
                 onGoodsItemClick(model, position, false);
+                long end = System.currentTimeMillis();
+                Log.w("sql", "点击到打印完成耗时: " + (end - start) + "ms");
+                Const.fromClick = false;
 //                PluDto commdityByScalesCode = PluDtoDaoHelper.getCommdityByScalesCode(model.getGoodsId());
 //                if (commdityByScalesCode.getPreviewImage() == null || "".equals(commdityByScalesCode.getPreviewImage())) {
 //                    updatePrevirwImg(model);
@@ -1356,10 +1372,19 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
 
                 String settingValue = Const.getSettingValue(Const.KEY_GET_DATA_SQL);
                 String settingValue1 = Const.getSettingValue(Const.KEY_GET_DATA_ADDITIONAL_SQL);
-                List plus = DBUtil.Query(settingValue);
+                List plus = null;
+                try {
+                    plus = DBUtil.Query(settingValue);
+                } catch (SQLException throwables) {
+                    throwables.printStackTrace();
+                }
                 List accs = null;
                 if (("sql Server".equals(Const.getSettingValue(Const.KEY_GET_DATA_DB)))) {
-                    accs = DBUtil.Query(settingValue1);
+                    try {
+                        accs = DBUtil.Query(settingValue1);
+                    } catch (SQLException throwables) {
+                        throwables.printStackTrace();
+                    }
                 }
                 saveSqlDate(plus, accs);
                 new DBUtil().logWriteData("写入本地数据库完成");
@@ -1772,7 +1797,7 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
                         new Thread(new Runnable() {
                             @Override
                             public void run() {
-                                    dealInsert(goodsModel, detectResultNew);
+                                dealInsert(goodsModel, detectResultNew);
 //                                upImg(this.taskId, goodsModel.getGoodsName(), goodsModel.getGoodsId(), detectResult);
                             }
                         }).start();
@@ -2248,7 +2273,7 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
         tempPrice = 0;
         // 初始化总价
         tempTotal = 0;
-        logging.i("已清除改价状态");
+//        logging.i("已清除改价状态");
 
 
     }
@@ -2390,7 +2415,11 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
     private void sendScale(int unitId, GoodsModel goodsModel, String count, Total total) {
         PluDto co;
         if ("在线取数".equals(Const.getSettingValue(Const.KEY_GET_DATA_MODE)) && NetWorkUtil.isNetworkAvailable(this)) {
-            co = PluDtoDaoHelper.getCommdityByScalesCodeOnline(goodsModel.getGoodsId());
+            if (currentCo == null) {
+                co = PluDtoDaoHelper.getCommdityByScalesCodeOnline(goodsModel.getGoodsId());
+            } else {
+                co = currentCo;
+            }
         } else {
             co = PluDtoDaoHelper.getCommdityByScalesCode(goodsModel.getGoodsId());
         }
@@ -2676,11 +2705,26 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
     private Total setTotalandDisdiscountPrice(GoodsModel goodsModel, String count) {
         int flag = 0;
         PluDto co;
-        if ("在线取数".equals(Const.getSettingValue(Const.KEY_GET_DATA_MODE)) && NetWorkUtil.isNetworkAvailable(this)) {
-            co = PluDtoDaoHelper.getCommdityByScalesCodeOnline(goodsModel.getGoodsId());
-//            Log.i("test",co.getPluNo()+co.getNameTextA());
+        if (Const.NetworkReachable && Const.fromClick && "在线取数".equals(Const.getSettingValue(Const.KEY_GET_DATA_MODE)) && NetWorkUtil.isNetworkAvailable(this)) {
+            if (Const.pulAndPricesMapOk && Const.pulAndPricesMap.containsKey(goodsModel.getGoodsId())) {
+                co = PluDtoDaoHelper.getCommdityByScalesCode(goodsModel.getGoodsId());
+                try {
+                    co.setUnitPriceA(Const.pulAndPricesMap.get(goodsModel.getGoodsId()));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                Const.pulAndPricesMap.clear();
+                Const.pulAndPricesMapOk = false;
+            } else {
+                co = PluDtoDaoHelper.getCommdityByScalesCodeOnline(goodsModel.getGoodsId());
+                if (co == null) {
+                    co = PluDtoDaoHelper.getCommdityByScalesCode(goodsModel.getGoodsId());
+                }
+            }
+            currentCo = co;
         } else {
             co = PluDtoDaoHelper.getCommdityByScalesCode(goodsModel.getGoodsId());
+            currentCo = co;
         }
         if (co == null) {
             return null;
@@ -2715,6 +2759,47 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
         String mTotal = CommUtils.priceToString(Float.valueOf(CommUtils.Float2String(total, totalPricePoint)));
         return new Total(mTotal, discountPrice, tradeMode);
     }
+//        int flag = 0;
+//        PluDto co;
+//        if ("在线取数".equals(Const.getSettingValue(Const.KEY_GET_DATA_MODE)) && NetWorkUtil.isNetworkAvailable(this)) {
+//            co = PluDtoDaoHelper.getCommdityByScalesCodeOnline(goodsModel.getGoodsId());
+////            Log.i("test",co.getPluNo()+co.getNameTextA());
+//        } else {
+//            co = PluDtoDaoHelper.getCommdityByScalesCode(goodsModel.getGoodsId());
+//        }
+//        if (co == null) {
+//            return null;
+//        }
+//        float price = 0.00f;
+//        int unitPricePoint = Integer.valueOf(Const.getSettingValue(Const.UNIT_PRICE_POINT));
+//        int totalPricePoint = Integer.valueOf(Const.getSettingValue(Const.TOTAL_PRICE_POINT));
+//        if (tradeMode == MODE_DISCOUNT_TRADE && discount < 1 && discount > 0) {
+//            price = Float.parseFloat(CommUtils.Float2String(co.getUnitPriceA() * discount, unitPricePoint));
+//            flag = 2;
+//        } else if (tradeMode == MODE_CHANGE_PRICE_TRADE) {
+//            price = Float.parseFloat(CommUtils.Float2String(tempPrice, unitPricePoint));
+//            flag = 1;
+//        } else {
+//            price = Float.parseFloat(CommUtils.Float2String(co.getUnitPriceA(), unitPricePoint));
+//        }
+//
+//        float total = 0;
+//        if (goodsModel.getUnitId() == 0) {
+//            total = price * net;
+//            disCountAppand(flag, price + "", net + "", co);
+//        } else {
+//            total = price * Integer.valueOf(count);
+//            disCountAppand(flag, price + "", count, co);
+//
+//        }
+//        String discountPrice = String.format("%.2f", price);
+//        if (tradeMode == MODE_CHANGE_TOTAL_TRADE) {
+//            total = tempTotal;
+//            discountPrice = String.format("%.2f", total / net);
+//        }
+//        String mTotal = CommUtils.priceToString(Float.valueOf(CommUtils.Float2String(total, totalPricePoint)));
+//        return new Total(mTotal, discountPrice, tradeMode);
+//    }
 
     private void popupsShow(View v, String[] listItems, GoodsModel model) {
         List<String> data = new ArrayList<>();
@@ -2963,6 +3048,71 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
                 fileWriter.flush();
             } catch (IOException e) {
                 e.printStackTrace();
+            }
+
+        }
+    }
+
+
+    private void getPriceBypluList(List<String> plus) {
+        Long s = System.currentTimeMillis();
+        if (plus != null && plus.size() > 0) {
+            String inputQuerySQL = Const.getSettingValue(Const.KEY_GET_DATA_SQL);
+            int num = plus.size();
+            String tempSql = inputQuerySQL.toUpperCase();
+            StringBuffer queryOneByPLU = new StringBuffer();
+            if (tempSql.contains("WHERE")) {
+                int indexWHERE = tempSql.indexOf("WHERE");
+                if (inputQuerySQL.length() > indexWHERE) {
+                    queryOneByPLU.append(inputQuerySQL.substring(0, indexWHERE));
+                }
+            } else {
+                queryOneByPLU.append(inputQuerySQL + " ");
+            }
+            if ("oracle".equals(Const.getSettingValue(Const.KEY_GET_DATA_DB))) {
+                queryOneByPLU.append("WHERE PLU IN (");
+            } else {
+                queryOneByPLU.append("WHERE plu_no IN (");
+            }
+
+            for (int i = 0; i < num; i++) {
+                String scalesCode = plus.get(i);
+                if (i == (num - 1)) {
+                    queryOneByPLU.append(scalesCode + ")");
+                } else {
+                    queryOneByPLU.append(scalesCode + ",");
+                }
+            }
+            List query = null;
+            try {
+                query = DBUtil.Query(queryOneByPLU.toString());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (query != null && query.size() >= 2 && query.get(0).equals("ok")) {
+                List<HashMap<String, Object>> dataQuery = (List<HashMap<String, Object>>) query.get(1);
+                try {
+                    dataQuery.forEach(item -> {
+                        if ("oracle".equals(Const.getSettingValue(Const.KEY_GET_DATA_DB))) {
+                            Float price1 = item.get("PRICE1") != null ? Float.parseFloat(item.get("PRICE1") + "") : 0F;
+                            String scalesCode = item.get("PLU") != null ? item.get("PLU") + "" : "0000";
+                            Const.pulAndPricesMap.put(scalesCode, price1);
+                        } else {
+                            Float price1 = item.get("unit_price_a") != null ? Float.parseFloat(item.get("unit_price_a") + "") : 0F;
+                            String scalesCode = item.get("plu_no") != null ? item.get("plu_no") + "" : "0000";
+                            Const.pulAndPricesMap.put(scalesCode, price1);
+                        }
+                    });
+                    Const.pulAndPricesMapOk = true;
+                    Const.NetworkReachable = true;
+                    Log.w("sql", "完成提前查询  花费 " + (System.currentTimeMillis() - s) + " ms  " + queryOneByPLU.toString());
+                } catch (Exception e) {
+                    Const.pulAndPricesMapOk = false;
+                    Const.NetworkReachable = false;
+                    e.printStackTrace();
+                    Log.w("sql", "完成提前查询失败: " + e.toString());
+                    logging.i("完成提前查询失败: " + e.toString());
+                }
             }
 
         }

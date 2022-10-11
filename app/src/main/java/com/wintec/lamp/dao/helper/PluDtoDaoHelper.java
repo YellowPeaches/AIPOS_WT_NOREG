@@ -1,33 +1,22 @@
 package com.wintec.lamp.dao.helper;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.os.Build;
-import android.util.Log;
 
 import androidx.annotation.RequiresApi;
-import androidx.room.util.StringUtil;
 
-import com.google.zxing.common.StringUtils;
 import com.wintec.ThreadCacheManager;
 import com.wintec.lamp.base.Const;
 import com.wintec.lamp.base.MyApp;
-import com.wintec.lamp.dao.AccDtoDao;
 import com.wintec.lamp.dao.PluDtoDao;
 import com.wintec.lamp.dao.entity.PluDto;
-import com.wintec.lamp.utils.CommUtils;
 import com.wintec.lamp.utils.DBUtil;
-import com.wintec.lamp.utils.NetWorkUtil;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
-import java.util.stream.Collectors;
 
 public class PluDtoDaoHelper {
 
@@ -68,7 +57,7 @@ public class PluDtoDaoHelper {
                             long beginTime = System.currentTimeMillis();
                             List query = DBUtil.Query(queryOneByPLU);
                             long endTime = System.currentTimeMillis();
-                            dbUtil.logWriteData("完成根据plu查询  花费 "+(endTime-beginTime)+" ms  "+queryOneByPLU);
+                            dbUtil.logWriteData("完成根据plu查询  花费 " + (endTime - beginTime) + " ms  " + queryOneByPLU);
                             if (query != null || query.size() == 2) {
                                 List<HashMap<String, Object>> data = (List<HashMap<String, Object>>) query.get(1);
                                 if (data.size() == 1) {
