@@ -408,15 +408,15 @@ public class WelcomeActivity extends BaseMvpActivity<WelcomePresenter> implement
         Const.setSettingValue(Const.KEY_GET_DATA_MODE, "托利多传秤");
         Const.setSettingValue(Const.KEY_GET_DATA_DB, "oracle");
         Const.setSettingValue(Const.KEY_GET_DATA_ADDITIONAL_SQL, "SELECT * FROM dbo.v_sk_extratext");
-        Const.setSettingValue(Const.KEY_GET_DATA_SQL, "SELECT * FROM JAVAPOS.POSDZCPRICE");
+        Const.setSettingValue(Const.KEY_GET_DATA_SQL, "SELECT * FROM dbo.v_sk_item");
         Const.setSettingValue(Const.KEY_GET_DATA_UP_PRICE_CHANGE_SQL, "INSERT INTO TESTONLINE.CLERK_LOG (CODE, SCALE_CODE, PLU_NUMBER,COMMODITY_NAME,EDITDATE,TIME,STATUS,SCALE_IP,OLD_UNIT_PRICE,NEW_UNIT_PRICE,PRINTED_EAN_DATA) VALUES( #{CODE}, #{SCALE_CODE},  #{PLU_NUMBER},#{COMMODITY_NAME},#{EDITDATE},#{TIME},#{STATUS},#{SCALE_IP},#{OLD_UNIT_PRICE},#{NEW_UNIT_PRICE},#{PRINTED_EAN_DATA})");
 
         //临时默认配置
-        Const.setSettingValue(Const.KEY_GET_DATA_IP, "10.254.3.156");
-        Const.setSettingValue(Const.KEY_GET_DATA_PORT, "1521");
-        Const.setSettingValue(Const.KEY_GET_DATA_DB_NAME, "JG04");
-        Const.setSettingValue(Const.KEY_GET_DATA_USER, "dbusrinf");
-        Const.setSettingValue(Const.KEY_GET_DATA_PWD, "inf");
+        Const.setSettingValue(Const.KEY_GET_DATA_IP, "118.31.114.228");
+        Const.setSettingValue(Const.KEY_GET_DATA_PORT, "1433");
+        Const.setSettingValue(Const.KEY_GET_DATA_DB_NAME, "get_online");
+        Const.setSettingValue(Const.KEY_GET_DATA_USER, "sa");
+        Const.setSettingValue(Const.KEY_GET_DATA_PWD, "F%OAft0fnJ");
 
 
         Const.setSettingValue(Const.KEY_SCALE_PORT, "3001");

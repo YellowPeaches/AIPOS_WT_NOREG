@@ -10,7 +10,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.net.InetAddress;
 import java.net.URL;
+import java.net.UnknownHostException;
 
 import okhttp3.Call;
 import okhttp3.MediaType;
@@ -93,5 +95,16 @@ public class NetWorkUtil {
         }
 
     }
-
+    public static boolean isHostReachable() {
+        String host="114.115.174.123";
+        Integer timeOut=2000;
+        try {
+            return InetAddress.getByName(host).isReachable(timeOut);
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }

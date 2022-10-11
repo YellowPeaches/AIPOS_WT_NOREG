@@ -166,6 +166,7 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
     private AtomicBoolean isContinuityPrintFlag = new AtomicBoolean(false);  // 连续打印标志
     private CompositeDisposable compositeDisposable;
     private BaseSchedulerProvider schedulerProvider;
+    private float wendingNet = 0f;
 
     private ComIO comIO = null;
     private float net = 0;                // 秤重量
@@ -301,7 +302,6 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
                     mPresenter.detect(detectRe, aiPosAllView.getListView(), mNet, tradeMode, discount, tempPrice, tempTotal, maxDetectNum);
                     break;
                 case SCALES_DETECT:
-                    long starttime = System.currentTimeMillis();
                     if (!Const.DATA_LOADING_OK) {
                         if (Const.IS_NOT_LOADING) {
                             Const.IS_NOT_LOADING = false;
@@ -314,7 +314,9 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
                             aiPosAllView.getListView().noResult();
                             return;
                         }
+                        long starttime = System.currentTimeMillis();
                         DetectResult detectResult = api_Detect();
+                        Log.i("识别耗时：", "" + (System.currentTimeMillis() - starttime) + "ms");
                         if (detectResult.getErrorCode() == 0) {
                             detectRe = detectResult;
                             scalesHandler.sendEmptyMessage(SCALES_SHOW_PLU);
@@ -322,7 +324,6 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
                             aiPosAllView.getListView().noResult();
                         }
                     }
-                    Log.i("识别耗时：", "" + (System.currentTimeMillis() - starttime) + "ms");
                     break;
                 case SHOW_FAIL:
                     String str = (String) msg.obj;
@@ -467,9 +468,13 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
                                 isDetect = false;
                             }
                         }
+                        long current_time = System.currentTimeMillis();
                         api_confirmResult(taskId, dto.parse().getGoodsId(), dto.parse().getGoodsName(), isDetect);
+                        long current_time2 = System.currentTimeMillis();
+
                         Const.keyFromInput = false;
                         Log.i("test", "点击打印" + isDetect);
+                        Log.i("test", "点击确认花费" + (current_time2 - current_time));
                         if (NetWorkUtil.isNetworkAvailable(this)) {
                             try {
                                 dealInsert(dto.parse(), isDetect ? 3 : 4);
@@ -1737,20 +1742,41 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
                     detectResult = -1;
                     Log.i("test", "未命中");
                 } else {
+                    long current_time = System.currentTimeMillis();
                     if (detectReGoodsIds.size() > 0 && detectReGoodsIds.get(0).equals(trueGoodsId) && !Const.keyFromInput) {
                         detectResult = 3;
-                        api_confirmResult(this.taskId, goodsModel.getGoodsId(), goodsModel.getGoodsName(), true);
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                api_confirmResult(taskId, goodsModel.getGoodsId(), goodsModel.getGoodsName(), true);
+                            }
+                        }).start();
+
                     } else {
                         detectResult = 1;
-                        api_confirmResult(this.taskId, goodsModel.getGoodsId(), goodsModel.getGoodsName(), false);
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                api_confirmResult(taskId, goodsModel.getGoodsId(), goodsModel.getGoodsName(), false);
+                            }
+                        }).start();
                     }
                     Const.keyFromInput = false;
+                    long current_time2 = System.currentTimeMillis();
+                    Log.i("test", "点击确认花费 " + (current_time2 - current_time));
                     Log.i("test", "命中");
                 }
+                int detectResultNew = detectResult;
                 try {
                     if (NetWorkUtil.isNetworkAvailable(this)) {
-                        dealInsert(goodsModel, detectResult);
-//                        upImg(this.taskId, goodsModel.getGoodsName(), goodsModel.getGoodsId(), detectResult);
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                    dealInsert(goodsModel, detectResultNew);
+//                                upImg(this.taskId, goodsModel.getGoodsName(), goodsModel.getGoodsId(), detectResult);
+                            }
+                        }).start();
+
                     }
 //                } catch (InvalidKeySpecException e) {
 //                    e.printStackTrace();
@@ -1992,18 +2018,13 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
 //                Log.i("test","稳重识别"+net+","+prePrintNet);
                 isCanDectect.set(false);
                 // 请求识别
-                scalesHandler.sendEmptyMessage(SCALES_DETECT);
+//                scalesHandler.sendEmptyMessage(SCALES_DETECT);
             }
-//            lastNet[(++index)%2]=net;
-//            if((net == 0&&index==0&&lastNet[1]>=14)||(net == 0&&index==1&&lastNet[0]>=14)){
-//                ol=true;
-//            }
-//            if((net == 0&&index==0&&lastNet[1]<=4)||(net == 0&&index==1&&lastNet[0]<=14)){
-//                ol=false;
-//            }
-//            if(ol){
-//                aiPosAllView.getTitleView().setScaleOverload(CommUtils.Float2String(net, point));
-//            }
+            wendingNet = mNet;
+
+            if (mNet < weight / 1000) {
+                isCanDectect.set(true);
+            }
 
         } else if (status.equals("EM")) {
             isCanPrint.set(true);
@@ -2043,6 +2064,7 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
         else if (status.equals("LL")) {
             isZero = true;
             aiPosAllView.getTitleView().setScaleLoseload(CommUtils.Float2String(net, point));
+            isCanDectect.set(true);
             return;
         }
         // 变化中
@@ -2062,6 +2084,7 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
             if (isAfterPrint && Math.abs(net - prePrintNet) > 0.15f) {
                 isZeroAfterPrint = false;
             }
+
         }
 
         // 根据重量差,发送识别请求
@@ -2405,8 +2428,18 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
                     mPresentation.setGoods(co.parse(), mNet + "", Integer.valueOf(count), total.getTotal(), isKg, aiPosAllView.getTitleView().getTareBySecend());
                     co.setUnitPriceA(unitprice);
 
-//                    Bitmap bitmap1 = WintecServiceSingleton.getInstance().printImgLable(co, total.getTotal(), Integer.valueOf(count), total.getPrice(), isKg, tradeMode, aiPosAllView.getTitleView().getTare(), mNet);
-//                    imageView.setImageBitmap(bitmap1);
+//                    Transaction transaction =new Transaction();
+//                    transaction.setGoodName(co.getNameTextA());
+//                    transaction.setPLU(co.getPluNo());
+//                    transaction.setItemNo(co.getItemNo());
+//                    transaction.setNet(mNet);
+//                    transaction.setTotalPrice(Double.parseDouble(total.getTotal()));
+//                    transaction.setTransactionType(0);
+//                    transaction.setUnitPrice(Double.parseDouble(total.getPrice()));
+//                    transaction.setCreateDate(1111111);
+
+//                    TransactionHelper.insert(transaction);
+
                     ThreadPoolManagerUtils.getInstance().execute(new Runnable() {
                         @Override
                         public void run() {

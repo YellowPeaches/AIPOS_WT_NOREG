@@ -1,16 +1,12 @@
 package com.wintec.lamp.dao.helper;
 
-import com.alibaba.fastjson.asm.Label;
 import com.wintec.lamp.base.MyApp;
-import com.wintec.lamp.dao.CommdityDao;
 import com.wintec.lamp.dao.TagMiddleDao;
 import com.wintec.lamp.dao.entity.TagMiddle;
 
-import org.greenrobot.greendao.query.Query;
-
 import java.util.List;
 
-/**
+/*
  * @author 赵冲
  * @description:
  * @date :2021/7/9 8:32

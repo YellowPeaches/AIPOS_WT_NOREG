@@ -7,8 +7,6 @@ import android.util.Log;
 import com.wintec.lamp.ScaleActivityUI;
 import com.wintec.lamp.base.Const;
 
-import org.xml.sax.helpers.AttributesImpl;
-
 import java.io.File;
 import java.io.RandomAccessFile;
 import java.lang.reflect.Field;
@@ -34,6 +32,7 @@ public class DBUtil {
     private static Handler handler;
     public static Connection con = null;
     public static long timeFlag = System.currentTimeMillis();
+    public static boolean reGetConnection = false;
 
     public static void init(Handler handler1) {
         handler = handler1;
@@ -42,36 +41,48 @@ public class DBUtil {
     /**
      * 创建数据库对象
      */
-    private static Connection getSQLConnection() throws SQLException, ClassNotFoundException {
-        if (con == null) {
-//            if (System.currentTimeMillis()-timeFlag>60000){
-                if ("oracle".equals(Const.getSettingValue(Const.KEY_GET_DATA_DB))) {
-                    String url = "jdbc:oracle:thin:@" + IP + ":" + PORT + ":" + DBName;
-                    String user = USER;
-                    String password = PWD;
-                    try {
-                        Class.forName("oracle.jdbc.driver.OracleDriver");//加载数据驱动
-                        DriverManager.setLoginTimeout(1);
-                        logWriteData("开始DriverManager.getConnection(url, user, password)");
-                        con = DriverManager.getConnection(url, user, password);// 连接数据库
-                        logWriteData("getSQLConnection()完成");
-                    } catch (ClassNotFoundException e) {
-                        e.printStackTrace();
-                        Log.d("TAG", "加载数据库驱动失败");
-                        logWriteData("加载数据库驱动失败" + e.getMessage());
-                    } catch (Exception e) {
-                        timeFlag=System.currentTimeMillis();
-                        e.printStackTrace();
-                        Log.d("TAG", "连接数据库失败");
-                        logWriteData("连接数据库失败-" + e.getMessage());
-                    }
-                } else {
-                    Class.forName("net.sourceforge.jtds.jdbc.Driver");
-                    //加上 useunicode=true;characterEncoding=UTF-8 防止中文乱码
-                    DriverManager.setLoginTimeout(3);
-                    con = DriverManager.getConnection("jdbc:jtds:sqlserver://" + IP + ":" + PORT + "/" + DBName + ";useunicode=true;characterEncoding=UTF-8;connectTimeout=1000&socketTimeout=60000", USER, PWD);
+    public static Connection getSQLConnection() throws SQLException, ClassNotFoundException {
+        if (con == null || "批量取数".equals(Const.getSettingValue(Const.KEY_GET_DATA_MODE))) {
+            if (con != null) {
+                try {
+                    con.close();
+                } catch (SQLException throwables) {
+                    throwables.printStackTrace();
                 }
-//            }
+            }
+            con = null;
+            if ("oracle".equals(Const.getSettingValue(Const.KEY_GET_DATA_DB))) {
+                String url = "jdbc:oracle:thin:@" + IP + ":" + PORT + ":" + DBName;
+                String user = USER;
+                String password = PWD;
+                try {
+                    Class.forName("oracle.jdbc.driver.OracleDriver");//加载数据驱动
+                    DriverManager.setLoginTimeout(1);
+                    Log.w("sql", "开始getConnection(url,user,password)/" + url + "/" + user + "/" + password);
+                    con = DriverManager.getConnection(url, user, password);// 连接数据库
+                    Log.w("sql", "getSQLConnection()完成");
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                    Log.w("sql", "加载数据库驱动失败" + e.getMessage());
+                } catch (Exception e) {
+                    timeFlag = System.currentTimeMillis();
+                    e.printStackTrace();
+                    Log.w("sql", "连接数据库失败-" + e.getMessage());
+                }
+            } else {
+                Class.forName("net.sourceforge.jtds.jdbc.Driver");
+                Log.w("sql", "s加载驱动完成-");
+                //加上 useunicode=true;characterEncoding=UTF-8 防止中文乱码
+                DriverManager.setLoginTimeout(3);
+                try {
+                    con = DriverManager.getConnection("jdbc:jtds:sqlserver://" + IP + ":" + PORT + "/" + DBName + ";useunicode=true;characterEncoding=UTF-8;connectTimeout=1000&socketTimeout=60000", USER, PWD);
+                    Log.w("sql", "getSQLConnection()完成");
+                } catch (SQLException throwables) {
+                    Log.w("sql", "获得连接失败 -" + throwables.getMessage());
+                    throwables.printStackTrace();
+                }
+            }
+            reGetConnection = false;
         }
         return con;
     }
@@ -93,35 +104,34 @@ public class DBUtil {
             if (conn == null) {
 
             }
-//            Connection conn = DruidJDBCUtils.getConnection();
             Statement stmt = conn.createStatement();
-            stmt.setQueryTimeout(1);
+            stmt.setQueryTimeout(3);
             rs = stmt.executeQuery(sql);
             result = convertList(rs);
             rs.close();
             stmt.close();
 //            conn.close();
         } catch (SQLException e) {
-            logWriteData("连接异常1" + e.getMessage());
+            Log.w("sql", "连接异常1" + e.getMessage());
             Message msg = handler.obtainMessage();
             msg.what = ScaleActivityUI.SHOW_FAIL;
             msg.obj = "查询数据异常1";
             handler.sendMessage(msg);
         } catch (ClassNotFoundException e) {
-            logWriteData("连接异常2" + e.getMessage());
+            Log.w("sql", "连接异常2" + e.getMessage());
             Message msg = handler.obtainMessage();
             msg.what = ScaleActivityUI.SHOW_FAIL;
             msg.obj = "查询数据异常2";
             handler.sendMessage(msg);
         } catch (Exception e) {
-            logWriteData("数据库连接异常" + e.getMessage());
+            Log.w("sql", "数据库连接异常" + e.getMessage());
             Message msg = handler.obtainMessage();
             msg.what = ScaleActivityUI.SHOW_FAIL;
             msg.obj = "数据库 连接异常";
             handler.sendMessage(msg);
         }
         if (result == null) {
-            logWriteData("没有数据");
+            Log.w("sql", "没有数据");
         }
         return result;
     }
@@ -135,43 +145,44 @@ public class DBUtil {
         return str5.toString();
     }
 
-    /**jihu
+    /**
+     * jihu
      * 更新数据，新增，修改，删除
      * 不成功则回滚
      */
     //region 更新数据，新增，修改，删除 返回int
-    public static int exeList(String[] sql) throws SQLException {
-        int rs = 0;
-        int index = 0;
-        Connection conn = null;
-        try {
-
-            conn = getSQLConnection();
-            conn.setAutoCommit(false);  //不自动提交（默认执行一条成功则提交，现在都执行完成功才手动提交）
-            Statement stmt = conn.createStatement();//
-            for (String item : sql) {
-                rs += stmt.executeUpdate(item);
-                index++;
-            }
-            conn.commit();
-            stmt.close();
-            conn.close();//提交
-        } catch (SQLException e) {
-            //  LogUtil.e("TestDButil", e.getMessage() + ","+tostrings(sql) ); //本机打印日志
-            String res = "查询数据异常3" + e.getMessage();
-            e.printStackTrace();
-            conn.rollback();
-            return 0;
-        } catch (Exception e) {
-            // LogUtil.e("TestDButil", e.getMessage() + "," ); //本机打印日志
-            if (conn != null) {
-                conn.rollback();
-            }
-            return 0;
-        }
-
-        return rs;
-    }
+//    public static int exeList(String[] sql) throws SQLException {
+//        int rs = 0;
+//        int index = 0;
+//        Connection conn = null;
+//        try {
+//
+//            conn = getSQLConnection();
+//            conn.setAutoCommit(false);  //不自动提交（默认执行一条成功则提交，现在都执行完成功才手动提交）
+//            Statement stmt = conn.createStatement();//
+//            for (String item : sql) {
+//                rs += stmt.executeUpdate(item);
+//                index++;
+//            }
+//            conn.commit();
+//            stmt.close();
+//            conn.close();//提交
+//        } catch (SQLException e) {
+//            //  LogUtil.e("TestDButil", e.getMessage() + ","+tostrings(sql) ); //本机打印日志
+//            String res = "查询数据异常3" + e.getMessage();
+//            e.printStackTrace();
+//            conn.rollback();
+//            return 0;
+//        } catch (Exception e) {
+//            // LogUtil.e("TestDButil", e.getMessage() + "," ); //本机打印日志
+//            if (conn != null) {
+//                conn.rollback();
+//            }
+//            return 0;
+//        }
+//
+//        return rs;
+//    }
     //endregion
 
 
@@ -216,23 +227,17 @@ public class DBUtil {
             conn = getSQLConnection();
             stmt = conn.createStatement();
             rs = stmt.executeUpdate(sql);
-            logWriteData("改价成功  " + sql);
+            Log.w("sql", "改价成功  " + sql);
         } catch (SQLException e) {
-            //      LogUtil.e("TestDButil", e.getMessage() + "," + sql); //本机打印日志
-
             String res = "查询数据异常4 改价上报异常" + e.getMessage();
-            logWriteData(res);
-            e.printStackTrace();
-
+            Log.w("sql", res);
             return 0;
         } catch (Exception e) {
-            // LogUtil.e("TestDButil", e.getMessage() + "," + sql); //本机打印日志
-            logWriteData("改价上报异常2" + e.getMessage() + "-" + sql);
-
+            Log.w("sql", "改价上报异常2" + e.getMessage() + "-" + sql);
             return 0;
         } finally {
             stmt.close();
-            conn.close();
+//            conn.close();
         }
 
         return rs;
@@ -240,38 +245,38 @@ public class DBUtil {
     //endregion
 
     //region 更新数据，新增，修改，删除 返回LIST数据
-    public static List exesql(String sql) {
-        List result = new ArrayList();
-        int rs = 0;
-        try {
-            String ress = "";
-            Connection conn = getSQLConnection();
-
-            Statement stmt = conn.createStatement();//
-            rs = stmt.executeUpdate(sql);
-            if (rs > 0) {
-                ress = "ok";
-            } else {
-                ress = "nodate";
-            }
-            result.add(ress);
-            stmt.close();
-            conn.close();
-        } catch (SQLException e) {
-            String res = "请联系管理员，异常" + e.getMessage();
-            // LogUtil.e("TestDButil", e.getMessage() + "," + sql); //本机打印日志
-            e.printStackTrace();
-            result.add(res);
-            return result;
-        } catch (Exception e) {
-            String res = "无网络";
-            //  LogUtil.e("TestDButil", e.getMessage() + "," + sql); //本机打印日志
-
-            result.add(res);
-            return result;
-        }
-        return result;
-    }
+//    public static List exesql(String sql) {
+//        List result = new ArrayList();
+//        int rs = 0;
+//        try {
+//            String ress = "";
+//            Connection conn = getSQLConnection();
+//
+//            Statement stmt = conn.createStatement();//
+//            rs = stmt.executeUpdate(sql);
+//            if (rs > 0) {
+//                ress = "ok";
+//            } else {
+//                ress = "nodate";
+//            }
+//            result.add(ress);
+//            stmt.close();
+//            conn.close();
+//        } catch (SQLException e) {
+//            String res = "请联系管理员，异常" + e.getMessage();
+//            // LogUtil.e("TestDButil", e.getMessage() + "," + sql); //本机打印日志
+//            e.printStackTrace();
+//            result.add(res);
+//            return result;
+//        } catch (Exception e) {
+//            String res = "无网络";
+//            //  LogUtil.e("TestDButil", e.getMessage() + "," + sql); //本机打印日志
+//
+//            result.add(res);
+//            return result;
+//        }
+//        return result;
+//    }
 
 
     //endregion
@@ -285,72 +290,72 @@ public class DBUtil {
      * @throws
      */
     //region 查询，又多少条行数
-    public static int hasrows(String sql) {
-        int result = 0;
-
-        try {
-            Connection conn = getSQLConnection();
-
-            Statement stmt = conn.createStatement();//
-            ResultSet ss = stmt.executeQuery(sql);
-            if (!ss.next()) {
-                result = 0;
-            } else {
-                result = 1;
-            }
-            ss.close();
-            stmt.close();
-            conn.close();
-        } catch (SQLException e) {
-            String res = "查询数据异常5" + e.getMessage();
-            //        LogUtil.e("TestDButil", e.getMessage() + "," + sql); //本机打印日志
-
-            return -1;
-        } catch (Exception e) {
-            String res = "无网络";
-            //     LogUtil.e("TestDButil", e.getMessage() + "," + sql); //本机打印日志
-
-            return -1;
-
-        }
-        return result;
-    }
+//    public static int hasrows(String sql) {
+//        int result = 0;
+//
+//        try {
+//            Connection conn = getSQLConnection();
+//
+//            Statement stmt = conn.createStatement();//
+//            ResultSet ss = stmt.executeQuery(sql);
+//            if (!ss.next()) {
+//                result = 0;
+//            } else {
+//                result = 1;
+//            }
+//            ss.close();
+//            stmt.close();
+//            conn.close();
+//        } catch (SQLException e) {
+//            String res = "查询数据异常5" + e.getMessage();
+//            //        LogUtil.e("TestDButil", e.getMessage() + "," + sql); //本机打印日志
+//
+//            return -1;
+//        } catch (Exception e) {
+//            String res = "无网络";
+//            //     LogUtil.e("TestDButil", e.getMessage() + "," + sql); //本机打印日志
+//
+//            return -1;
+//
+//        }
+//        return result;
+//    }
     //endregion
 
 
     //region 传入sql,返回转换成List(查询)
-    public static <T> List QueryT(String sql, T t) {
-        List result = new ArrayList();
-
-        ResultSet rs = null;
-        try {
-            Connection conn = getSQLConnection();
-
-            Statement stmt = conn.createStatement();//
-            rs = stmt.executeQuery(sql);
-            result = util(t, rs);
-
-            rs.close();
-            stmt.close();
-            conn.close();
-        } catch (SQLException e) {
-            //  LogUtil.e("TestDButil", e.getMessage() + "," + sql); //本机打印日志
-
-//            String res = "查询数据异常" + e.getMessage();
-//            e.printStackTrace();
-            String res = "nodate";
-            result.add(res);
-            return result;
-        } catch (Exception e) {
-            // LogUtil.e("TestDButil", e.getMessage() + "," + sql); //本机打印日志
-
-            String res = "无网络";
-            result.add(res);
-            return result;
-        }
-
-        return result;
-    }
+//    public static <T> List QueryT(String sql, T t) {
+//        List result = new ArrayList();
+//
+//        ResultSet rs = null;
+//        try {
+//            Connection conn = getSQLConnection();
+//
+//            Statement stmt = conn.createStatement();//
+//            rs = stmt.executeQuery(sql);
+//            result = util(t, rs);
+//
+//            rs.close();
+//            stmt.close();
+//            conn.close();
+//        } catch (SQLException e) {
+//            //  LogUtil.e("TestDButil", e.getMessage() + "," + sql); //本机打印日志
+//
+////            String res = "查询数据异常" + e.getMessage();
+////            e.printStackTrace();
+//            String res = "nodate";
+//            result.add(res);
+//            return result;
+//        } catch (Exception e) {
+//            // LogUtil.e("TestDButil", e.getMessage() + "," + sql); //本机打印日志
+//
+//            String res = "无网络";
+//            result.add(res);
+//            return result;
+//        }
+//
+//        return result;
+//    }
 
 
     /**
@@ -453,11 +458,11 @@ public class DBUtil {
 
     public static void logWriteData(String log) {
         Date date = new Date();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
         String dateNow = dateFormat.format(date);
 
         String filePath = "/sdcard/LAMP/logs/";
-        String fileName = dateNow.substring(0, 8) + "log.txt";
+        String fileName = dateNow + "log.txt";
 
         writeTxtToFile(log, filePath, fileName);
     }

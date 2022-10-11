@@ -41,7 +41,7 @@ public class MyApp extends BaseApp {
             showNum = Integer.parseInt(Const.getSettingValue(Const.KEY_GOODS_COUNT));
         }
 //        int code = WtAISDK.api_InitSDK(this, false);
-        int code = WtAISDK.api_InitSDK(this, false, 1, minScore, showNum);
+        int code = WtAISDK.api_InitSDK(this, false, 0, minScore, showNum);
 //        int code = WtAISDK.api_InitSDK(this, false, 1, minScore, showNum,true);
         LogUtils.d("code:" + code);
 

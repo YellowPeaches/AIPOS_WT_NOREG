@@ -26,6 +26,7 @@ public class DaoMaster extends AbstractDaoMaster {
         PluDtoDao.createTable(db, ifNotExists);
         TagMiddleDao.createTable(db, ifNotExists);
         TraceabilityCodeDao.createTable(db, ifNotExists);
+        TransactionDao.createTable(db, ifNotExists);
     }
 
     /** Drops underlying database table using DAOs. */
@@ -35,6 +36,7 @@ public class DaoMaster extends AbstractDaoMaster {
         PluDtoDao.dropTable(db, ifExists);
         TagMiddleDao.dropTable(db, ifExists);
         TraceabilityCodeDao.dropTable(db, ifExists);
+        TransactionDao.dropTable(db, ifExists);
     }
 
     /**
@@ -58,6 +60,7 @@ public class DaoMaster extends AbstractDaoMaster {
         registerDaoClass(PluDtoDao.class);
         registerDaoClass(TagMiddleDao.class);
         registerDaoClass(TraceabilityCodeDao.class);
+        registerDaoClass(TransactionDao.class);
     }
 
     public DaoSession newSession() {
