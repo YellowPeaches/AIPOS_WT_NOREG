@@ -6,7 +6,6 @@ import android.content.Context;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.util.QMUIResHelper;
@@ -155,7 +154,6 @@ public class ShowInfo extends BaseActivity {
     }
 
     private Boolean straightChick() {
-        Log.i("test", "initView: 点击了我");
         if (clickNum.size() == 0) {
             clickNum.add(SystemClock.uptimeMillis());
             return false;

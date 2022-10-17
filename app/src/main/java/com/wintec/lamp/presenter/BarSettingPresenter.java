@@ -1,16 +1,15 @@
 package com.wintec.lamp.presenter;
 
+import com.elvishew.xlog.XLog;
 import com.wintec.detection.utils.StringUtils;
 import com.wintec.lamp.api.ComModel;
 import com.wintec.lamp.base.Const;
-import com.wintec.lamp.dao.entity.TagMiddle;
 import com.wintec.lamp.bean.TagRules;
 import com.wintec.lamp.contract.BarSettingContart;
+import com.wintec.lamp.dao.entity.TagMiddle;
 import com.wintec.lamp.dao.helper.TagMiddleHelper;
 import com.wintec.lamp.network.ModelRequestCallBack;
 import com.wintec.lamp.result.HttpResponse;
-import com.wintec.lamp.service.WintecService;
-import com.wintec.lamp.service.WintecServiceSingleton;
 import com.wintec.lamp.utils.log.Logging;
 
 import java.util.List;
@@ -85,7 +84,7 @@ public class BarSettingPresenter extends BarSettingContart.Presenter {
                     Const.setSettingValue(Const.BAR_CODE_FORMAT, listItems[tagRules.getFormat()]);
                     getView().saveData(Const.getSettingValue(Const.BAR_CODE_FORMAT));
                 } catch (Exception e) {
-                    logging.i(e.getMessage());
+                    XLog.e(e);
                 }
 
                 if (tagRules.getNumberBits() == 0) {

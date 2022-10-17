@@ -1,12 +1,8 @@
 package com.wintec.lamp.utils.scale;
 
-import android.util.Log;
-
+import com.elvishew.xlog.XLog;
 import com.wintec.lamp.utils.ComIO;
 import com.wintec.lamp.utils.PriceUtils;
-
-import java.io.UnsupportedEncodingException;
-import java.text.DecimalFormat;
 
 import me.f1reking.serialportlib.SerialPortHelper;
 import me.f1reking.serialportlib.listener.ISerialPortDataListener;
@@ -108,7 +104,7 @@ public class ScalesForAipos20 extends ScalesObject {
                             preNet = net;
                         }
                     } catch (Exception e) {
-                        Log.i("test", "read data error:" + e.toString());
+                        XLog.e(e);
                     }
                     buffer_ = "";
                 }
@@ -140,7 +136,6 @@ public class ScalesForAipos20 extends ScalesObject {
     public void sendYtare(float tare) {
         String t = stringToHexString(PriceUtils.toPrinterPrice(tare + ""));
         String cmd = "3C5450" + t + "3E09";
-        Log.i("test", cmd);
         comIO.sendHex(cmd);
     }
 

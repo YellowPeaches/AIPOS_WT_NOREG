@@ -1,11 +1,9 @@
 package com.wintec.lamp;
 
-import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.text.TextUtils;
@@ -18,9 +16,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
+import com.elvishew.xlog.XLog;
 import com.google.gson.Gson;
 import com.wang.avi.BuildConfig;
 import com.wintec.aiposui.view.dialog.AiTipDialog;
@@ -105,10 +102,11 @@ public class WelcomeActivity extends BaseMvpActivity<WelcomePresenter> implement
 
     @Override
     protected void initView(Bundle savedInstanceState) {
-        schedulerProvider = SchedulerProvider.getInstance();
-        //权限
-        requestPermissions();
 
+        // 加载默认配置
+        firstOpenApp();
+
+        schedulerProvider = SchedulerProvider.getInstance();
         if (Const.getSettingValue(Const.PREVIEW_FLAG).equals("1") && NetWorkUtil.isNetworkAvailable(this)) {
 //            mPresenter.upplus();
             new WelcomePresenter().upPLUDto();
@@ -132,8 +130,8 @@ public class WelcomeActivity extends BaseMvpActivity<WelcomePresenter> implement
     @Override
     protected void onRestart() {
         if (NetWorkUtil.isNetworkAvailable(this)) {
-            //批量上传
-            checkVersionUpload();
+            //检查更新
+//            checkVersionUpload();
 //            mPresenter.getAppDownInfo();
         } else {
             showCheckVersion(null);
@@ -357,33 +355,15 @@ public class WelcomeActivity extends BaseMvpActivity<WelcomePresenter> implement
     }
 
     /**
-     * 请求权限
+     * 首次打开软件，设置默认配置
      */
-    public void requestPermissions() {
-        // 加载默认配置
+    private void firstOpenApp() {
         SharedPreferences setting = getSharedPreferences("First.ini", 0);
         boolean isfirst = setting.getBoolean("FIRST", true);
         if (isfirst) {// 第一次则跳转到欢迎页面
             setting.edit().putBoolean("FIRST", false).commit();
             firstSetting();
         }
-        if (Build.VERSION.SDK_INT > 22) {
-            if (ContextCompat.checkSelfPermission(WelcomeActivity.this, android.Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(WelcomeActivity.this,
-                        new String[]{android.Manifest.permission.CAMERA,
-                                Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                                Manifest.permission.LOCATION_HARDWARE,
-                                Manifest.permission.READ_PHONE_STATE,
-                                Manifest.permission.WRITE_SETTINGS,
-                                Manifest.permission.READ_EXTERNAL_STORAGE,
-                                Manifest.permission.RECORD_AUDIO,
-                                Manifest.permission.READ_CONTACTS,
-                                android.Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
-            } else {
-//                jumpToMainActivity();
-            }
-        }
-
     }
 
     /**
@@ -599,7 +579,6 @@ public class WelcomeActivity extends BaseMvpActivity<WelcomePresenter> implement
 
     @Override
     public void showAppState() {
-        Log.i(TAG, "");
     }
 
     @Override
@@ -632,7 +611,7 @@ public class WelcomeActivity extends BaseMvpActivity<WelcomePresenter> implement
 
         String snCode = Const.getSettingValue(Const.KEY_SN_CODE);
         if (Const.getSettingValue(Const.KEY_IS_BIND).equals("1")) {
-            Log.i("test", "不再需要初始化");
+            XLog.i("不再需要初始化");
             return;
         }
         WtAISDK.api_regSDK(branchCode, pos, companyCode, snCode, new OnRegSDKListener() {

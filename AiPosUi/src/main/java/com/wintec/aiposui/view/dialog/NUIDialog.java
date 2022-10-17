@@ -1,7 +1,6 @@
 package com.wintec.aiposui.view.dialog;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -14,8 +13,6 @@ import com.qmuiteam.qmui.util.QMUIResHelper;
 import com.qmuiteam.qmui.widget.dialog.QMUIDialogView;
 import com.wintec.aiposui.R;
 import com.wintec.aiposui.view.control.NUIKeyView;
-
-import java.util.Date;
 
 /**
  * @描述：自定义键盘Dialog
@@ -59,7 +56,6 @@ public class NUIDialog extends AppCompatDialog {
     @Override
     protected void onStart() {
         super.onStart();
-        Log.i("aaaaaaaaaaaaaaaaaaa","dialog Start "+new Date().getTime());
     }
 
     public static class Builder {

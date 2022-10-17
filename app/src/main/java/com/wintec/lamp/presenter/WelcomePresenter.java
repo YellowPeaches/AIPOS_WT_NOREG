@@ -6,6 +6,7 @@ import android.os.Environment;
 import android.util.Log;
 
 import com.alibaba.fastjson.JSON;
+import com.elvishew.xlog.XLog;
 import com.wintec.aiposui.view.AiPosListView;
 import com.wintec.detection.utils.StringUtils;
 import com.wintec.lamp.BuildConfig;
@@ -72,10 +73,12 @@ public class WelcomePresenter<JavaScriptSerializer> extends WelcomeContract.Pres
             @Override
             public void onSuccess(HttpResponse<registerBean> response) {
                 getView().showRegister(response.getData());
+                XLog.i(response.getData().toString());
             }
 
             @Override
             public void onFail() {
+                XLog.i("注册失败");
                 getView().showCheckVersion(null);
             }
         });

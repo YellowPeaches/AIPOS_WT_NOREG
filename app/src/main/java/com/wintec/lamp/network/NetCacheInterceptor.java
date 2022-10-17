@@ -2,10 +2,10 @@ package com.wintec.lamp.network;
 
 import android.os.Build;
 import android.text.TextUtils;
-import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 
+import com.elvishew.xlog.XLog;
 import com.wintec.lamp.base.Const;
 import com.wintec.lamp.utils.ContextUtils;
 import com.wintec.lamp.utils.DateUtils;
@@ -75,7 +75,7 @@ public class NetCacheInterceptor implements Interceptor {
             builder.addHeader("osType", "Android");
             builder.addHeader("mobileType", android.os.Build.MODEL == null ? "" : android.os.Build.MODEL);
             Response response = chain.proceed(builder.build());
-            Log.i("Http", String.format("...\n请求链接：%s\n请求参数：%s\n请求响应%s", request.url(), getRequestInfo(request), getResponseInfo(response)));
+            XLog.tag("Http").d(String.format("...\n请求链接：%s\n请求参数：%s\n请求响应%s", request.url(), getRequestInfo(request), getResponseInfo(response)));
             return response;
         } else {
             int offlineCacheTime = 30 * 24 * 60 * 60;//离线的时候的缓存的过期时间

@@ -1,13 +1,17 @@
 package com.wintec.lamp.base;
 
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.Settings;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -15,8 +19,22 @@ import android.view.WindowManager;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import com.elvishew.xlog.LogConfiguration;
+import com.elvishew.xlog.LogLevel;
+import com.elvishew.xlog.flattener.Flattener;
+import com.elvishew.xlog.flattener.Flattener2;
+import com.elvishew.xlog.printer.AndroidPrinter;
+import com.elvishew.xlog.printer.file.FilePrinter;
+import com.elvishew.xlog.printer.file.backup.FileSizeBackupStrategy;
+import com.elvishew.xlog.printer.file.clean.FileLastModifiedCleanStrategy;
+import com.elvishew.xlog.printer.file.naming.FileNameGenerator;
 import com.wintec.lamp.R;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Created by Android Studio.
@@ -32,8 +50,10 @@ public class BaseActivityNew extends AppCompatActivity {
     protected Bundle mBundleExtra;
     protected int mRequestCode;
     private Dialog mDialog;
-
     protected Activity mContext;
+
+    private static String ROOT_PATH = Environment.getExternalStoragePublicDirectory("DIRECTORY_DOCUMENTS").getPath() + "//aipos_log//";
+    private static int logLevel = LogLevel.DEBUG;
     /**
      * 是否需要把dialog圆圈颜色设置为白色(默认为false)
      */
@@ -47,15 +67,14 @@ public class BaseActivityNew extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         this.getWindow().setBackgroundDrawable(null);
-//        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
         mContext = this;
+        //权限
+        requestPermissions();
+
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
-        // 设置全屏模式
-//        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-//                WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        // 去除标题栏
-//        requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+
         Window window = getWindow();
         View decorView = window.getDecorView();
         int option = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
@@ -80,6 +99,9 @@ public class BaseActivityNew extends AppCompatActivity {
 //        StackManager.addActivity(this);
         initBundle();
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+        // 初始化日志
+        initLogging();
+        com.elvishew.xlog.XLog.i("xlog初始化日志完成");
     }
 
     /**
@@ -160,6 +182,56 @@ public class BaseActivityNew extends AppCompatActivity {
         }
     }
 
+    /**
+     * 请求权限
+     */
+    public void requestPermissions() {
+
+        if (Build.VERSION.SDK_INT >= 30) {//30
+            // 先判断有没有权限
+            if (!Environment.isExternalStorageManager()) {
+                //跳转到设置界面引导用户打开
+                Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
+                intent.setData(Uri.parse("package:" + getPackageName()));
+                startActivityForResult(intent, 3);
+            }
+        }
+        if (Build.VERSION.SDK_INT > 22) {
+            if (ContextCompat.checkSelfPermission(mContext, android.Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(mContext,
+                        new String[]{android.Manifest.permission.CAMERA,
+                                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                                Manifest.permission.LOCATION_HARDWARE,
+                                Manifest.permission.READ_PHONE_STATE,
+                                Manifest.permission.WRITE_SETTINGS,
+                                Manifest.permission.READ_EXTERNAL_STORAGE,
+//                                Manifest.permission.RECORD_AUDIO,
+//                                Manifest.permission.READ_CONTACTS,
+                                android.Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
+            } else {
+//                jumpToMainActivity();
+            }
+        }
+
+    }
+
+    public static void initLogging() {
+        LogConfiguration config = new LogConfiguration.Builder()
+                .logLevel(logLevel)
+                .tag("XLog")
+                .build();
+        AndroidPrinter androidPrinter = new AndroidPrinter(true);         // Printer that print the log using android.util.Log 使用android.util.Log打印日志的打印机
+        FilePrinter filePrinter = new FilePrinter                      // Printer that print(save) the log to file 打印(保存)日志到文件的打印机
+                .Builder(ROOT_PATH)// Specify the directory path of log file(s) 指定日志文件的目录路径
+                .fileNameGenerator(new MyFileNameGenerator()) //自定义文件名称 默认值:ChangelessFileNameGenerator(“日志”)
+                .backupStrategy(new FileSizeBackupStrategy(3 * 1024 * 1024)) //单个日志文件的大小默认:FileSizeBackupStrategy(1024 * 1024)
+                .cleanStrategy(new FileLastModifiedCleanStrategy(1L * 24L * 60L * 60L * 1000L))  //日志文件存活时间，单位毫秒
+                .flattener(new MyFlattener()) //自定义flattener，控制打印格式
+                .build();
+
+        com.elvishew.xlog.XLog.init(config, androidPrinter, filePrinter);
+        com.elvishew.xlog.XLog.i("初始化完成");
+    }
 
     @Override
     protected void onResume() {
@@ -171,4 +243,42 @@ public class BaseActivityNew extends AppCompatActivity {
         super.onPause();
     }
 
+}
+
+class MyFileNameGenerator implements FileNameGenerator {
+
+    @Override
+    public boolean isFileNameChangeable() {
+        return false;
+    }
+
+    @Override
+    public String generateFileName(int logLevel, long timestamp) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = new Date(System.currentTimeMillis());
+        return dateFormat.format(date) + ".txt";
+    }
+}
+
+class MyFlattener implements Flattener, Flattener2 {
+
+    @Override
+    public CharSequence flatten(int logLevel, String tag, String message) {
+        return flatten(System.currentTimeMillis(), logLevel, tag, message);
+    }
+
+    @Override
+    public CharSequence flatten(long timeMillis, int logLevel, String tag, String message) {
+        return (getCurrDDate(timeMillis)
+                + '|' + LogLevel.getLevelName(logLevel)
+                + '|' + tag
+                + '|' + message);
+
+    }
+
+    private String getCurrDDate(long timeMillis) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+        Date date = new Date(timeMillis);
+        return dateFormat.format(date);
+    }
 }

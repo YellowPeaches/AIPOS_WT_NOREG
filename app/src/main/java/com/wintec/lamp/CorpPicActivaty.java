@@ -9,6 +9,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.elvishew.xlog.XLog;
 import com.wintec.detection.WtAISDK;
 import com.wintec.detection.bean.CameraSetting;
 import com.wintec.detection.bean.ScaleBitmap;
@@ -37,12 +38,14 @@ public class CorpPicActivaty extends CamSupportActivity implements View.OnClickL
 
     @BindView(R.id.text_camera_view)
     TextureView textureView;
-    
+
     @BindView(R.id.rl_crop)
     RelativeLayout rlCrop;
 
     @BindView(R.id.crop_img)
     CropView cropImg;
+
+    private static final String TAG = "CorpPicActivaty";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -71,8 +74,10 @@ public class CorpPicActivaty extends CamSupportActivity implements View.OnClickL
                     if (raw.isRecycled()) {
                         raw.recycle();
                     }
+                    cropImg.setImageBitmap(raw);
+                } else {
+                    XLog.tag(TAG).e("裁剪图片时未获取到图片");
                 }
-                cropImg.setImageBitmap(raw);
                 break;
             case R.id.tv_sure:
                 cropImg.cropImage(new CropView.OnCropListener() {
@@ -87,7 +92,14 @@ public class CorpPicActivaty extends CamSupportActivity implements View.OnClickL
                                     e.printStackTrace();
                                 }
                                 CameraSetting scaleSetting = new CameraSetting(left, top, width, height);
-                                int code = WtAISDK.api_SaveCameraParam(scaleSetting);
+                                int code = -99;
+                                try {
+                                    code = WtAISDK.api_SaveCameraParam(scaleSetting);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                    XLog.tag(TAG).e(e);
+                                }
+
                                 if (code == 0) {
                                     Intent settingIntent = getIntent();
                                     Bundle bundle = settingIntent.getExtras();
@@ -109,6 +121,7 @@ public class CorpPicActivaty extends CamSupportActivity implements View.OnClickL
                                         finish();
                                     }
                                 } else {
+                                    XLog.tag(TAG).e("标定设置失败，错误码：" + code);
                                     Toast.makeText(CorpPicActivaty.this, "设置失败，错误码：" + code, Toast.LENGTH_SHORT).show();
                                 }
                             }

@@ -31,6 +31,7 @@ import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 
 import com.bigkoo.pickerview.TimePickerView;
+import com.elvishew.xlog.XLog;
 import com.qmuiteam.qmui.skin.QMUISkinManager;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.qmuiteam.qmui.widget.dialog.QMUIBottomSheet;
@@ -269,7 +270,7 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
             super.handleMessage(msg);
             switch (msg.what) {
                 case SCALES_CLEAR:
-                    Log.i("test", "清空秤盘");
+                    XLog.d("清空秤盘");
                     resetPage();
                     aiPosAllView.getListView().idle();
                     aiPosAllView.getListView().clear();
@@ -320,9 +321,9 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
                         }
                         long starttime = System.currentTimeMillis();
                         DetectResult detectResult = api_Detect();
+                        XLog.tag(TAG).i("ResultCode:" + detectResult.getErrorCode() + " || GoodsIds:" + detectResult.getGoodsIds() + " || ModelIds:" + detectResult.getModelIds());
                         String detectTime = (System.currentTimeMillis() - starttime) + "ms";
-                        Log.i("识别耗时：", detectTime);
-                        logging.i(detectResult.getTaskId() + "识别耗时：" + detectTime);
+                        XLog.tag(TAG).d("识别耗时:" + detectTime);
                         if (detectResult.getErrorCode() == 0) {
                             detectRe = detectResult;
                             if ("在线取数".equals(Const.getSettingValue(Const.KEY_GET_DATA_MODE)) && NetWorkUtil.isNetworkAvailable(context)) {
@@ -458,10 +459,10 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
             if (!priceChangeFlagFoever) {
                 if (taskId != null || "".equals(taskId)) {
                     if (!taskId.equals(detectRe.getTaskId())) {
-                        Log.i("error", "存在问题，任务id和sessionid不一致");
+                        XLog.tag("error").e("存在问题，任务id和sessionid不一致");
                     }
                     api_confirmResult(taskId, dto.parse().getGoodsId(), dto.parse().getGoodsName(), false);
-                    Log.i("test", "未命中");
+                    XLog.i("未命中");
                     if (net <= 0.0f && dto.getPriceUnitA() == 0) {
                         aiTipDialog.showFail("重量不能为零", aiPosAllView);
                         return;
@@ -484,8 +485,7 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
                         long current_time2 = System.currentTimeMillis();
 
                         Const.keyFromInput = false;
-                        Log.i("test", "点击打印" + isDetect);
-                        Log.i("test", "点击确认花费" + (current_time2 - current_time));
+                        XLog.d("点击确认花费" + (current_time2 - current_time));
                         if (NetWorkUtil.isNetworkAvailable(this)) {
                             try {
                                 dealInsert(dto.parse(), isDetect ? 3 : 4);
@@ -893,7 +893,7 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
         try {
             fileWriter = initDisCountFile();
         } catch (IOException e) {
-            Log.i(TAG, "initData: 变价日志文件初始化异常");
+            XLog.e(e);
             e.printStackTrace();
         }
         context = this;
@@ -910,8 +910,8 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
             }
         });
         nuiBottomSheet = new NUIBottomSheet(mContext);
-        logging = new Logging(mContext);
-        logging.d("软件初始化");
+//        logging = new Logging(mContext);
+//        logging.d("软件初始化");
 //        printer = new Printer(mContext);
         if (TextUtils.isEmpty(Const.versionName)) {
             aiPosAllView.getListView().setVersion("v:");
@@ -1081,7 +1081,7 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
                 .addDialogListner(new NUIKeyDialog.Builder.DialogListner() {
                     @Override
                     public void onConfirm(String code, NUIKeyDialog dialog, int param) {
-                        Log.i("输入的数量是", code);
+                        XLog.d("输入的数量是:" + code);
                         if (code.contains(".")) {
                             Toast.makeText(mContext, "请输入整数", Toast.LENGTH_SHORT).show();
                             return;
@@ -1147,7 +1147,7 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
                 long start = System.currentTimeMillis();
                 onGoodsItemClick(model, position, false);
                 long end = System.currentTimeMillis();
-                Log.w("sql", "点击到打印完成耗时: " + (end - start) + "ms");
+                XLog.d("点击到下发打印指令耗时: " + (end - start) + "ms");
                 Const.fromClick = false;
 //                PluDto commdityByScalesCode = PluDtoDaoHelper.getCommdityByScalesCode(model.getGoodsId());
 //                if (commdityByScalesCode.getPreviewImage() == null || "".equals(commdityByScalesCode.getPreviewImage())) {
@@ -1451,7 +1451,7 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
             try {
                 port = Integer.valueOf(Const.getSettingValue(Const.TRACEABILITY_CODE_PORT));
             } catch (NumberFormatException e) {
-                logging.i("追溯码端口号异常");
+                XLog.e("追溯码端口号异常" + e);
                 return;
             }
 
@@ -1464,7 +1464,7 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
                         ThreadPoolManagerUtils.getInstance().execute(new SocketHandler(accept));
                     }
                 } catch (IOException e) {
-                    logging.i("追溯码服务开启异常");
+                    XLog.e("追溯码服务开启异常" + e);
 
                 }
             });
@@ -1484,7 +1484,7 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
                 ThreadPoolManagerUtils.getInstance().execute(new DuoDianSocketHandler(accept));
             }
         } catch (IOException e) {
-            logging.i("追溯码服务开启异常");
+            XLog.e("追溯码服务开启异常");
 
         }
 
@@ -1662,7 +1662,7 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
             sendScale(1, tempGoods, number + "", total);
             setTitleData(tempGoods, number, total);
         } catch (Exception e) {
-            Log.i("test", e.toString());
+            XLog.e(e);
         }
         dialog.dismiss();
     }
@@ -1701,7 +1701,7 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
             //调用打印
             WintecServiceSingleton.getInstance().printImgLable(printCommdity, total, number, isKg, tradeMode, aiPosAllView.getTitleView().getTare(), mNet);
         } catch (Exception e) {
-            Log.i("test", e.toString());
+            XLog.e(e);
         }
         clearMode();
         dialog.dismiss();
@@ -1765,7 +1765,7 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
                 if (flagNull || !flagContains) {
                     api_confirmResult(this.taskId, goodsModel.getGoodsId(), goodsModel.getGoodsName(), false);
                     detectResult = -1;
-                    Log.i("test", "未命中");
+                    XLog.d("未命中");
                 } else {
                     long current_time = System.currentTimeMillis();
                     if (detectReGoodsIds.size() > 0 && detectReGoodsIds.get(0).equals(trueGoodsId) && !Const.keyFromInput) {
@@ -1788,8 +1788,7 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
                     }
                     Const.keyFromInput = false;
                     long current_time2 = System.currentTimeMillis();
-                    Log.i("test", "点击确认花费 " + (current_time2 - current_time));
-                    Log.i("test", "命中");
+                    XLog.d("命中，点击确认花费:" + (current_time2 - current_time));
                 }
                 int detectResultNew = detectResult;
                 try {
@@ -2134,7 +2133,6 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
 //            printDialog.setTotalandWeight(mNet + "", total);
             Total total = setTotalandDisdiscountPrice(printCommdity.parse(), "1");
             printDialog.setTotalandWeight(mNet + "", total.getPrice(), total.getTotal());
-            logging.i("连续打价签");
             dealInsert(printCommdity.parse(), 5);
             mPresentation.setGoods(printCommdity.parse(), mNet + "", count, total.getTotal(), isKg, aiPosAllView.getTitleView().getTareBySecend());
             if (aiPosAllView.mIsLandscape) {
@@ -2146,7 +2144,6 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
                 });
             } else {
                 String barcode = WintecServiceSingleton.getInstance().createBarCode(printCommdity, total.getTotal(), mNet, 1, total.getPrice());
-                Log.i("test", barcode);
                 comIO.send(barcode + "\r");
             }
         }
@@ -2262,7 +2259,7 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
 
     public void clearMode() {
         if (isContinuityPrintFlag.get()) {
-            logging.i("无法清除改价状态");
+            XLog.i("无法清除改价状态");
             return;
         }
         // 重置交易模式
@@ -2273,9 +2270,6 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
         tempPrice = 0;
         // 初始化总价
         tempTotal = 0;
-//        logging.i("已清除改价状态");
-
-
     }
 
 
@@ -2493,7 +2487,6 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
                 break;
             case "POS20":
                 String barcode = WintecServiceSingleton.getInstance().createBarCode(co, total.getTotal(), net, Integer.valueOf(count), total.getPrice());
-                Log.i("test", barcode);
                 comIO.send(barcode + "\r");
                 break;
             case "收银台模式(ttySAC4)":
@@ -2508,7 +2501,6 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
                     comIO.open();
                 }
                 String barcode1 = WintecServiceSingleton.getInstance().createBarCode(co, total.getTotal(), net, Integer.valueOf(count), total.getPrice());
-                Log.i("test", barcode1);
                 comIO.send(barcode1 + "\r");
                 break;
             case "收银台模式(ttySAC3)":
@@ -2523,7 +2515,6 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
                     comIO.open();
                 }
                 String barcode2 = WintecServiceSingleton.getInstance().createBarCode(co, total.getTotal(), net, Integer.valueOf(count), total.getPrice());
-                Log.i("test", barcode2);
                 comIO.send(barcode2 + "\r");
                 break;
         }
@@ -2691,7 +2682,6 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
 
     @Override
     public void onResume() {
-        Log.i(TAG, "resume");
         weight = Float.parseFloat(Const.getSettingValue(Const.DELECT_WEIGHT));
         isKg = "kg".equals(Const.getSettingValue(Const.WEIGHT_UNIT));
         try {
@@ -2941,13 +2931,11 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
     @Override
     public void onStart() {
         super.onStart();
-        Log.i(TAG, "Start");
         WintecServiceSingleton.getInstance().bind();
     }
 
     @Override
     protected void onStop() {
-        Log.i(TAG, "Stop");
         if (imgDialog.isShowing()) {
             imgDialog.dismiss();
         }
@@ -3111,7 +3099,7 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
                     Const.NetworkReachable = false;
                     e.printStackTrace();
                     Log.w("sql", "完成提前查询失败: " + e.toString());
-                    logging.i("完成提前查询失败: " + e.toString());
+                    XLog.e("完成提前查询失败: " + e);
                 }
             }
 

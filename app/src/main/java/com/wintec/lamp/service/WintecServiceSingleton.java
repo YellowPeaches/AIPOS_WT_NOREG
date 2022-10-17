@@ -21,6 +21,7 @@ import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 
+import com.elvishew.xlog.XLog;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.oned.Code128Writer;
@@ -136,7 +137,7 @@ public class WintecServiceSingleton {
                     openScale();
                 } catch (RemoteException e) {
                     e.printStackTrace();
-                    logging.i(e.toString());
+                    XLog.e(e);
                 }
             }
 
@@ -226,7 +227,7 @@ public class WintecServiceSingleton {
             });
         } catch (Exception e) {
             e.printStackTrace();
-//            logging.i(e.toString());
+            XLog.e(e);
         }
 
     }
@@ -275,7 +276,7 @@ public class WintecServiceSingleton {
             labelPrinterService.PRN_SetPageModePrintArea(10, 10);
         } catch (RemoteException e) {
             e.printStackTrace();
-            logging.e(e.toString());
+            XLog.e(e);
         }
         try {
             if ("宁致打印机".equals(Const.getSettingValue(Const.PRINT_SETTING))) {
@@ -289,7 +290,7 @@ public class WintecServiceSingleton {
                 labelPrinterService.PRN_Hex(ByteUtils.hexToByteArr("0C"));
             }
         } catch (Exception e) {
-            logging.e(e.toString());
+            XLog.e(e);
         }
 
     }
@@ -1048,7 +1049,6 @@ public class WintecServiceSingleton {
             e.printStackTrace();
         }
         try {
-            Log.i("大小", "大小" + bitmap.getWidth() + "+" + bitmap.getHeight());
             if ("逆向打印".equals(Const.getSettingValue(Const.TAG_DIRECTION))) {
                 labelPrinterService.PRN_PrintBitmap(bitmap, 440 - width, 0, bitmap.getWidth(), bitmap.getHeight(), 0);
             } else {
@@ -1072,6 +1072,7 @@ public class WintecServiceSingleton {
 ////                labelPrinterService.PRN_Hex(new byte[]{0x1F, 0x11, (byte) 0x80});
 //            } else if ("普瑞特打印机".equals(Const.getSettingValue(Const.PRINT_SETTING))) {
             boolean printSuccess = labelPrinterService.PRN_print(false);
+            XLog.d("bitmap大小w*h:  %d * %d", bitmap.getWidth(), bitmap.getHeight());
             if (printSuccess) {
                 labelPrinterService.PRN_Hex(ByteUtils.hexToByteArr("0C"));
             }
@@ -1403,7 +1404,7 @@ public class WintecServiceSingleton {
                 try {
                     DBUtil.exesqlint(sql);
                 } catch (SQLException throwables) {
-                    logging.i(throwables.getMessage());
+                    XLog.e(throwables);
                     throwables.printStackTrace();
                 }
             }

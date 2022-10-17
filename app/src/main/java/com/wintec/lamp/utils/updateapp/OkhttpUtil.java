@@ -1,6 +1,6 @@
 package com.wintec.lamp.utils.updateapp;
 
-import android.util.Log;
+import com.elvishew.xlog.XLog;
 
 import java.io.IOException;
 
@@ -28,13 +28,13 @@ public class OkhttpUtil {
             Response execute = okHttpClient.newCall(request).execute();
             if (execute.code() == 200) {
                 int responseData = Integer.valueOf(execute.body().string());
-                Log.i("responseData", responseData + "");
+//                XLog.d( responseData + "");
                 return responseData;
             } else {
                 return -1;
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            XLog.e("OkhttpUtil" + e);
             return -1;
         }
     }

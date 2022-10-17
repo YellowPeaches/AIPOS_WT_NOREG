@@ -2,6 +2,7 @@ package com.wintec.lamp.utils.scale;
 
 import android.util.Log;
 
+import com.elvishew.xlog.XLog;
 import com.wintec.lamp.utils.ComIO;
 
 import java.io.UnsupportedEncodingException;
@@ -26,7 +27,7 @@ public class ScalesForTuoLiDuo extends ScalesObject {
         this.callback = callback;
         this.comIO = new ComIO(SCALES_DEVICES1, SCALES_BAUDRATE);
         Boolean open = comIO.open();
-        Log.i("test", "串口打开状态" + open);
+        XLog.i( "串口打开状态" + open);
         readData();
     }
 
@@ -36,9 +37,6 @@ public class ScalesForTuoLiDuo extends ScalesObject {
     @Override
     protected void readData() {
         List<Device> allDevices = comIO.getAllDevices();
-        for (Device item : allDevices) {
-            Log.i("test", item.getName());
-        }
         SerialPortHelper serialPortHelper = comIO.getSerialPortHelper();
         send();
         serialPortHelper.setISerialPortDataListener(new ISerialPortDataListener() {
