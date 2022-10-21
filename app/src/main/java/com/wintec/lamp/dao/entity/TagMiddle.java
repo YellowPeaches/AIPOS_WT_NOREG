@@ -1,12 +1,10 @@
 package com.wintec.lamp.dao.entity;
 
 import org.greenrobot.greendao.annotation.Entity;
+import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
 
 import java.io.Serializable;
-import java.util.Objects;
-
-import org.greenrobot.greendao.annotation.Generated;
 
 @Entity
 public class TagMiddle implements Serializable {

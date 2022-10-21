@@ -28,6 +28,8 @@ import com.wintec.lamp.base.Const;
 import com.wintec.lamp.bean.VersionBean;
 import com.wintec.lamp.bean.registerBean;
 import com.wintec.lamp.contract.WelcomeContract;
+import com.wintec.lamp.dao.entity.TagMiddle;
+import com.wintec.lamp.dao.helper.TagMiddleHelper;
 import com.wintec.lamp.httpdownload.DownInfo;
 import com.wintec.lamp.httpdownload.HttpDownManager;
 import com.wintec.lamp.httpdownload.downloadlistener.HttpProgressOnNextListener;
@@ -44,7 +46,9 @@ import com.wintec.lamp.view.DownLoadApkDialog;
 import com.wintec.lamp.view.UploadVersionDialog;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import butterknife.BindView;
 import okhttp3.RequestBody;
@@ -103,10 +107,15 @@ public class WelcomeActivity extends BaseMvpActivity<WelcomePresenter> implement
     @Override
     protected void initView(Bundle savedInstanceState) {
 
-        // 加载默认配置
+        // 首次加载默认配置
         firstOpenApp();
-
         schedulerProvider = SchedulerProvider.getInstance();
+
+        if (NetWorkUtil.isNetworkAvailable(this) && Const.getSettingValue(Const.ERROR_LOG_FLAG).equals("1")) {
+            Toast.makeText(this, "正在上传日志", Toast.LENGTH_LONG).show();
+            File file = new File(Const.getSettingValue(Const.ERROR_LOG_PATH));
+            mPresenter.upLogTxt(file, file.getName(), Const.SN);
+        }
         if (Const.getSettingValue(Const.PREVIEW_FLAG).equals("1") && NetWorkUtil.isNetworkAvailable(this)) {
 //            mPresenter.upplus();
             new WelcomePresenter().upPLUDto();
@@ -119,12 +128,8 @@ public class WelcomeActivity extends BaseMvpActivity<WelcomePresenter> implement
         if (Const.getSettingValue(Const.PREVIEW_FLAG).equals("1") && NetWorkUtil.isNetworkAvailable(this)) {
             mPresenter.getImgUrl();
         }
-        if (NetWorkUtil.isNetworkAvailable(this) && Const.getSettingValue(Const.ERROR_LOG_FLAG).equals("1")) {
-            Toast.makeText(this, "正在上传日志", Toast.LENGTH_LONG).show();
-            File file = new File(Const.getSettingValue(Const.ERROR_LOG_PATH));
-            mPresenter.upLogTxt(file, file.getName(), Const.SN);
-        }
 
+//        jumpToMainActivity();
     }
 
     @Override
@@ -363,6 +368,7 @@ public class WelcomeActivity extends BaseMvpActivity<WelcomePresenter> implement
         if (isfirst) {// 第一次则跳转到欢迎页面
             setting.edit().putBoolean("FIRST", false).commit();
             firstSetting();
+//            new BarSettingPresenter().getUpdatePriceTar(branchId, Const.SN);
         }
     }
 
@@ -392,7 +398,7 @@ public class WelcomeActivity extends BaseMvpActivity<WelcomePresenter> implement
         Const.setSettingValue(Const.KEY_GET_DATA_UP_PRICE_CHANGE_SQL, "INSERT INTO TESTONLINE.CLERK_LOG (CODE, SCALE_CODE, PLU_NUMBER,COMMODITY_NAME,EDITDATE,TIME,STATUS,SCALE_IP,OLD_UNIT_PRICE,NEW_UNIT_PRICE,PRINTED_EAN_DATA) VALUES( #{CODE}, #{SCALE_CODE},  #{PLU_NUMBER},#{COMMODITY_NAME},#{EDITDATE},#{TIME},#{STATUS},#{SCALE_IP},#{OLD_UNIT_PRICE},#{NEW_UNIT_PRICE},#{PRINTED_EAN_DATA})");
 
         //临时默认配置
-        Const.setSettingValue(Const.KEY_GET_DATA_IP, "118.31.114.228");
+        Const.setSettingValue(Const.KEY_GET_DATA_IP, "118.31.114.118");
         Const.setSettingValue(Const.KEY_GET_DATA_PORT, "1433");
         Const.setSettingValue(Const.KEY_GET_DATA_DB_NAME, "get_online");
         Const.setSettingValue(Const.KEY_GET_DATA_USER, "sa");
@@ -453,8 +459,10 @@ public class WelcomeActivity extends BaseMvpActivity<WelcomePresenter> implement
         //识别阈值默认值
         Const.setSettingValue(Const.DETECT_THRESHOLD, "0.65");
         //获取称重串口
-        Const.setSettingValue(Const.GET_WEIGHT_PORT, "/dev/ttySAC1");
+        Const.setSettingValue(Const.GET_WEIGHT_PORT, "/dev/ttySAC4");
         Const.setSettingValue(Const.ERROR_LOG_FLAG, "0");
+
+        setDefaultTag();
 
     }
 
@@ -635,5 +643,204 @@ public class WelcomeActivity extends BaseMvpActivity<WelcomePresenter> implement
         });
     }
 
+    private void setDefaultTag() {
+        List<TagMiddle> tagData = new ArrayList<>();
+        TagMiddle tagMiddle = new TagMiddle();
+
+        tagMiddle.set_id(4L);
+        tagMiddle.setAbscissa(4);
+        tagMiddle.setBreadth(23);
+        tagMiddle.setBreadths(30);
+        tagMiddle.setBz2("0");
+        tagMiddle.setDivId("drag19");
+        tagMiddle.setFontSize(23);
+        tagMiddle.set_id(1575L);
+        tagMiddle.setItalic(0);
+        tagMiddle.setLength(32);
+        tagMiddle.setLengths(40);
+        tagMiddle.setName("默认标签");
+        tagMiddle.setOrdinate(24);
+        tagMiddle.setOverstriking(0);
+        tagMiddle.setCodeSystem(0);
+        tagMiddle.setTagName("单价");
+        tagMiddle.setTemplateId(89);
+        tagMiddle.setUnderline(0);
+        tagMiddle.setUnit("元/kg");
+        tagData.add(tagMiddle);
+        tagMiddle = new TagMiddle();
+
+        tagMiddle.set_id(2L);
+        tagMiddle.setAbscissa(19);
+        tagMiddle.setBreadth(80);
+        tagMiddle.setBreadths(30);
+        tagMiddle.setBz2("0");
+        tagMiddle.setCodeSystem(0);
+        tagMiddle.setDivId("drag21");
+        tagMiddle.setFontSize(14);
+        tagMiddle.set_id(1577L);
+        tagMiddle.setItalic(0);
+        tagMiddle.setLength(280);
+        tagMiddle.setLengths(40);
+        tagMiddle.setName("默认标签");
+        tagMiddle.setOrdinate(68);
+        tagMiddle.setOverstriking(0);
+        tagMiddle.setTagName("商品条码");
+        tagMiddle.setTemplateId(89);
+        tagMiddle.setUnderline(0);
+        tagData.add(tagMiddle);
+        tagMiddle = new TagMiddle();
+
+        tagMiddle.set_id(3L);
+        tagMiddle.setAbscissa(4);
+        tagMiddle.setBreadth(23);
+        tagMiddle.setBreadths(30);
+        tagMiddle.setBz2("0");
+        tagMiddle.setCodeSystem(0);
+        tagMiddle.setDateFormat("yy/MM/dd");
+        tagMiddle.setDivId("drag23");
+        tagMiddle.setFontSize(18);
+        tagMiddle.set_id(1579L);
+        tagMiddle.setItalic(0);
+        tagMiddle.setLength(60);
+        tagMiddle.setLengths(40);
+        tagMiddle.setName("默认标签");
+        tagMiddle.setOrdinate(53);
+        tagMiddle.setOverstriking(0);
+        tagMiddle.setTagName("包装日期");
+        tagMiddle.setTemplateId(89);
+        tagMiddle.setUnderline(0);
+        tagData.add(tagMiddle);
+        tagMiddle = new TagMiddle();
+
+
+        tagMiddle.set_id(1L);
+        tagMiddle.setAbscissa(93);
+        tagMiddle.setBreadth(23);
+        tagMiddle.setBreadths(30);
+        tagMiddle.setBz2("0");
+        tagMiddle.setCodeSystem(1);
+        tagMiddle.setDivId("drag20");
+        tagMiddle.setFontSize(37);
+        tagMiddle.set_id(1576L);
+        tagMiddle.setItalic(0);
+        tagMiddle.setLength(32);
+        tagMiddle.setLengths(40);
+        tagMiddle.setName("默认标签");
+        tagMiddle.setOrdinate(36);
+        tagMiddle.setOverstriking(1);
+        tagMiddle.setTagName("总价");
+        tagMiddle.setTemplateId(89);
+        tagMiddle.setUnit("元");
+        tagMiddle.setUnderline(0);
+        tagData.add(tagMiddle);
+        tagMiddle = new TagMiddle();
+
+        tagMiddle.set_id(8L);
+        tagMiddle.setAbscissa(8);
+        tagMiddle.setBreadth(23);
+        tagMiddle.setBreadths(30);
+        tagMiddle.setBz2("0");
+        tagMiddle.setCodeSystem(1);
+        tagMiddle.setDivId("drag1");
+        tagMiddle.setFontSize(34);
+        tagMiddle.set_id(1580L);
+        tagMiddle.setItalic(0);
+        tagMiddle.setLength(60);
+        tagMiddle.setLengths(40);
+        tagMiddle.setName("默认标签");
+        tagMiddle.setOrdinate(4);
+        tagMiddle.setOverstriking(1);
+        tagMiddle.setTagName("商品名称");
+        tagMiddle.setTemplateId(89);
+        tagMiddle.setUnderline(0);
+        tagData.add(tagMiddle);
+        tagMiddle = new TagMiddle();
+
+        tagMiddle.set_id(11L);
+        tagMiddle.setAbscissa(78);
+        tagMiddle.setBreadth(23);
+        tagMiddle.setBreadths(30);
+        tagMiddle.setBz2("0");
+        tagMiddle.setCodeSystem(2);
+        tagMiddle.setDivId("drag22");
+        tagMiddle.setFontSize(24);
+        tagMiddle.set_id(1582L);
+        tagMiddle.setItalic(0);
+        tagMiddle.setLength(18);
+        tagMiddle.setLengths(40);
+        tagMiddle.setName("默认标签");
+        tagMiddle.setOrdinate(48);
+        tagMiddle.setOverstriking(1);
+        tagMiddle.setTagName("价");
+        tagMiddle.setTemplateId(89);
+        tagMiddle.setUnderline(0);
+        tagData.add(tagMiddle);
+        tagMiddle = new TagMiddle();
+
+        tagMiddle.set_id(14L);
+        tagMiddle.setAbscissa(3);
+        tagMiddle.setBreadth(34);
+        tagMiddle.setBreadths(30);
+        tagMiddle.setBz2("0");
+        tagMiddle.setCodeSystem(0);
+        tagMiddle.setDivId("drag4");
+        tagMiddle.setFontSize(23);
+        tagMiddle.set_id(1584L);
+        tagMiddle.setItalic(0);
+        tagMiddle.setLength(50);
+        tagMiddle.setLengths(40);
+        tagMiddle.setName("默认标签");
+        tagMiddle.setOrdinate(37);
+        tagMiddle.setOverstriking(0);
+        tagMiddle.setTagName("重量");
+        tagMiddle.setTemplateId(89);
+        tagMiddle.setUnderline(0);
+        tagMiddle.setUnit("kg");
+        tagData.add(tagMiddle);
+        tagMiddle = new TagMiddle();
+
+        tagMiddle.set_id(41L);
+        tagMiddle.setAbscissa(78);
+        tagMiddle.setBreadth(37);
+        tagMiddle.setBreadths(30);
+        tagMiddle.setBz2("0");
+        tagMiddle.setCodeSystem(2);
+        tagMiddle.setDivId("drag17");
+        tagMiddle.setFontSize(25);
+        tagMiddle.set_id(1585L);
+        tagMiddle.setItalic(0);
+        tagMiddle.setLength(29);
+        tagMiddle.setLengths(40);
+        tagMiddle.setName("默认标签");
+        tagMiddle.setOrdinate(33);
+        tagMiddle.setOverstriking(1);
+        tagMiddle.setTagName("总");
+        tagMiddle.setTemplateId(89);
+        tagMiddle.setUnderline(0);
+        tagData.add(tagMiddle);
+
+        float offsetX = 2.01f;
+        float offsetY = 2.01f;
+        float tarOffsetX = 0.688f;
+        float textOffset = 0.78f;
+        tagData.forEach(item -> {
+            int leftOffset = 0;
+            if (item.getFontSize() != null) {
+                item.setFontSize((int) (item.getFontSize() * textOffset));
+            }
+            item.setAbscissa(new Float(item.getAbscissa() * offsetX).intValue());
+            item.setOrdinate(new Float(item.getOrdinate() * offsetY).intValue());
+            if (item.getLength() != null && item.getBreadth() != null) {
+                item.setLength(new Float(item.getLength() * tarOffsetX).intValue());
+                item.setBreadth(new Float(item.getBreadth() * tarOffsetX).intValue());
+            }
+        });
+        try {
+            TagMiddleHelper.deleteAll();
+            TagMiddleHelper.insertList(tagData);
+        } catch (Exception e) {
+            XLog.e(e);
+        }
+    }
 
 }

@@ -4,10 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 
-import com.wintec.detection.WtAISDK;
 import com.wintec.lamp.R;
 import com.wintec.lamp.utils.TextTools;
 import com.wintec.lamp.utils.ToastUtils;
@@ -52,6 +49,7 @@ public abstract class BaseMvpActivity<T extends BaseMvpPresenter> extends BaseAc
         initView(savedInstanceState);
         initEvent();
         loadData();
+
     }
 
     public void jumpToActivityForResult(Intent intent, int requestCode) {

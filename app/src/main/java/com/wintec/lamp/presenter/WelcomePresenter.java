@@ -201,15 +201,15 @@ public class WelcomePresenter<JavaScriptSerializer> extends WelcomeContract.Pres
                                 Bitmap currentBitmap = NetWorkUtil.GetImageInputStream(split[1]);
                                 if (currentBitmap != null) {
                                     savaImageToPath(currentBitmap, AiPosListView.ROOT_PATH, (split[0] + ".jpg"));
-                                    Log.i("下载图片成功：", split[0]);
+                                    XLog.d("下载图片成功："+split[0]);
                                 } else {
-                                    Log.i("下载图片失败：", split[0]);
+                                    XLog.d("下载图片失败："+split[0]);
                                 }
                             }
                         }
                     }
                     long s2 = System.currentTimeMillis();
-                    Log.i("下载图片花费：", (s2 - s1) + "");
+                    XLog.i("下载图片花费："+ (s2 - s1) );
                 });
 
             }

@@ -44,7 +44,6 @@ import com.wintec.lamp.utils.DBUtil;
 import com.wintec.lamp.utils.DateUtils;
 import com.wintec.lamp.utils.PriceUtils;
 import com.wintec.lamp.utils.StrToBrCode;
-import com.wintec.lamp.utils.log.Logging;
 
 import java.io.ByteArrayOutputStream;
 import java.net.Inet4Address;
@@ -95,7 +94,6 @@ public class WintecServiceSingleton {
     private List<TagMiddle> tagMiddles1; //条形码格式
     private List<TagMiddle> muchTagMiddles; //二维码文字格式
     private List<TagMiddle> muchTagMiddles1; //二维码格式
-    private Logging logging;
 
     private WintecServiceSingleton() {
     }
@@ -116,7 +114,6 @@ public class WintecServiceSingleton {
      * @param scalesCallback
      */
     public void init(Context context, Handler hander, WintecServiceSingleton.ScalesCallback scalesCallback) {
-//        logging = new Logging(context);
         this.scalesCallback = scalesCallback;
         mhandler = hander;
         mContext = context;
@@ -159,15 +156,15 @@ public class WintecServiceSingleton {
     }
 
     public void unbind() {
-//        try {
-//            labelPrinterService.PRN_Close();
-//            scaleService.SCL_Close();
-//        } catch (RemoteException e) {
-//            e.printStackTrace();
-//        }
-//        if (mContext != null && connection != null) {
-//            mContext.unbindService(connection);
-//        }
+        try {
+            labelPrinterService.PRN_Close();
+            scaleService.SCL_Close();
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        if (mContext != null && connection != null) {
+            mContext.unbindService(connection);
+        }
     }
 
     /**
@@ -175,11 +172,11 @@ public class WintecServiceSingleton {
      * 打开串口重量监听
      */
     public void openScale() {
+        if (StringUtils.isEmpty(SCALES_DEVICES)) {
+            SCALES_DEVICES = "/dev/ttySAC1";
+        }
         try {
             scaleService.SCL_Close();
-            if (StringUtils.isEmpty(SCALES_DEVICES)) {
-                SCALES_DEVICES = "/dev/ttySAC1";
-            }
             scaleService.SCL_Open(SCALES_DEVICES, new ScaleListener.Stub() {
                 @Override
                 public void onWeightResult(double v, double v1, boolean b, int i, boolean b1, boolean b2) throws RemoteException {
@@ -226,7 +223,6 @@ public class WintecServiceSingleton {
 
             });
         } catch (Exception e) {
-            e.printStackTrace();
             XLog.e(e);
         }
 
@@ -241,7 +237,7 @@ public class WintecServiceSingleton {
                 }
             });
         } catch (Exception e) {
-            e.printStackTrace();
+            XLog.e(e);
         }
     }
 
@@ -254,7 +250,7 @@ public class WintecServiceSingleton {
                 }
             });
         } catch (Exception e) {
-            e.printStackTrace();
+            XLog.e(e);
         }
     }
 
@@ -267,7 +263,7 @@ public class WintecServiceSingleton {
                 }
             });
         } catch (Exception e) {
-            e.printStackTrace();
+            XLog.e(e);
         }
     }
 

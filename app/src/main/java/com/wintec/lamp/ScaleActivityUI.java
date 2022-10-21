@@ -321,8 +321,8 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
                         }
                         long starttime = System.currentTimeMillis();
                         DetectResult detectResult = api_Detect();
-                        XLog.tag(TAG).i("ResultCode:" + detectResult.getErrorCode() + " || GoodsIds:" + detectResult.getGoodsIds() + " || ModelIds:" + detectResult.getModelIds());
                         String detectTime = (System.currentTimeMillis() - starttime) + "ms";
+                        XLog.i("识别耗时:" + detectTime+"-ResultCode:" + detectResult.getErrorCode() + " || GoodsIds:" + detectResult.getGoodsIds() + " || ModelIds:" + detectResult.getModelIds());
                         XLog.tag(TAG).d("识别耗时:" + detectTime);
                         if (detectResult.getErrorCode() == 0) {
                             detectRe = detectResult;
@@ -1214,7 +1214,7 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
         imgDialog.setPositiveListener(new ImgDialog.DialogPositiveListener() {
             @Override
             public void onClick() {
-                isCanDectect.set(true);
+//                isCanDectect.set(true);//xyq
                 isCanReDetect.set(false);
             }
         });
@@ -1270,9 +1270,6 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
             TTSpeaker.getInstance(mContext).speak(printCommdity.getNameTextA());
         }
         for (int i = 0; i < count; i++) {
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
             dealInsert(printCommdity.parse(), 5);
             WintecServiceSingleton.getInstance().printImgLable(printCommdity, total, quantityOfLockNum, isKg, tradeMode, aiPosAllView.getTitleView().getTare(), mNet);
             try {
@@ -1280,8 +1277,7 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-//            }
-//        }).start();
+
         }
         quantityOfLockNum = 1;
         isContinuityPrintFlag.set(false);
@@ -2417,9 +2413,6 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
         } else {
             co = PluDtoDaoHelper.getCommdityByScalesCode(goodsModel.getGoodsId());
         }
-//        int[] tests =new int[3];
-//        tests[1]=23;
-//        tests[3]=9;
         switch (Const.getSettingValue(Const.KEY_MODE)) {
             case "价签模式":
                 prePrintNet = mNet;

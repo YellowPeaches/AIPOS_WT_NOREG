@@ -265,7 +265,7 @@ public abstract class BaseMvpActivityYM<T extends BaseMvpPresenter> extends Base
         if (!TextTools.checkIsEmpty(msg)) {
             ToastUtils.showToast(msg);
         } else {
-            ToastUtils.showToast("服务器出错了");
+//            ToastUtils.showToast("服务器出错了");
         }
     }
 

@@ -1,4 +1,4 @@
-        apply plugin: 'com.android.application'
+apply plugin: 'com.android.application'
 apply plugin: 'org.greenrobot.greendao' // apply plugin
 apply from: 'and_res_guard.gradle'
 
@@ -42,7 +42,7 @@ android {
         applicationId "com.wintec.lamp"
         minSdkVersion 25
         targetSdkVersion 31
-        versionName "V2.4.05"
+        versionName "V2.4.07"
         versionCode 10213
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         ndk {
@@ -145,7 +145,7 @@ dependencies {
 //    implementation(name: 'WtAISDK_v1.0.35_sdk', ext: 'aar')
 //    implementation(name:'WtAISDK_v1.0.31_sdk', ext:'aar')
 //    implementation(name:'Wintec_AiScaleSDK_4.0.13', ext:'aar')//阈值改变
-    implementation(name:'Wintec_AiScaleSDK_3.0.27', ext:'aar')
+    implementation(name: 'Wintec_AiScaleSDK_3.0.27', ext: 'aar')
     implementation 'androidx.room:room-runtime:2.2.6'
     annotationProcessor 'androidx.room:room-compiler:2.2.6'
     implementation 'com.hjq:http:9.0'

@@ -1,5 +1,6 @@
 package com.wintec.lamp.network;
 
+import com.elvishew.xlog.XLog;
 import com.wintec.aiposui.model.BtnType;
 import com.wintec.aiposui.utils.RxBus;
 import com.wintec.lamp.mvp.ModelImpl;
@@ -42,13 +43,14 @@ public class NetWorkError {
         } else if (throwable instanceof ConnectException
                 || throwable instanceof SocketTimeoutException
                 || throwable instanceof UnknownHostException) {
-            msg = "服务器不可用";
+//            msg = "服务器不可用";
+            XLog.i("服务器不可用");
         } else if (throwable instanceof FileNotFoundException) {
             msg = "文件未找到";
         } else if (throwable instanceof SSLHandshakeException) {
             msg = "证书验证失败";
         } else {
-            msg = "未知错误";
+//            msg = "未知错误";
         }
         modelImpl.onError();
         modelImpl.onMessage(msg);

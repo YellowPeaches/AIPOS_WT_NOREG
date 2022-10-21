@@ -53,7 +53,7 @@ public class BaseActivityNew extends AppCompatActivity {
     protected Activity mContext;
 
     private static String ROOT_PATH = Environment.getExternalStoragePublicDirectory("DIRECTORY_DOCUMENTS").getPath() + "//aipos_log//";
-    private static int logLevel = LogLevel.DEBUG;
+    private static int logLevel = LogLevel.INFO;
     /**
      * 是否需要把dialog圆圈颜色设置为白色(默认为false)
      */
@@ -224,13 +224,13 @@ public class BaseActivityNew extends AppCompatActivity {
         FilePrinter filePrinter = new FilePrinter                      // Printer that print(save) the log to file 打印(保存)日志到文件的打印机
                 .Builder(ROOT_PATH)// Specify the directory path of log file(s) 指定日志文件的目录路径
                 .fileNameGenerator(new MyFileNameGenerator()) //自定义文件名称 默认值:ChangelessFileNameGenerator(“日志”)
-                .backupStrategy(new FileSizeBackupStrategy(3 * 1024 * 1024)) //单个日志文件的大小默认:FileSizeBackupStrategy(1024 * 1024)
-                .cleanStrategy(new FileLastModifiedCleanStrategy(1L * 24L * 60L * 60L * 1000L))  //日志文件存活时间，单位毫秒
+                .backupStrategy(new FileSizeBackupStrategy(6 * 1024 * 1024)) //单个日志文件的大小默认:FileSizeBackupStrategy(1024 * 1024)
+                .cleanStrategy(new FileLastModifiedCleanStrategy(30L * 24L * 60L * 60L * 1000L))  //日志文件存活时间，单位毫秒
                 .flattener(new MyFlattener()) //自定义flattener，控制打印格式
                 .build();
 
         com.elvishew.xlog.XLog.init(config, androidPrinter, filePrinter);
-        com.elvishew.xlog.XLog.i("初始化完成");
+        com.elvishew.xlog.XLog.i("XLog初始化完成");
     }
 
     @Override
