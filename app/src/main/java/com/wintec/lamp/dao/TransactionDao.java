@@ -28,11 +28,12 @@ public class TransactionDao extends AbstractDao<Transaction, Long> {
         public final static Property PLU = new Property(1, String.class, "PLU", false, "PLU");
         public final static Property ItemNo = new Property(2, String.class, "itemNo", false, "ITEM_NO");
         public final static Property GoodName = new Property(3, String.class, "goodName", false, "GOOD_NAME");
-        public final static Property CreateDate = new Property(4, Integer.class, "createDate", false, "CREATE_DATE");
+        public final static Property CreateDate = new Property(4, Long.class, "createDate", false, "CREATE_DATE");
         public final static Property TransactionType = new Property(5, Integer.class, "transactionType", false, "TRANSACTION_TYPE");
-        public final static Property Net = new Property(6, double.class, "net", false, "NET");
-        public final static Property UnitPrice = new Property(7, double.class, "unitPrice", false, "UNIT_PRICE");
-        public final static Property TotalPrice = new Property(8, double.class, "totalPrice", false, "TOTAL_PRICE");
+        public final static Property Hit_Order = new Property(6, Integer.class, "hit_Order", false, "HIT__ORDER");
+        public final static Property Net = new Property(7, double.class, "net", false, "NET");
+        public final static Property UnitPrice = new Property(8, double.class, "unitPrice", false, "UNIT_PRICE");
+        public final static Property TotalPrice = new Property(9, double.class, "totalPrice", false, "TOTAL_PRICE");
     }
 
 
@@ -54,9 +55,10 @@ public class TransactionDao extends AbstractDao<Transaction, Long> {
                 "\"GOOD_NAME\" TEXT," + // 3: goodName
                 "\"CREATE_DATE\" INTEGER," + // 4: createDate
                 "\"TRANSACTION_TYPE\" INTEGER," + // 5: transactionType
-                "\"NET\" REAL NOT NULL ," + // 6: net
-                "\"UNIT_PRICE\" REAL NOT NULL ," + // 7: unitPrice
-                "\"TOTAL_PRICE\" REAL NOT NULL );"); // 8: totalPrice
+                "\"HIT__ORDER\" INTEGER," + // 6: hit_Order
+                "\"NET\" REAL NOT NULL ," + // 7: net
+                "\"UNIT_PRICE\" REAL NOT NULL ," + // 8: unitPrice
+                "\"TOTAL_PRICE\" REAL NOT NULL );"); // 9: totalPrice
     }
 
     /** Drops the underlying database table. */
@@ -89,7 +91,7 @@ public class TransactionDao extends AbstractDao<Transaction, Long> {
             stmt.bindString(4, goodName);
         }
  
-        Integer createDate = entity.getCreateDate();
+        Long createDate = entity.getCreateDate();
         if (createDate != null) {
             stmt.bindLong(5, createDate);
         }
@@ -98,9 +100,14 @@ public class TransactionDao extends AbstractDao<Transaction, Long> {
         if (transactionType != null) {
             stmt.bindLong(6, transactionType);
         }
-        stmt.bindDouble(7, entity.getNet());
-        stmt.bindDouble(8, entity.getUnitPrice());
-        stmt.bindDouble(9, entity.getTotalPrice());
+ 
+        Integer hit_Order = entity.getHit_Order();
+        if (hit_Order != null) {
+            stmt.bindLong(7, hit_Order);
+        }
+        stmt.bindDouble(8, entity.getNet());
+        stmt.bindDouble(9, entity.getUnitPrice());
+        stmt.bindDouble(10, entity.getTotalPrice());
     }
 
     @Override
@@ -127,7 +134,7 @@ public class TransactionDao extends AbstractDao<Transaction, Long> {
             stmt.bindString(4, goodName);
         }
  
-        Integer createDate = entity.getCreateDate();
+        Long createDate = entity.getCreateDate();
         if (createDate != null) {
             stmt.bindLong(5, createDate);
         }
@@ -136,9 +143,14 @@ public class TransactionDao extends AbstractDao<Transaction, Long> {
         if (transactionType != null) {
             stmt.bindLong(6, transactionType);
         }
-        stmt.bindDouble(7, entity.getNet());
-        stmt.bindDouble(8, entity.getUnitPrice());
-        stmt.bindDouble(9, entity.getTotalPrice());
+ 
+        Integer hit_Order = entity.getHit_Order();
+        if (hit_Order != null) {
+            stmt.bindLong(7, hit_Order);
+        }
+        stmt.bindDouble(8, entity.getNet());
+        stmt.bindDouble(9, entity.getUnitPrice());
+        stmt.bindDouble(10, entity.getTotalPrice());
     }
 
     @Override
@@ -153,11 +165,12 @@ public class TransactionDao extends AbstractDao<Transaction, Long> {
             cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // PLU
             cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // itemNo
             cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // goodName
-            cursor.isNull(offset + 4) ? null : cursor.getInt(offset + 4), // createDate
+            cursor.isNull(offset + 4) ? null : cursor.getLong(offset + 4), // createDate
             cursor.isNull(offset + 5) ? null : cursor.getInt(offset + 5), // transactionType
-            cursor.getDouble(offset + 6), // net
-            cursor.getDouble(offset + 7), // unitPrice
-            cursor.getDouble(offset + 8) // totalPrice
+            cursor.isNull(offset + 6) ? null : cursor.getInt(offset + 6), // hit_Order
+            cursor.getDouble(offset + 7), // net
+            cursor.getDouble(offset + 8), // unitPrice
+            cursor.getDouble(offset + 9) // totalPrice
         );
         return entity;
     }
@@ -168,11 +181,12 @@ public class TransactionDao extends AbstractDao<Transaction, Long> {
         entity.setPLU(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
         entity.setItemNo(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
         entity.setGoodName(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
-        entity.setCreateDate(cursor.isNull(offset + 4) ? null : cursor.getInt(offset + 4));
+        entity.setCreateDate(cursor.isNull(offset + 4) ? null : cursor.getLong(offset + 4));
         entity.setTransactionType(cursor.isNull(offset + 5) ? null : cursor.getInt(offset + 5));
-        entity.setNet(cursor.getDouble(offset + 6));
-        entity.setUnitPrice(cursor.getDouble(offset + 7));
-        entity.setTotalPrice(cursor.getDouble(offset + 8));
+        entity.setHit_Order(cursor.isNull(offset + 6) ? null : cursor.getInt(offset + 6));
+        entity.setNet(cursor.getDouble(offset + 7));
+        entity.setUnitPrice(cursor.getDouble(offset + 8));
+        entity.setTotalPrice(cursor.getDouble(offset + 9));
      }
     
     @Override

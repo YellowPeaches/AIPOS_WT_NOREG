@@ -1,14 +1,12 @@
 package com.wintec.lamp;
 
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.Toast;
+
+import androidx.annotation.Nullable;
 
 import com.qmuiteam.qmui.skin.QMUISkinManager;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
@@ -20,7 +18,6 @@ import com.qmuiteam.qmui.widget.grouplist.QMUIGroupListView;
 import com.qmuiteam.qmui.widget.popup.QMUIPopup;
 import com.wintec.aiposui.view.dialog.AiTipDialog;
 import com.wintec.lamp.base.BaseActivity;
-import com.wintec.lamp.base.BaseActivityNew;
 import com.wintec.lamp.base.Const;
 import com.wintec.lamp.data.EditType;
 import com.wintec.lamp.entity.EditEntity;
@@ -64,6 +61,7 @@ public class GetPluSettingActivty extends BaseActivity {
         itemViewMap = new HashMap<>();
         int height = QMUIResHelper.getAttrDimen(mContext, R.attr.qmui_list_item_height_higher);
         addSettingItem(Const.KEY_GET_DATA_MODE, "获取数据方式", height, true);
+        addSettingItem(Const.DELAY_TIME, "定时取数时间间隔(单位秒)", height, true);
         addSettingItem(Const.KEY_GET_DATA_DB, "数据库选择", height, true);
         addSettingItem("ScaleSend", "传秤设置", height, false);
         addSettingItem(Const.KEY_GET_DATA_IP, "数据库ip", height, false);
@@ -91,6 +89,9 @@ public class GetPluSettingActivty extends BaseActivity {
                     showSimpleBottomSheetList(
                             true, false, "获取数据方式",
                             listItems, true, false, Const.KEY_GET_DATA_MODE, itemViewMap.get(Const.KEY_GET_DATA_MODE));
+                })
+                .addItemView(itemViewMap.get(Const.DELAY_TIME), v -> {
+                    startEdit(Const.DELAY_TIME, "定时取数间隔", Const.getSettingValue(Const.DELAY_TIME), EditType.Edit_TYPE_NUMBER);
                 })
                 .addItemView(itemViewMap.get(Const.KEY_GET_DATA_DB), v -> {
                     String[] listItems = new String[]{

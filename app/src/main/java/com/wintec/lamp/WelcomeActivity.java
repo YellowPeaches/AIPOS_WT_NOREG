@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.text.TextUtils;
@@ -353,6 +354,7 @@ public class WelcomeActivity extends BaseMvpActivity<WelcomePresenter> implement
         params.put("posCode", Const.SN);
         params.put("state", "1");
         params.put("posId", posId);//pos编号
+        params.put("versionCode", Const.getSettingValue(Const.BACK_VERSION));
         Gson gson = new Gson();
         String strEntity = gson.toJson(params);
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json;charset=UTF-8"), strEntity);
@@ -398,6 +400,7 @@ public class WelcomeActivity extends BaseMvpActivity<WelcomePresenter> implement
         Const.setSettingValue(Const.KEY_GET_DATA_UP_PRICE_CHANGE_SQL, "INSERT INTO TESTONLINE.CLERK_LOG (CODE, SCALE_CODE, PLU_NUMBER,COMMODITY_NAME,EDITDATE,TIME,STATUS,SCALE_IP,OLD_UNIT_PRICE,NEW_UNIT_PRICE,PRINTED_EAN_DATA) VALUES( #{CODE}, #{SCALE_CODE},  #{PLU_NUMBER},#{COMMODITY_NAME},#{EDITDATE},#{TIME},#{STATUS},#{SCALE_IP},#{OLD_UNIT_PRICE},#{NEW_UNIT_PRICE},#{PRINTED_EAN_DATA})");
 
         //临时默认配置
+        Const.setSettingValue(Const.DELAY_TIME, "1800");
         Const.setSettingValue(Const.KEY_GET_DATA_IP, "118.31.114.118");
         Const.setSettingValue(Const.KEY_GET_DATA_PORT, "1433");
         Const.setSettingValue(Const.KEY_GET_DATA_DB_NAME, "get_online");
@@ -459,7 +462,11 @@ public class WelcomeActivity extends BaseMvpActivity<WelcomePresenter> implement
         //识别阈值默认值
         Const.setSettingValue(Const.DETECT_THRESHOLD, "0.65");
         //获取称重串口
-        Const.setSettingValue(Const.GET_WEIGHT_PORT, "/dev/ttySAC4");
+        if (Build.VERSION.SDK_INT < 30)
+            Const.setSettingValue(Const.GET_WEIGHT_PORT, "/dev/ttySAC1");
+        else
+            Const.setSettingValue(Const.GET_WEIGHT_PORT, "/dev/ttySAC4");
+
         Const.setSettingValue(Const.ERROR_LOG_FLAG, "0");
 
         setDefaultTag();

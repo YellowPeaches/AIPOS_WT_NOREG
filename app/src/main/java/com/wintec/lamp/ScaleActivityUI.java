@@ -113,6 +113,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
@@ -322,7 +324,7 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
                         long starttime = System.currentTimeMillis();
                         DetectResult detectResult = api_Detect();
                         String detectTime = (System.currentTimeMillis() - starttime) + "ms";
-                        XLog.i("识别耗时:" + detectTime+"-ResultCode:" + detectResult.getErrorCode() + " || GoodsIds:" + detectResult.getGoodsIds() + " || ModelIds:" + detectResult.getModelIds());
+                        XLog.i("识别耗时:" + detectTime + "-ResultCode:" + detectResult.getErrorCode() + " || GoodsIds:" + detectResult.getGoodsIds() + " || ModelIds:" + detectResult.getModelIds());
                         XLog.tag(TAG).d("识别耗时:" + detectTime);
                         if (detectResult.getErrorCode() == 0) {
                             detectRe = detectResult;
@@ -1343,13 +1345,17 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
             }, Const.getSettingValue(Const.KEY_SCALE_PORT) == null || "".equals(Const.getSettingValue(Const.KEY_SCALE_PORT)) ? 3001 : Integer.valueOf(Const.getSettingValue(Const.KEY_SCALE_PORT)));
             initTaceability();
         } else if ("批量取数".equals(Const.getSettingValue(Const.KEY_GET_DATA_MODE)) || "在线取数".equals(Const.getSettingValue(Const.KEY_GET_DATA_MODE))) {
-            //todo 批量取数
+            //todo 批量取数 定时任务
             ThreadPoolManagerUtils.getInstance().execute(() -> {
-                getDataOnline();
+                ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+                executor.scheduleWithFixedDelay(new Runnable() {
+                    @Override
+                    public void run() {
+                        SystemClock.sleep(5000L);
+                        getDataOnline();
+                    }
+                }, 17, Long.valueOf(Const.getSettingValue("DELAY_TIME")), TimeUnit.SECONDS);
             });
-//            getDataOnline();
-
-            // ThreadPoolManagerUtils.getInstance().execute(()->{ initDuoDianPlu();});
         }
     }
 
@@ -1362,10 +1368,11 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
      */
 
     private void getDataOnline() {
+        XLog.i("开始批量读数据库");
         if (NetWorkUtil.isNetworkAvailable(this)) {
             DBUtil.init(scalesHandler);
             ThreadCacheManager.getExecutorService().execute(() -> {
-
+                Long startTime = System.currentTimeMillis();
                 String settingValue = Const.getSettingValue(Const.KEY_GET_DATA_SQL);
                 String settingValue1 = Const.getSettingValue(Const.KEY_GET_DATA_ADDITIONAL_SQL);
                 List plus = null;
@@ -1379,15 +1386,16 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
                     try {
                         accs = DBUtil.Query(settingValue1);
                     } catch (SQLException throwables) {
-                        throwables.printStackTrace();
+                        XLog.e(throwables);
                     }
                 }
                 saveSqlDate(plus, accs);
-                new DBUtil().logWriteData("写入本地数据库完成");
+                Long endTime = System.currentTimeMillis();
+                XLog.i("写入本地数据库完成,花费 " + (endTime - startTime) / 1000 + " s");
             });
         } else {
             //不处理
-            new DBUtil().logWriteData("无网络连接，批量下载数据失败");
+            XLog.i("无网络连接，批量下载数据失败");
         }
     }
 

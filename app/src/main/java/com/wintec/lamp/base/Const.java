@@ -238,6 +238,8 @@ public class Const {
     public final static String KEY_GET_DATA_MODE = "KEY_GET_DATA_MODE";
     //ip
     public final static String KEY_GET_DATA_IP = "KEY_GET_DATA_IP";
+    //定时取数间隔
+    public final static String DELAY_TIME = "DELAY_TIME";
     //端口
     public final static String KEY_GET_DATA_PORT = "KEY_GET_DATA_PORT";
     //数据库名

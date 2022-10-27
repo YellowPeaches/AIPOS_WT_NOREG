@@ -1,13 +1,19 @@
 package com.wintec.lamp.base;
 
 import android.database.sqlite.SQLiteDatabase;
+import android.hardware.Camera;
 import android.hardware.camera2.CameraCharacteristics;
+import android.os.Build;
+import android.widget.Toast;
 
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
+import com.wintec.aiposui.view.AiPosAllView;
+import com.wintec.aiposui.view.dialog.AiTipDialog;
 import com.wintec.detection.WtAISDK;
 import com.wintec.detection.utils.LogUtils;
 import com.wintec.detection.utils.StringUtils;
+import com.wintec.lamp.R;
 import com.wintec.lamp.dao.DaoMaster;
 import com.wintec.lamp.dao.DaoSession;
 import com.wintec.lamp.dao.helper.GreenDaoUpgradeHelper;
@@ -15,11 +21,19 @@ import com.wintec.lamp.network.NetWorkManager;
 import com.wintec.lamp.utils.ContextUtils;
 import com.wintec.lamp.utils.CrashHandler;
 
+import java.util.List;
+
+import butterknife.BindView;
+
 public class MyApp extends BaseApp {
 
     private static DaoSession daoSession;
     private static SQLiteDatabase db;
     private RefWatcher refWatcher;
+    private AiTipDialog aiTipDialog;
+
+    @BindView(R.id.aipos)
+    AiPosAllView aiPosAllView;
 
     @Override
     public void onCreate() {
@@ -47,10 +61,13 @@ public class MyApp extends BaseApp {
 
         // 初始化网络框架
         NetWorkManager.getInstance().init();
-        //字体
-//        TypefaceUtil.replaceSystemDefaultFont(this,"fonts/msyh.ttf");
-//        xcrash.XCrash.init(this);
-//        LogUtils.i("程序启动"+ WintecDevInfo.getDevSn());
+//        检查摄像头
+        boolean cameraEnable = checkCameraEnable();
+        if (!cameraEnable) {
+            Toast.makeText(this, "相机未连接", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "相机未连接", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "相机未连接", Toast.LENGTH_LONG).show();
+        }
 
         //根据摄像头选择 CameraCharacteristics.LENS_FACING_FRONT
         WtAISDK.api_setCameraId(CameraCharacteristics.LENS_FACING_FRONT);
@@ -94,5 +111,39 @@ public class MyApp extends BaseApp {
 
     public static SQLiteDatabase getSQLiteDatabase() {
         return db;
+    }
+
+    public static boolean checkCameraEnable() {
+        boolean result;
+        Camera camera = null;
+        try {
+            camera = Camera.open();
+            if (camera == null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
+                boolean connected = false;
+                for (int camIdx = 0; camIdx < Camera.getNumberOfCameras(); ++camIdx) {
+                    try {
+                        camera = Camera.open(camIdx);
+                        connected = true;
+                    } catch (RuntimeException e) {
+                        e.printStackTrace();
+                    }
+                    if (connected) {
+                        break;
+                    }
+                }
+            }
+            List<Camera.Size> supportedPreviewSizes = camera.getParameters().getSupportedPreviewSizes();
+            result = supportedPreviewSizes != null;
+            /* Finally we are ready to start the preview */
+
+            camera.startPreview();
+        } catch (Exception e) {
+            result = false;
+        } finally {
+            if (camera != null) {
+                camera.release();
+            }
+        }
+        return result;
     }
 }
