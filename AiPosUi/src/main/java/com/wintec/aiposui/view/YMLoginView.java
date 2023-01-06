@@ -8,8 +8,6 @@ import android.widget.TextView;
 
 import com.wintec.aiposui.R;
 
-import butterknife.BindView;
-
 /**
  * @author 赵冲
  * @description:
@@ -32,11 +30,6 @@ public class YMLoginView extends AiPosLayout {
     private EditText accountcompany;
 
     /**
-     * 获取mac地址
-     */
-    private  TextView getMacText;
-
-    /**
      * 注册
      */
     private TextView tvSign;
@@ -55,7 +48,10 @@ public class YMLoginView extends AiPosLayout {
         posEdit = view.findViewById(R.id.pos_edit);
         macText = view.findViewById(R.id.mac_text);
         accountcompany = view.findViewById(R.id.account_company);
-        getMacText = view.findViewById(R.id.get_mac_text);
+        /**
+         * 获取mac地址
+         */
+        TextView getMacText = view.findViewById(R.id.get_mac_text);
         tvSign = view.findViewById(R.id.tv_sign);
     }
 

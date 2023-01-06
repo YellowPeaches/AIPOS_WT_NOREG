@@ -7,25 +7,16 @@ import com.wintec.aiposui.view.AiPosListView;
 import com.wintec.aiposui.view.AiPosTitleView;
 import com.wintec.detection.bean.DetectResult;
 import com.wintec.lamp.api.ComModel;
-import com.wintec.lamp.base.Const;
 import com.wintec.lamp.contract.ScaleContract;
-import com.wintec.lamp.dao.PluDtoDao;
-import com.wintec.lamp.dao.entity.Commdity;
 import com.wintec.lamp.dao.entity.PluDto;
-import com.wintec.lamp.dao.helper.CommdityHelper;
 import com.wintec.lamp.dao.helper.PluDtoDaoHelper;
 import com.wintec.lamp.network.ModelRequestCallBack;
 import com.wintec.lamp.result.HttpResponse;
-import com.wintec.lamp.utils.CommUtils;
-import com.wintec.detection.bean.DetectResult;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
-
-import okhttp3.RequestBody;
 
 /**
  * Created by Android Studio.
@@ -121,7 +112,7 @@ public class ScalePresenter extends ScaleContract.Presenter {
 
             @Override
             public void onFail() {
-
+                int a =0;
             }
         });
     }

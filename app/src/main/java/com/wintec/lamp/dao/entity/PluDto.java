@@ -287,7 +287,7 @@ public class PluDto {
         String preflag = Const.getSettingValue(Const.PREVIEW_FLAG);
         boolean isKg = "kg".equals(Const.getSettingValue(Const.WEIGHT_UNIT));
         GoodsModel goodsModel = new GoodsModel(itemNo, this.pluNo, nameTextA, "",
-                CommUtils.Float2String(unitPriceA, 2), "0",
+                CommUtils.Float2String(unitPriceA, totalPricePoint), "0",
                 previewImage, priceUnitA, "", sellByDate, preflag, itemNo, discountFlagA, priceChangeFlagA);
         goodsModel.setKg(isKg);
         Total total = getTotal(goodsModel, status, discount, tempPrice, tempTotal, mNet);
@@ -338,7 +338,8 @@ public class PluDto {
         if (status == ScaleActivityUI.MODE_CHANGE_TOTAL_TRADE) {
             total = tempTotal;
         }
-        String mTotal = CommUtils.priceToString(Float.valueOf(CommUtils.Float2String(total, totalPricePoint)));
+        final String tempTotel = CommUtils.Float2String(total, totalPricePoint);
+        String mTotal = CommUtils.priceToString(Float.valueOf(tempTotel));
         String discountPrice = String.valueOf(price);
         return new Total(mTotal, discountPrice, status);
     }

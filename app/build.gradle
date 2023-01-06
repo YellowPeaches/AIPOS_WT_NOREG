@@ -21,7 +21,7 @@ android {
             outputFileName = fileName
         }
     }
-    compileSdkVersion 30
+    compileSdkVersion 31
     buildToolsVersion '30.0.2'
     signingConfigs {
         debug {
@@ -42,10 +42,11 @@ android {
         applicationId "com.wintec.lamp"
         minSdkVersion 25
         targetSdkVersion 31
-        versionName "V2.4.08"
+        versionName "V2.5.02NRS"
         versionCode 10213
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         ndk {
+//            abiFilters 'arm64-v8a'
             abiFilters 'armeabi-v7a'
         }
     }
@@ -73,7 +74,7 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
     greendao {
-        schemaVersion 8
+        schemaVersion 9
         daoPackage 'com.wintec.lamp.dao'//设置DaoMaster、DaoSession、Dao包名
         targetGenDir 'src/main/java'//设置DaoMaster、DaoSession、Dao目录
     }
@@ -141,11 +142,10 @@ dependencies {
 
     implementation 'com.github.tbruyelle:rxpermissions:0.10.2'
     implementation 'com.tencent:mmkv-static:1.2.1'
-    //元芒sdk
-//    implementation(name: 'WtAISDK_v1.0.35_sdk', ext: 'aar')
-//    implementation(name:'WtAISDK_v1.0.31_sdk', ext:'aar')
-//    implementation(name:'Wintec_AiScaleSDK_4.0.13', ext:'aar')//阈值改变
-    implementation(name: 'Wintec_AiScaleSDK_3.0.27', ext: 'aar')
+
+    //识别sdk
+    implementation(name: 'Wintec_AiScaleSDK_3.0.34', ext: 'aar')
+
     implementation 'androidx.room:room-runtime:2.2.6'
     annotationProcessor 'androidx.room:room-compiler:2.2.6'
     implementation 'com.hjq:http:9.0'
@@ -161,4 +161,6 @@ dependencies {
     implementation 'com.youth.banner:banner:1.4.10'
     // XLog日志
     implementation 'com.elvishew:xlog:1.7.2'
+    //Android使用NanoHttpd
+    implementation 'org.nanohttpd:nanohttpd:2.3.1'
 }

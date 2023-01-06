@@ -53,9 +53,11 @@ import com.wintec.aiposui.view.dialog.NUIKeyDialog;
 import com.wintec.aiposui.view.keyboard.KeyBoardEditText;
 import com.wintec.detection.WtAISDK;
 import com.wintec.detection.bean.DetectResult;
+import com.wintec.detection.utils.StringUtils;
 import com.wintec.domain.Acc;
 import com.wintec.domain.DataBean;
 import com.wintec.domain.Plu;
+import com.wintec.domain.TraceCode;
 import com.wintec.lamp.base.BaseMvpActivityYM;
 import com.wintec.lamp.base.Const;
 import com.wintec.lamp.contract.ScaleContract;
@@ -161,6 +163,7 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
     private NUIKeyDialog priceKeyboard;       // 价格键盘
     private NUIKeyDialog tempPriceKeyboard;   // 价格键盘
     private NUIKeyDialog resStudyKeyboard;    // 重新学习键盘
+    private NUIKeyDialog deleteOnePLUKeyboard;    // 重新学习键盘
     private QMUIBottomSheet quitBottomSheet;  // 退出确认底部菜单
     private NUIKeyDialog tareKeyboard;        // 皮重键盘
     private NUIKeyDialog lockByNumNumKeyboard;        // 锁定输入份数键盘
@@ -252,7 +255,7 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
     //当前co,避免在线取数时重复查，减少耗时
     PluDto currentCo = null;
 
-    public static int flag = 0;    //
+    public static boolean detectFlagOver = true;    //是否识别完成
     public static int quantityOfLockNum = 1;    //锁定连打几个
 
 //    private ImageView imageView;
@@ -322,15 +325,41 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
                             return;
                         }
                         long starttime = System.currentTimeMillis();
-                        DetectResult detectResult = api_Detect();
+
+                        final DetectResult[] detectResult = {null};
+                        int detectCount = 0;
+                        if (detectFlagOver) {
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    detectResult[0] = api_Detect();
+                                }
+                            }).start();
+                            detectFlagOver = false;
+                        } else {
+                            String detectTime = (System.currentTimeMillis() - starttime) + "ms";
+                            XLog.i("上次识别还未完成:" + detectTime);
+                        }
+                        while (detectResult[0] == null && System.currentTimeMillis() - starttime < 460) {
+                            detectCount++;
+                        }
+                        detectFlagOver = true;
+//                        detectResult = api_Detect();
+
+                        if (detectResult[0] == null) {
+                            String detectTime = (System.currentTimeMillis() - starttime) + "ms";
+                            XLog.i("识别超时:" + detectTime);
+                            aiPosAllView.getListView().noResult();
+                            return;
+                        }
                         String detectTime = (System.currentTimeMillis() - starttime) + "ms";
-                        XLog.i("识别耗时:" + detectTime + "-ResultCode:" + detectResult.getErrorCode() + " || GoodsIds:" + detectResult.getGoodsIds() + " || ModelIds:" + detectResult.getModelIds());
-                        XLog.tag(TAG).d("识别耗时:" + detectTime);
-                        if (detectResult.getErrorCode() == 0) {
-                            detectRe = detectResult;
+                        XLog.i("识别耗时:" + detectTime + "-ResultCode:" + detectResult[0].getErrorCode() + " || GoodsIds:" + detectResult[0].getGoodsIds() + " || ModelIds:" + detectResult[0].getModelIds());
+
+                        if (detectResult[0].getErrorCode() == 0) {
+                            detectRe = detectResult[0];
                             if ("在线取数".equals(Const.getSettingValue(Const.KEY_GET_DATA_MODE)) && NetWorkUtil.isNetworkAvailable(context)) {
                                 ThreadPoolManagerUtils.getInstance().execute(() -> {
-                                    getPriceBypluList(detectResult.getGoodsIds());
+                                    getPriceBypluList(detectRe.getGoodsIds());
                                 });
                             }
                             scalesHandler.sendEmptyMessage(SCALES_SHOW_PLU);
@@ -843,7 +872,7 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
      * @return
      */
     public boolean isNumeric(String str) {
-        if (str.equals("")) {
+        if ("".equals(str)) {
             return false;
         }
         Pattern pattern = Pattern.compile("[0-9]*");
@@ -1041,6 +1070,18 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
                 dialog.dismiss();
             }
         }).create();
+        //删除单个指定商品
+        deleteOnePLUKeyboard = new NUIKeyDialog.Builder(mContext).addKeyView("请输入要删除的打称码", NUIKeyView.KEY_TYPE_NUMBER).addDialogListner(new NUIKeyDialog.Builder.DialogListner() {
+            @Override
+            public void onConfirm(String code, NUIKeyDialog dialog, int param) {
+                deleteOnePLU(code);
+            }
+
+            @Override
+            public void onCancel(NUIKeyDialog dialog) {
+                dialog.dismiss();
+            }
+        }).create();
         // 临时价格键盘
         tempPriceKeyboard = new NUIKeyDialog.Builder(mContext).addKeyView("请输入商品单价", NUIKeyView.KEY_TYPE_NUMBER_DISCOUNT).addDialogListner(new NUIKeyDialog.Builder.DialogListner() {
             @Override
@@ -1139,7 +1180,12 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
         }, "是否退出？");
 
         //初始化最小
-        weight = Float.parseFloat(Const.getSettingValue(Const.DELECT_WEIGHT));
+        weight = 30;
+        try {
+            weight = Float.parseFloat(Const.getSettingValue(Const.DELECT_WEIGHT));
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+        }
         // 列表点击、刷新事件
         aiPosAllView.getListView().setClickListener(new com.wintec.aiposui.view.AiPosListView.ClickListener() {
             @Override
@@ -1240,6 +1286,23 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
 
             }
         });
+        aiPosAllView.getTitleView().getTv_price().setOnClickListener(new View.OnClickListener() {
+            final static int COUNTS = 5;//点击次数
+            final static long DURATION = 3 * 1000;//规定有效时间
+            long[] mHits = new long[COUNTS];
+
+            @Override
+            public void onClick(View view) {
+                System.arraycopy(mHits, 1, mHits, 0, mHits.length - 1);
+                mHits[mHits.length - 1] = SystemClock.uptimeMillis();
+                if (mHits[0] >= (SystemClock.uptimeMillis() - DURATION)) {
+                    if (mHits.length == 5) {
+                        deleteOnePLUKeyboard.show();
+                    }
+                }
+
+            }
+        });
         aiPosAllView.getTitleView().getTv_total().setOnClickListener(new View.OnClickListener() {
             final static int COUNTS = 5;//点击次数
             final static long DURATION = 3 * 1000;//规定有效时间
@@ -1315,34 +1378,60 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
     private void initReceiveCommdity() {
         if ("托利多传秤".equals(Const.getSettingValue(Const.KEY_GET_DATA_MODE))) {
             //  初始化传称
-            ScaleTrancefer.getInstance().startLoadPluData(new ScaleTranceferListener() {
-                @Override
-                public void onConnected() {
-                }
+            try {
+                ScaleTrancefer.getInstance().startLoadPluData(new ScaleTranceferListener() {
+                    @Override
+                    public void onConnected() {
+                    }
 
-                @Override
-                public void onDataReceived(String str) {
-                }
+                    @Override
+                    public void onDataReceived(String str) {
+                    }
 
-                @Override
-                public void onException(String str) {
-                }
+                    @Override
+                    public void onException(String str) {
+                    }
 
-                @Override
-                public void onIOException(String str) {
-                }
+                    @Override
+                    public void onIOException(String str) {
+                    }
 
-                @Override
-                public void onStart(String str) {
-                }
+                    @Override
+                    public void onStart(String str) {
+                    }
 
-                @Override
-                public void pluList(List<DataBean> dataBeans) {
-//                    String Json = new Gson().toJson(dataBeans);
-//                    Log.e("json",Json);
-                    insert(dataBeans);
-                }
-            }, Const.getSettingValue(Const.KEY_SCALE_PORT) == null || "".equals(Const.getSettingValue(Const.KEY_SCALE_PORT)) ? 3001 : Integer.valueOf(Const.getSettingValue(Const.KEY_SCALE_PORT)));
+                    @Override
+                    public void pluList(List<DataBean> dataBeans) {
+                        insert(dataBeans);
+                    }
+
+                    @Override
+                    public void zsmList(List<DataBean> list) {
+                        int a = 0;
+                    }
+
+                    @Override
+                    public void bpluspluList(List<DataBean> list) {
+                        insert(list);
+                    }
+
+                    @Override
+                    public void bpluszsmList(List<DataBean> list) {
+                        //追溯码
+//                        System.out.println(list.toString());
+                        insertbpluszsm(list);
+                    }
+
+                    @Override
+                    public void bpluszsmpluList(List<DataBean> list) {
+                        //追溯码国标码
+//                        System.out.println(list.toString());
+                        insertbpluszsmgbm(list);
+                    }
+                }, Const.getSettingValue(Const.KEY_SCALE_PORT) == null || "".equals(Const.getSettingValue(Const.KEY_SCALE_PORT)) ? 3001 : Integer.valueOf(Const.getSettingValue(Const.KEY_SCALE_PORT)));
+            } catch (NumberFormatException e) {
+                XLog.e(e);
+            }
             initTaceability();
         } else if ("批量取数".equals(Const.getSettingValue(Const.KEY_GET_DATA_MODE)) || "在线取数".equals(Const.getSettingValue(Const.KEY_GET_DATA_MODE))) {
             //todo 批量取数 定时任务
@@ -1582,8 +1671,27 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
         } else {
             aiTipDialog.showFail("请开启重新学习权限", aiPosAllView);
         }
+    }
 
-
+    /**
+     * @param code 商品plu
+     * @description:
+     * @return: void
+     * @author: dean
+     * @time: 2022/11/10 10:38
+     */
+    private void deleteOnePLU(String code) {
+        if (code == null || code.equals("")) {
+            CommUtils.showMessage(mContext, "输入PLU不能为空");
+            return;
+        }
+        final PluDto commdityByScalesCode = PluDtoDaoHelper.getCommdityByScalesCode(code);
+        if (commdityByScalesCode == null) {
+            CommUtils.showMessage(mContext, "输入PLU有误，未查询到商品");
+            return;
+        }
+        PluDtoDaoHelper.deleteOneByPLU(commdityByScalesCode);
+        aiTipDialog.showSuccess("已删除 " + code, aiPosAllView);
     }
 
     private void setTitleData(GoodsModel model, int count, Total total) {
@@ -1605,7 +1713,7 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
      */
     private void dealInsert(GoodsModel model, int proportion) {
         Map<String, Object> map = new HashMap<>();
-        String content = model.getGoodsName();//识别出的菜的名字
+        String content = model.getGoodsName();//识别出的商品的名字
         int pricingManner = model.getUnitId();
         String transactionValue = model.getPrice();//商品的价格
         String branchCode = Const.getSettingValue(Const.KEY_BRANCH_ID);
@@ -1616,7 +1724,7 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
         map.put("transactionValue", transactionValue);
         map.put("pricingManner", pricingManner);//9-计件  4-计重
         map.put("weight", weight);
-        map.put("branchCode", branchCode);
+        map.put("branchCode", StringUtils.isEmpty(branchCode) ? "210629001" : branchCode);
         map.put("plu", model.getGoodsId());
         map.put("SD", Const.getSettingValue(Const.TRACEABILITY_CODE_PORT));
         map.put("proportion", proportion);
@@ -1653,7 +1761,7 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
             dialog.dismiss();
             return;
         }
-        if (code == null || code.equals("") || code.contains(".")) {
+        if (code == null || "".equals(code) || code.contains(".")) {
             return;
         }
         int number = Integer.valueOf(code);
@@ -1719,28 +1827,6 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
      * @param goodsModel
      */
     void onGoodsItemClick(GoodsModel goodsModel, int position, boolean isRecommond) {
-
-//        new Thread(() -> {
-//            WtAISDKEngine WtAISDKEngine = WtAISDKEngine.f();
-//            Class aClass = WtAISDKEngine.getClass();
-//            Method method = null;
-//            try {
-//                method = aClass.getDeclaredMethod("RunA", Bitmap.class, boolean.class, int.class);
-//            } catch (NoSuchMethodException e) {
-//                e.printStackTrace();
-//            }
-//            method.setAccessible(true);
-//            try {
-//                String invoke = (String)method.invoke(WtAISDKEngine,detectRe.getCropBitmap(), true, 10);
-//                Log.i(TAG, "initView: "+invoke);
-//            } catch (IllegalAccessException e) {
-//                e.printStackTrace();
-//            } catch (InvocationTargetException e) {
-//                e.printStackTrace();
-//            }
-//            DetectModelResult a = WtAISDKEngine.a(detectRe.getCropBitmap(), true, 10);
-//            Log.i(TAG, "initView: "+a.toString());
-//        }).start();
         // 按KG卖
         if (net <= 0.0f && goodsModel.getUnitId() == 0 && !priceChangeFlagFoever) {
             aiTipDialog.showFail("重量不能为零", aiPosAllView);
@@ -1797,14 +1883,19 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
                 int detectResultNew = detectResult;
                 try {
                     if (NetWorkUtil.isNetworkAvailable(this)) {
+//                        int finalDetectResult = detectResult;
                         new Thread(new Runnable() {
                             @Override
                             public void run() {
-                                dealInsert(goodsModel, detectResultNew);
-//                                upImg(this.taskId, goodsModel.getGoodsName(), goodsModel.getGoodsId(), detectResult);
+//                                dealInsert(goodsModel, detectResultNew);
+                                try {
+                                    dealInsert(goodsModel, detectResultNew);
+//                                    upImg(taskId, goodsModel.getGoodsName(), goodsModel.getGoodsId(), finalDetectResult);
+                                } catch (Exception e) {
+                                    XLog.e(e);
+                                }
                             }
                         }).start();
-
                     }
 //                } catch (InvalidKeySpecException e) {
 //                    e.printStackTrace();
@@ -2421,6 +2512,14 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
         } else {
             co = PluDtoDaoHelper.getCommdityByScalesCode(goodsModel.getGoodsId());
         }
+        if (co == null) {
+            aiTipDialog.showFail("商品查询错误", aiPosAllView);
+            return;
+        }
+        //是否语音播报
+        if ("1".equals(Const.getSettingValue(Const.VOIDCE_BROADCAST_FLAG))) {
+            TTSpeaker.getInstance(mContext).speak(co.getNameTextA() + " " + total.getTotal() + "元");
+        }
         switch (Const.getSettingValue(Const.KEY_MODE)) {
             case "价签模式":
                 prePrintNet = mNet;
@@ -2435,17 +2534,10 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
                     goodsModel.setNet(mNet + "");
                     goodsModel.setTotal(total.getTotal());
                     goodsModel.setPrice(total.getPrice());
-                    //是否语音播报
-                    if ("1".equals(Const.getSettingValue(Const.VOIDCE_BROADCAST_FLAG))) {
-                        TTSpeaker.getInstance(mContext).speak(goodsModel.getGoodsName());
-                    }
+
                     aiPosAllView.getAiPosAccountList().addData(goodsModel);
                     mPresentation.addData(goodsModel);
                 } else {
-                    //是否语音播报
-                    if ("1".equals(Const.getSettingValue(Const.VOIDCE_BROADCAST_FLAG))) {
-                        TTSpeaker.getInstance(mContext).speak(co.getNameTextA());
-                    }
                     //副屏展示信息
                     float unitprice = co.getUnitPriceA();
                     co.setUnitPriceA(Float.parseFloat(total.getPrice()));
@@ -2491,10 +2583,6 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
                 comIO.send(barcode + "\r");
                 break;
             case "收银台模式(ttySAC4)":
-                //是否语音播报
-                if ("1".equals(Const.getSettingValue(Const.VOIDCE_BROADCAST_FLAG))) {
-                    TTSpeaker.getInstance(mContext).speak(co.getNameTextA());
-                }
                 if (comIO == null) {
                     this.comIO = new ComIO("/dev/ttySAC4", 9600);
                 }
@@ -2505,10 +2593,6 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
                 comIO.send(barcode1 + "\r");
                 break;
             case "收银台模式(ttySAC3)":
-                //是否语音播报
-                if ("1".equals(Const.getSettingValue(Const.VOIDCE_BROADCAST_FLAG))) {
-                    TTSpeaker.getInstance(mContext).speak(co.getNameTextA());
-                }
                 if (comIO == null) {
                     this.comIO = new ComIO("/dev/ttySAC3", 9600);
                 }
@@ -2661,7 +2745,10 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
             if (item instanceof Plu) {
                 Plu plu = (Plu) item;
                 PluDto commdity = new PluDto(plu);
-                commdity.setInitials(PinyinUtil.getFirstSpell(plu.getNameTextA()));
+                String pluName = plu.getNameTextA();
+                //去除商品名里的字母
+                pluName =pluName.replaceAll("[a-zA-Z]", "");
+                commdity.setInitials(PinyinUtil.getFirstSpell(pluName));
                 commdity.setBranchId(Const.getSettingValue(Const.KEY_BRANCH_ID));
                 PluDto commdityByItemCode = PluDtoDaoHelper.getCommdityByScalesCodeLocal(commdity.getPluNo());
                 if (commdityByItemCode == null) {
@@ -2681,9 +2768,29 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
         });
     }
 
+    private void insertbpluszsm(List<DataBean> dataBeans) {
+        dataBeans.forEach(item -> {
+            TraceCode traceCode = (TraceCode) item;
+            TraceabilityCode traceabilityCode = new TraceabilityCode(traceCode);
+            TraceabilityCodeHelper.insert(traceabilityCode);
+        });
+
+    }
+
+    private void insertbpluszsmgbm(List<DataBean> dataBeans) {
+//        GolCodePlu golCodePlu =(GolCodePlu)dataBeans;
+
+    }
+
     @Override
     public void onResume() {
-        weight = Float.parseFloat(Const.getSettingValue(Const.DELECT_WEIGHT));
+        try {
+            weight = Float.parseFloat(Const.getSettingValue(Const.DELECT_WEIGHT));
+        } catch (NumberFormatException e) {
+            weight = 30;
+            e.printStackTrace();
+        }
+        ;
         isKg = "kg".equals(Const.getSettingValue(Const.WEIGHT_UNIT));
         try {
             maxDetectNum = Integer.parseInt(Const.getSettingValue(Const.KEY_GOODS_COUNT));
@@ -2906,6 +3013,10 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
         }
         PluDto co = PluDtoDaoHelper.getCommdityByScalesCode(disTempModel.getGoodsId());
         Total total = setTotalandDisdiscountPrice(disTempModel, "1");
+        if (co == null) {
+            aiTipDialog.showFail("未查到该商品", aiPosAllView);
+            return;
+        }
         if (co.getUnitPriceA() == 0.00f) {
             aiTipDialog.showFail("单价不能为零", aiPosAllView);
             clearMode();

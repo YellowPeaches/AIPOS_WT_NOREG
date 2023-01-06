@@ -46,6 +46,7 @@ import com.wintec.lamp.utils.PriceUtils;
 import com.wintec.lamp.utils.StrToBrCode;
 
 import java.io.ByteArrayOutputStream;
+import java.math.BigDecimal;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -474,7 +475,15 @@ public class WintecServiceSingleton {
                 barCode[i] = prefix.charAt(i);
             }
         }
-        jointBarCode(barCode, Const.BAR_CODE_PLU_COORDINATE, Const.BAR_CODE_PLU_LENGTH, PriceUtils.toCodeBarPLU(commdity.getPluNo()));
+        if ("1".equals(Const.getSettingValue(Const.ITEM_NO_REPLACE_PLU))) {
+            String itemNo = commdity.getItemNo();
+            int pluLength = getCoordinateCount(Const.getSettingValue(Const.BAR_CODE_PLU_LENGTH));
+            if (itemNo.length() > pluLength)
+                itemNo = itemNo.substring(itemNo.length() - pluLength);
+            jointBarCode(barCode, Const.BAR_CODE_PLU_COORDINATE, Const.BAR_CODE_PLU_LENGTH, PriceUtils.toCodeBarPLU(itemNo));
+        } else {
+            jointBarCode(barCode, Const.BAR_CODE_PLU_COORDINATE, Const.BAR_CODE_PLU_LENGTH, PriceUtils.toCodeBarPLU(commdity.getPluNo()));
+        }
         jointBarCode(barCode, Const.BAR_CODE_TOTAL_COORDINATE, Const.BAR_CODE_TOTAL_LENGTH, PriceUtils.toPrinterPrice(total));
         jointBarCode(barCode, Const.BAR_CODE_WEIGHT_COORDINATE, Const.BAR_CODE_WEIGHT_LENGTH, PriceUtils.toPrinterWeight(currentNet));
         jointBarCode(barCode, Const.BAR_CODE_PRICE_COORDINATE, Const.BAR_CODE_PRICE_LENGTH, PriceUtils.toPrinterPrice(discountPrice));
@@ -569,7 +578,6 @@ public class WintecServiceSingleton {
         int width = tagMiddles.get(0).getLengths() * 8;
         int height = (tagMiddles.get(0).getBreadths() - 2) * 8;
         bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-//        bitmap.eraseColor(Color.parseColor("#FFFAFA"));//填充颜色
         canvasTag = new Canvas(bitmap);
         // 画文字
         String finalTotal = total;
@@ -580,25 +588,28 @@ public class WintecServiceSingleton {
             }
             paint.setTextSize(Float.valueOf(item.getFontSize()));
             List<String> list = new ArrayList<>();
-//            if ("drag19".equals(item.getDivId()) && status != 1 && item.getIsDelLine() != null && "1".equals(item.getIsDelLine())) {
-//                String lable = null;
-//                if (!isKg && commdity.getPriceUnitA() == 0) {
-//                    lable = CommUtils.Float2String(new BigDecimal(discountPrice).divide(new BigDecimal(2)).floatValue(), 2);
-//                } else {
-//                    lable = commdity.getUnitPriceA() + "";
-//                }
-//                list.add(lable);
-//            } else if ("drag20".equals(item.getDivId()) && status != 1 && item.getIsDelLine() != null && "1".equals(item.getIsDelLine())) {
-//                float price = Float.parseFloat(CommUtils.Float2String(commdity.getUnitPriceA(), 2));
-//                float total1 = 0;
-//                if (commdity.getPriceUnitA() == 0) {
-//                    total1 = price * mNet;
-//                } else {
-//                    total1 = price * Integer.valueOf(num);
-//                }
-//                String mTotal = CommUtils.priceToString(Float.valueOf(CommUtils.Float2String(total1, 2)));
-//                list.add(mTotal + "");
-//            }
+
+            //drag19单价drag20总价
+            //用于改价和折扣
+            if ("drag19".equals(item.getDivId()) && status != 1 && "1".equals(Const.getSettingValueWithDef("DISCOUNT_LINEATION", "0"))) {
+                String lable = null;
+                if (!isKg && commdity.getPriceUnitA() == 0) {
+                    lable = CommUtils.Float2String(new BigDecimal(discountPrice).divide(new BigDecimal(2)).floatValue(), 2);
+                } else {
+                    lable = " " + commdity.getUnitPriceA()+" ";
+                }
+                list.add(lable);
+            } else if ("drag20".equals(item.getDivId()) && status != 1 && "1".equals(Const.getSettingValueWithDef("DISCOUNT_LINEATION", "0"))) {
+                float price = Float.parseFloat(CommUtils.Float2String(commdity.getUnitPriceA(), 2));
+                float total1 = 0;
+                if (commdity.getPriceUnitA() == 0) {
+                    total1 = price * mNet;
+                } else {
+                    total1 = price * Integer.valueOf(num);
+                }
+                String mTotal = CommUtils.priceToString(Float.valueOf(CommUtils.Float2String(total1, 2)));
+                list.add(" "+mTotal + " ");
+            }
             String lable = getLable(commdity, finalTotal, mNet + "", num, discountPrice, isKg, status, tare, item);
             //利群四方店特殊需求，不打印单价
             if (Const.sellByNum) {
@@ -612,7 +623,10 @@ public class WintecServiceSingleton {
             for (int i = 0; i < list.size(); i++) {
                 String lable1 = list.get(i);
                 if (list.size() == 2 && i == 1) {
+                    paint.setFakeBoldText(false);
                     paint.setStrikeThruText(true);
+                    Integer fontSize = item.getFontSize();
+                    paint.setTextSize(fontSize>36? (float) (fontSize * 0.6) :fontSize);
                 }
                 Path path = new Path();
                 switch (item.getUnderline()) {
@@ -738,7 +752,7 @@ public class WintecServiceSingleton {
 //                    break;
 //            }
 //        });
-        // 多品一签
+        //条形码二维码
         BarcodeFormat barcodeFormat;
         OneDimensionalCodeWriter oneDimensionalCodeWriter;
         if (tagMiddles1.size() == 1) {
@@ -751,13 +765,50 @@ public class WintecServiceSingleton {
             Bitmap tempBitmap = null;
             if ("1".equals(Const.getSettingValue(Const.BAR_CODE_OR_QRCODE_FLAG))) {
                 tempBitmap = StrToBrCode.createQRCode(code, barHeight, barHeight);
+                switch (tagMiddles1.get(0).getUnderline()) {
+                    case 0:
+                        break;
+                    case 1:
+                        tempBitmap = BmpUtil.rotateBitmap(tempBitmap, 90);
+                        break;
+                    case 2:
+                        tempBitmap = BmpUtil.rotateBitmap(tempBitmap, 180);
+                        break;
+                    case 3:
+                        tempBitmap = BmpUtil.rotateBitmap(tempBitmap, 270);
+                        break;
+                    default:
+                        break;
+                }
                 canvasTag.drawBitmap(tempBitmap, barLeft, barTop, null);
+
                 if ("1".equals(Const.getSettingValue(Const.QRCODE_NUMBER_FLAG))) {
                     Paint paint1 = new Paint();
-                    int textSize = tempBitmap.getHeight() / 4;
+                    Path path = new Path();
+                    int textSize = tempBitmap.getHeight() / 5;
                     paint1.setTextSize(textSize);
-                    paint1.setTextAlign(Paint.Align.CENTER);
-                    canvasTag.drawText(code, barLeft + tempBitmap.getWidth() / 2, barTop + tempBitmap.getHeight() + textSize, paint1);
+
+                    switch (tagMiddles1.get(0).getUnderline()) {
+                        case 0:
+                            paint1.setTextAlign(Paint.Align.CENTER);
+                            canvasTag.drawText(code, barLeft + tempBitmap.getWidth() / 2, barTop + tempBitmap.getHeight() + textSize, paint1);
+                            break;
+                        case 1:
+                            int x = barLeft - tempBitmap.getHeight() / 4;// * lable1.length()) / 2;
+                            int y = barTop - barHeight / 2;
+                            path.moveTo(x, y);
+                            path.lineTo(x, 7 * y + tagMiddles1.get(0).getOrdinate() + tagMiddles1.get(0).getFontSize() * 2);
+                            canvasTag.drawTextOnPath(code, path, 0, 0, paint1);
+                            break;
+                        case 2:
+                            tempBitmap = BmpUtil.rotateBitmap(tempBitmap, 180);
+                            break;
+                        case 3:
+                            tempBitmap = BmpUtil.rotateBitmap(tempBitmap, 270);
+                            break;
+                        default:
+                            break;
+                    }
                 }
             } else {
                 if ("13位".equals(Const.getSettingValue(Const.BAR_CODE_LENGTH))) {
@@ -796,7 +847,6 @@ public class WintecServiceSingleton {
                 canvasTag.drawBitmap(tempBitmap, barLeft, barTop, null);
             }
 
-
             if (tempBitmap != null) {
                 tempBitmap.recycle();
             }
@@ -816,13 +866,15 @@ public class WintecServiceSingleton {
             canvasTag.drawBitmap(tempBitmap, barLeft, barTop, null);
 
             canvasTag.drawBitmap(tempBitmap, traceabilityCode.get(0).getAbscissa(), traceabilityCode.get(0).getOrdinate(), null);
+            if (tempBitmap != null) {
+                tempBitmap.recycle();
+            }
         }
         if ("逆向打印".equals(Const.getSettingValue(Const.TAG_DIRECTION))) {
             bitmap = BmpUtil.rotateBitmap(bitmap, 180);
         }
-//        String s = bitmapToString(bitmap, 100);
         printBitMap(width, height, bitmap);
-        //   return bitmap;
+
         if (bitmap != null) {
             bitmap.recycle();
         }

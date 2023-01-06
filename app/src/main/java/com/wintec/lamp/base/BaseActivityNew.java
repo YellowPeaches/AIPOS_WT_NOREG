@@ -24,6 +24,7 @@ import androidx.core.content.ContextCompat;
 
 import com.elvishew.xlog.LogConfiguration;
 import com.elvishew.xlog.LogLevel;
+import com.elvishew.xlog.XLog;
 import com.elvishew.xlog.flattener.Flattener;
 import com.elvishew.xlog.flattener.Flattener2;
 import com.elvishew.xlog.printer.AndroidPrinter;
@@ -32,6 +33,7 @@ import com.elvishew.xlog.printer.file.backup.FileSizeBackupStrategy;
 import com.elvishew.xlog.printer.file.clean.FileLastModifiedCleanStrategy;
 import com.elvishew.xlog.printer.file.naming.FileNameGenerator;
 import com.wintec.lamp.R;
+import com.wintec.lamp.utils.nanoHttp.MyNanoHttpdServer;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -52,8 +54,11 @@ public class BaseActivityNew extends AppCompatActivity {
     private Dialog mDialog;
     protected Activity mContext;
 
-    private static String ROOT_PATH = Environment.getExternalStoragePublicDirectory("DIRECTORY_DOCUMENTS").getPath() + "//aipos_log//";
+    private MyNanoHttpdServer myNanoHttpdServer;
+
     private static int logLevel = LogLevel.INFO;
+    private static String ROOT_PATH = Environment.getExternalStoragePublicDirectory("DIRECTORY_DOCUMENTS").getPath() + "//aipos_log//";
+
     /**
      * 是否需要把dialog圆圈颜色设置为白色(默认为false)
      */
@@ -84,24 +89,19 @@ public class BaseActivityNew extends AppCompatActivity {
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             window.setStatusBarColor(getResources().getColor(R.color.deepgreen1));
         }
-//        ImmersionBar immersionBar = ImmersionBar.with(this);
-//        switch (statusBar) {
-//            case 2:
-//                immersionBar.fitsSystemWindows(false).navigationBarEnable(false).statusBarDarkFont(false).init();
-//                break;
-//            case 3:
-//                immersionBar.statusBarColor(R.color.color_FFFFFF);
-//                immersionBar.fitsSystemWindows(true).navigationBarEnable(false).statusBarDarkFont(true).init();
-//                break;
-//            default:
-//                immersionBar.fitsSystemWindows(false).navigationBarEnable(false).statusBarDarkFont(true).init();
-//        }
-//        StackManager.addActivity(this);
         initBundle();
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
         // 初始化日志
         initLogging();
         com.elvishew.xlog.XLog.i("xlog初始化日志完成");
+
+        try {
+            myNanoHttpdServer = new MyNanoHttpdServer(2405);
+            myNanoHttpdServer.start();
+            XLog.i("WebServer start");
+        } catch (Exception e) {
+            XLog.e("WebServer start failed" + e);
+        }
     }
 
     /**

@@ -138,38 +138,8 @@ public class PluDtoDaoHelper {
                 .offset(offset * limit)
                 .limit(limit)
                 .list();
-//        if ("在线取数".equals(Const.getSettingValue(Const.KEY_GET_DATA_MODE))) {
-//            if (list != null && list.size() > 0) {
-//                List<String> collect = list.stream().map(PluDto::getPluNo).collect(Collectors.toList());
-//                String join = String.join(",", collect);
-//                try {
-//                    Future<List<PluDto>> submit = ThreadCacheManager.getExecutorService().submit(new Callable<List<PluDto>>() {
-//                        @Override
-//                        public List<PluDto> call() throws Exception {
-//                            List<PluDto> pluDtos = new ArrayList<>();
-//                            List query = DBUtil.Query("SELECT * FROM dbo.v_sk_item where plu_no in( " + join + ")");
-//                            if (query != null || query.size() == 2) {
-//                                List<HashMap<String, Object>> data = (List<HashMap<String, Object>>) query.get(1);
-//                                data.forEach(item -> {
-//                                    pluDtos.add(new PluDto(item));
-//                                });
-//                            }
-//                            return pluDtos;
-//                        }
-//                    });
-//                    return submit.get();
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                } catch (ExecutionException e) {
-//                    e.printStackTrace();
-//                }
-//                return new ArrayList<>();
-//            } else {
-//                return new ArrayList<>();
-//            }
-//        } else {
         return list;
-//        }
+
 
     }
 
@@ -198,6 +168,17 @@ public class PluDtoDaoHelper {
 
     public static void deleteAll() {
         MyApp.getDaoInstant().getPluDtoDao().deleteAll();
+    }
+
+    /**
+     * @description:  根据plu删除一条商品数据
+     * @param deleteOne   PluDto
+     * @return: void
+     * @author: dean
+     * @time: 2022/11/10 10:25
+     */
+    public static void deleteOneByPLU(PluDto deleteOne) {
+        MyApp.getDaoInstant().getPluDtoDao().delete(deleteOne);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)

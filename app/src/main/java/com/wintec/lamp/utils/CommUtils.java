@@ -30,7 +30,7 @@ public class CommUtils {
         BigDecimal bigDecimal = new BigDecimal(value + "");
         switch (num) {
             case 2:
-                decimalFormat = new DecimalFormat("#0.00");
+                decimalFormat = new DecimalFormat("#0.000");
                 decimalFormat.setRoundingMode(RoundingMode.HALF_UP);
                 break;
             case 3:
@@ -50,6 +50,7 @@ public class CommUtils {
         switch (Const.getSettingValue(Const.TOTAL_PRICE_MODE)) {
             case "不圆整(18.16)":
                 decimalFormat = new DecimalFormat("#0.00");
+                decimalFormat.setRoundingMode(RoundingMode.DOWN);
                 flag = true;
                 break;
             case "四舍五入(18.2)":

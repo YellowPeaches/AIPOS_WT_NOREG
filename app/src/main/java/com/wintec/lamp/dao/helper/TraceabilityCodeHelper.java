@@ -4,8 +4,6 @@ import com.wintec.lamp.base.MyApp;
 import com.wintec.lamp.dao.TraceabilityCodeDao;
 import com.wintec.lamp.dao.entity.TraceabilityCode;
 
-import java.util.List;
-
 public class TraceabilityCodeHelper {
 
     public static String selectByCode(String pluNo, String itemNo) {
@@ -31,7 +29,15 @@ public class TraceabilityCodeHelper {
         .unique();
     }
     public static void insert(TraceabilityCode traceabilityCode) {
-        MyApp.getDaoInstant().getTraceabilityCodeDao().insert(traceabilityCode);
+        TraceabilityCode temp = MyApp.getDaoInstant().getTraceabilityCodeDao().queryBuilder().where(
+                TraceabilityCodeDao.Properties.MrySymbol.eq(traceabilityCode.getMrySymbol())
+        ).unique();
+        if (temp == null) {
+            MyApp.getDaoInstant().getTraceabilityCodeDao().insert(traceabilityCode);
+        } else {
+            traceabilityCode.set_id(temp.get_id());
+            MyApp.getDaoInstant().getTraceabilityCodeDao().update(traceabilityCode);
+        }
     }
 
     public static TraceabilityCode selectByCodeOrPlu(String pluNo, String itemNo) {

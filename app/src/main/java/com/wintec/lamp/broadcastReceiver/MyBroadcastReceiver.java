@@ -4,7 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-import com.wintec.lamp.WelcomeActivity;
+import com.wintec.lamp.WelcomeNoReg;
 
 public class MyBroadcastReceiver extends BroadcastReceiver {
 
@@ -13,7 +13,7 @@ public class MyBroadcastReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         if (ACTION_BOOT.equals(intent.getAction())) {
-            Intent intentMainActivity = new Intent(context, WelcomeActivity.class);
+            Intent intentMainActivity = new Intent(context, WelcomeNoReg.class);
             intentMainActivity.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(intentMainActivity);
         }

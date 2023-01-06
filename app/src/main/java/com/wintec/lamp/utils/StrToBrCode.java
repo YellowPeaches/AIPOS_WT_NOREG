@@ -1,12 +1,9 @@
 package com.wintec.lamp.utils;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Point;
-import android.graphics.RectF;
 import android.text.TextUtils;
 
 import com.google.zxing.BarcodeFormat;
@@ -17,7 +14,6 @@ import com.google.zxing.common.BitMatrix;
 import com.google.zxing.oned.Code128Writer;
 import com.google.zxing.oned.OneDimensionalCodeWriter;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
-import com.wintec.lamp.base.Const;
 
 import java.util.HashMap;
 import java.util.Hashtable;

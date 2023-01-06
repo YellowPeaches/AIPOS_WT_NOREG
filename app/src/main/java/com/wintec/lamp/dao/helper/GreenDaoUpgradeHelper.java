@@ -3,12 +3,12 @@ package com.wintec.lamp.dao.helper;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.wintec.lamp.dao.AccDtoDao;
 import com.wintec.lamp.dao.CommdityDao;
 import com.wintec.lamp.dao.DaoMaster;
 import com.wintec.lamp.dao.PluDtoDao;
 import com.wintec.lamp.dao.TagMiddleDao;
 import com.wintec.lamp.dao.TraceabilityCodeDao;
-import com.wintec.lamp.dao.entity.TagMiddle;
 
 import org.greenrobot.greendao.database.Database;
 
@@ -58,9 +58,16 @@ public class GreenDaoUpgradeHelper extends DaoMaster.OpenHelper {
             currentVersion = newVersion;
         }
         if (oldVersion == 7) {
-            MigrationHelper.getInstance().migrate(db, TagMiddleDao.class);
+            MigrationHelper.getInstance().migrate(db, TagMiddleDao.class,TraceabilityCodeDao.class);
             currentVersion = newVersion;
         }
+        if (oldVersion == 8) {
+            MigrationHelper.getInstance().migrate(db, AccDtoDao.class,CommdityDao.class,TagMiddleDao.class,PluDtoDao.class,TraceabilityCodeDao.class);
+            currentVersion = newVersion;
+        }
+
+
+
         if (currentVersion != newVersion) {
             super.onUpgrade(db, oldVersion, newVersion);
         }

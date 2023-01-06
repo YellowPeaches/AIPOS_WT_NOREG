@@ -281,7 +281,8 @@ public class WelcomeActivity extends BaseMvpActivity<WelcomePresenter> implement
             aiTipDialog = new AiTipDialog();
             registerLayout.setVisibility(View.VISIBLE);
             tvSign.setOnClickListener(r -> {
-                registerPos();
+//                registerPos();
+                jumpToMainActivity();
             });
         } else {
             if (isCheck) {
@@ -364,7 +365,7 @@ public class WelcomeActivity extends BaseMvpActivity<WelcomePresenter> implement
     /**
      * 首次打开软件，设置默认配置
      */
-    private void firstOpenApp() {
+    public void firstOpenApp() {
         SharedPreferences setting = getSharedPreferences("First.ini", 0);
         boolean isfirst = setting.getBoolean("FIRST", true);
         if (isfirst) {// 第一次则跳转到欢迎页面
@@ -386,7 +387,7 @@ public class WelcomeActivity extends BaseMvpActivity<WelcomePresenter> implement
         }
         Const.setSettingValue(Const.KEY_MODE, "价签模式");
         Const.setSettingValue(Const.WEIGHT_UNIT, "kg");
-        Const.setSettingValue(Const.TOTAL_PRICE_POINT, "2");
+        Const.setSettingValue(Const.TOTAL_PRICE_POINT, "3");
         Const.setSettingValue(Const.UNIT_PRICE_POINT, "2");
         Const.setSettingValue(Const.WEIGHT_POINT, "3");
         Const.setSettingValue(Const.TOTAL_PRICE_MODE, "不圆整(18.16)");
@@ -421,6 +422,7 @@ public class WelcomeActivity extends BaseMvpActivity<WelcomePresenter> implement
         Const.setSettingValue(Const.BAR_CODE_FORMAT, "前缀-PLU-总价-重量");
         Const.setSettingValue(Const.BAR_CODE_PIECT_FLAG, "个位开始");
         Const.setSettingValue(Const.BAR_CODE_MULTI_PRICE_SIGN, "0");
+        Const.setSettingValue(Const.ITEM_NO_REPLACE_PLU, "0");
 
         Const.setSettingValue(Const.KEY_ODD_EVEN_CHECK, "奇校验");
         Const.setSettingValue(Const.BAR_CODE_LENGTH, "18位");
@@ -550,9 +552,7 @@ public class WelcomeActivity extends BaseMvpActivity<WelcomePresenter> implement
                 Const.setSettingValue(Const.KEY_SN_CODE, registerBean.getPosKey());
             }
             ymInit();
-
         }
-        // aiTipDialog.dismiss();
     }
 
     @Override

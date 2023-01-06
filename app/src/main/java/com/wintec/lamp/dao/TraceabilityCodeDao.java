@@ -28,6 +28,10 @@ public class TraceabilityCodeDao extends AbstractDao<TraceabilityCode, Long> {
         public final static Property PluNo = new Property(1, String.class, "pluNo", false, "PLU_NO");
         public final static Property ItemNo = new Property(2, String.class, "itemNo", false, "ITEM_NO");
         public final static Property TraceabilityCode = new Property(3, String.class, "traceabilityCode", false, "TRACEABILITY_CODE");
+        public final static Property TraceCodeNum = new Property(4, int.class, "TraceCodeNum", false, "TRACE_CODE_NUM");
+        public final static Property MrySymbol = new Property(5, int.class, "MrySymbol", false, "MRY_SYMBOL");
+        public final static Property TraceCode = new Property(6, String.class, "TraceCode", false, "TRACE_CODE");
+        public final static Property GolCode = new Property(7, String.class, "GolCode", false, "GOL_CODE");
     }
 
 
@@ -46,7 +50,11 @@ public class TraceabilityCodeDao extends AbstractDao<TraceabilityCode, Long> {
                 "\"_id\" INTEGER PRIMARY KEY AUTOINCREMENT ," + // 0: _id
                 "\"PLU_NO\" TEXT," + // 1: pluNo
                 "\"ITEM_NO\" TEXT," + // 2: itemNo
-                "\"TRACEABILITY_CODE\" TEXT);"); // 3: traceabilityCode
+                "\"TRACEABILITY_CODE\" TEXT," + // 3: traceabilityCode
+                "\"TRACE_CODE_NUM\" INTEGER NOT NULL ," + // 4: TraceCodeNum
+                "\"MRY_SYMBOL\" INTEGER NOT NULL ," + // 5: MrySymbol
+                "\"TRACE_CODE\" TEXT," + // 6: TraceCode
+                "\"GOL_CODE\" TEXT);"); // 7: GolCode
     }
 
     /** Drops the underlying database table. */
@@ -78,6 +86,18 @@ public class TraceabilityCodeDao extends AbstractDao<TraceabilityCode, Long> {
         if (traceabilityCode != null) {
             stmt.bindString(4, traceabilityCode);
         }
+        stmt.bindLong(5, entity.getTraceCodeNum());
+        stmt.bindLong(6, entity.getMrySymbol());
+ 
+        String TraceCode = entity.getTraceCode();
+        if (TraceCode != null) {
+            stmt.bindString(7, TraceCode);
+        }
+ 
+        String GolCode = entity.getGolCode();
+        if (GolCode != null) {
+            stmt.bindString(8, GolCode);
+        }
     }
 
     @Override
@@ -103,6 +123,18 @@ public class TraceabilityCodeDao extends AbstractDao<TraceabilityCode, Long> {
         if (traceabilityCode != null) {
             stmt.bindString(4, traceabilityCode);
         }
+        stmt.bindLong(5, entity.getTraceCodeNum());
+        stmt.bindLong(6, entity.getMrySymbol());
+ 
+        String TraceCode = entity.getTraceCode();
+        if (TraceCode != null) {
+            stmt.bindString(7, TraceCode);
+        }
+ 
+        String GolCode = entity.getGolCode();
+        if (GolCode != null) {
+            stmt.bindString(8, GolCode);
+        }
     }
 
     @Override
@@ -116,7 +148,11 @@ public class TraceabilityCodeDao extends AbstractDao<TraceabilityCode, Long> {
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // _id
             cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // pluNo
             cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // itemNo
-            cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3) // traceabilityCode
+            cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // traceabilityCode
+            cursor.getInt(offset + 4), // TraceCodeNum
+            cursor.getInt(offset + 5), // MrySymbol
+            cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6), // TraceCode
+            cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7) // GolCode
         );
         return entity;
     }
@@ -127,6 +163,10 @@ public class TraceabilityCodeDao extends AbstractDao<TraceabilityCode, Long> {
         entity.setPluNo(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
         entity.setItemNo(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
         entity.setTraceabilityCode(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
+        entity.setTraceCodeNum(cursor.getInt(offset + 4));
+        entity.setMrySymbol(cursor.getInt(offset + 5));
+        entity.setTraceCode(cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6));
+        entity.setGolCode(cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7));
      }
     
     @Override

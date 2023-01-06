@@ -93,7 +93,11 @@ public class Const {
     public final static String BAR_CODE_OR_QRCODE_FLAG = "BAR_CODE_OR_QRCODE_FLAG";
     //打印条码以克为单位显示
     public final static String BAR_CODE_GRAM_UNIT = "BAR_CODE_GRAM_UNIT";
-    //打印条码或二维码
+    //货号替换PLU
+    public final static String ITEM_NO_REPLACE_PLU = "ITEM_NO_REPLACE_PLU";
+    //打折改价划横线
+    public final static String DISCOUNT_LINEATION = "DISCOUNT_LINEATION";
+    //打印二维码数字
     public final static String QRCODE_NUMBER_FLAG = "QRCODE_NUMBER_FLAG";
     //打印方向
     public final static String TAG_DIRECTION = "TAG_DIRECTION";
@@ -126,7 +130,7 @@ public class Const {
     public final static String RESULT_DISPLAY = "RESULT_DISPLAY";
     //结果显示时间
     public final static String RESULT_DISPLAY_TIME = "RESULT_DISPLAY_TIME";
-    //结果显示时间
+    //识别触发重量
     public final static String DELECT_WEIGHT = "DELECT_WEIGHT";
 
     // 语音播报开关

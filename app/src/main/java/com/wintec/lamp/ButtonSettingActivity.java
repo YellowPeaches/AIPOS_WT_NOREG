@@ -5,12 +5,15 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.PopupWindow;
 import android.widget.Toast;
+
+import androidx.annotation.Nullable;
 
 import com.alibaba.fastjson.JSONObject;
 import com.qmuiteam.qmui.skin.QMUISkinManager;
@@ -22,20 +25,18 @@ import com.qmuiteam.qmui.widget.grouplist.QMUICommonListItemView;
 import com.qmuiteam.qmui.widget.grouplist.QMUIGroupListView;
 import com.qmuiteam.qmui.widget.popup.QMUIPopup;
 import com.qmuiteam.qmui.widget.popup.QMUIPopups;
-import com.qmuiteam.qmui.widget.popup.QMUIQuickAction;
 import com.wintec.aiposui.view.dialog.AiTipDialog;
+import com.wintec.detection.WtAISDK;
 import com.wintec.detection.http.OnUnRegSDKListener;
-import com.wintec.lamp.api.ComModel;
+import com.wintec.detection.utils.StringUtils;
 import com.wintec.lamp.base.BaseActivity;
 import com.wintec.lamp.base.Const;
+import com.wintec.lamp.dao.helper.AccDtoHelper;
+import com.wintec.lamp.dao.helper.PluDtoDaoHelper;
 import com.wintec.lamp.data.EditType;
 import com.wintec.lamp.entity.EditEntity;
 import com.wintec.lamp.utils.ToastUtils;
-import com.wintec.lamp.view.NUIBottomSheet;
-import com.wintec.detection.WtAISDK;
-import com.wintec.detection.http.OnRegSDKListener;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -43,17 +44,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import androidx.annotation.Nullable;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-
 import butterknife.BindView;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
-import okhttp3.Headers;
-import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -143,12 +137,10 @@ public class ButtonSettingActivity extends BaseActivity {
                     pluAttrDispriceFlag.getSwitch().performClick();
                 })
                 .addItemView(itemViewMap.get("UnbindPos"), v -> {
-
-//                    解绑设备
-//                    ToastUtils.showToast("开发ing");
                     try {
-                        unbindPos(Const.SN);
-                    } catch (IOException e) {
+                        alertDialog();
+//                        unbindPos(Const.SN);
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 })
@@ -327,9 +319,14 @@ public class ButtonSettingActivity extends BaseActivity {
 
     /**
      * okhttp的post方法
+     *
+     * @param sn 机器sn
+     * @description: 解绑设备
+     * @return: void
+     * @author: dean
      */
     private void unbindPos(String sn) throws IOException {
-        if (!"".equals(sn)) {
+        if (StringUtils.isNotEmpty(sn)) {
             OkHttpClient okHttpClient = new OkHttpClient();
             RequestBody body = new FormBody.Builder()
                     .add("sn", sn).build();
@@ -347,30 +344,27 @@ public class ButtonSettingActivity extends BaseActivity {
                 public void onResponse(Call call, Response response) throws IOException {
                     String result = response.body().string();
                     JSONObject jsonObject = JSONObject.parseObject(result);
-                    String snCode = jsonObject.get("data") + ""; // 激活码(密钥)
+                    String secretKey = jsonObject.get("data") + ""; // 激活码(密钥)
                     String tenant = Const.getSettingValue(Const.KEY_ACCOUNT); //租户号
-                    String code = Const.getSettingValue(Const.KEY_POS_ID);   //POS编号
-                    if (snCode != null && !"".equals(snCode)) {
-//                        //自研SDK解绑，自研SDK密钥长度包含- 共32位； 元芒密钥包含 - 共36位
-//                        if (snCode.replace(" ", "").length() != 36) {
-//                            ToastUtils.showToast("解绑成功");
-////                            jumpToWelcomeActivity();
-//                        } else {
-                        WtAISDK.api_unregSDK(snCode, code, new OnUnRegSDKListener() {
+                    String posNumber = Const.getSettingValue(Const.KEY_POS_ID);   //POS编号
+                    if (StringUtils.isNotEmpty(secretKey)) {
+                        WtAISDK.api_unregSDK(secretKey, posNumber, new OnUnRegSDKListener() {
                             @Override
                             public void unregFail(int i, String s) {
-                                ToastUtils.showToast(i + "");
-                                ToastUtils.showToast("解绑失败，未查到机器信息，请联系客服人员" + i);
+                                ToastUtils.showToast("未查到机器信息,请联系客服人员,错误代码:" + i);
                             }
 
                             @Override
                             public void unregSuccess() {
+                                PluDtoDaoHelper.deleteAll();
+                                AccDtoHelper.deleteAll();
                                 WtAISDK.api_clearTrainedData();
+                                SharedPreferences setting = getSharedPreferences("First.ini", 0);
+                                setting.edit().putBoolean("FIRST", true).commit();
                                 jumpToWelcomeActivity();
                             }
 
                         });
-//                        }
                     } else {
                         ToastUtils.showToast("解绑失败，未查到机器信息，请联系客服人员");
                     }
@@ -379,10 +373,23 @@ public class ButtonSettingActivity extends BaseActivity {
         }
     }
 
+    //    private QMUIBottomSheet okok;  // 退出确认底部菜单
+//    okok = new NUIBottomSheet(context).createQuitBottomSheet(new NUIBottomSheet.ClickListener() {
+//        @Override
+//        public void onItemClick(QMUIBottomSheet dialog, View itemView, int position, String tag) {
+//            if (position == 0) {
+//                finish();
+//                System.exit(0);
+//            } else {
+//                quitBottomSheet.dismiss();
+//            }
+//        }
+//
+//    }, "是否退出？");
     public void alertDialog() {
         AlertDialog.Builder ab = new AlertDialog.Builder(this);
-        ab.setPositiveButton("确定", new DialogInterface.OnClickListener() {
-
+        ab.setMessage("解绑后数据会清除，确认解绑吗?");
+        ab.setPositiveButton("确认解绑", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 try {
@@ -393,12 +400,12 @@ public class ButtonSettingActivity extends BaseActivity {
             }
         });
         ab.setNegativeButton("取消", new DialogInterface.OnClickListener() {
-
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
             }
         });
+        ab.show();
     }
 
 }

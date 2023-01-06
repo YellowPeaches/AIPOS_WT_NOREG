@@ -3,6 +3,41 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.wintec.lamp">
 
+    <uses-feature android:name="android.hardware.camera" /> <!-- /**  弹窗权限 **/ -->
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+
+    <uses-feature android:name="android.hardware.camera.autofocus" />
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" /> <!-- Android11新增 -->
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" /> <!-- 安装应用权限 -->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission
+        android:name="android.permission.WRITE_SETTINGS"
+        tools:ignore="ProtectedPermissions" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+    <uses-permission android:name="android.permission.EXPAND_STATUS_BAR" />
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" /> <!-- 安卓11添加，否则无法调用bindService -->
+    <queries>
+        <package android:name="cn.wintec.sdk" />
+        <!-- 安卓11语音识别 -->
+        <intent>
+            <action android:name="android.intent.action.TTS_SERVICE" />
+        </intent>
+    </queries>
+
     <application
         android:name=".base.MyApp"
         android:allowBackup="true"
@@ -15,7 +50,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-
+<!--        <activity android:name=".WelcomeNoReg"></activity>-->
         <activity
             android:name=".GetPluSettingActivty"
             android:exported="true" />
@@ -35,7 +70,7 @@
             android:windowSoftInputMode="adjustUnspecified|stateHidden" />
         <activity android:name=".EditActivity" />
         <activity
-            android:name=".WelcomeActivity"
+            android:name=".WelcomeNoReg"
             android:alwaysRetainTaskState="true"
             android:launchMode="singleTask"
             android:theme="@style/BlueBG">
@@ -54,7 +89,9 @@
         <activity
             android:name=".WeightSettingActivity"
             android:label="称重设置" />
-
+        <activity
+            android:name=".WelcomeActivity"
+            android:label="登录界面" />
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.wintec.lamp.fileprovider"
@@ -64,6 +101,7 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
+
         <receiver
             android:name=".broadcastReceiver.MyBroadcastReceiver"
             android:enabled="true"
@@ -78,39 +116,5 @@
             android:name=".service.DownloadService"
             android:exported="false" />
     </application>
-    <uses-feature android:name="android.hardware.camera" />
-    <!--    /**  弹窗权限 **/-->
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
-    <uses-feature android:name="android.hardware.camera.autofocus" />
-
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <!-- Android11新增 -->
-    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
-
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" /> <!-- 安装应用权限 -->
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <uses-permission android:name="android.permission.RECORD_AUDIO" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.READ_CONTACTS" />
-    <uses-permission
-        android:name="android.permission.WRITE_SETTINGS"
-        tools:ignore="ProtectedPermissions" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
-    <uses-permission android:name="android.permission.EXPAND_STATUS_BAR" />
-    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
-    <uses-permission android:name="android.permission.BLUETOOTH" />
-    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
-
-    <!--    安卓11添加，否则无法调用bindService-->
-    <queries>
-        <package android:name="cn.wintec.sdk" />
-    </queries>
 
 </manifest>

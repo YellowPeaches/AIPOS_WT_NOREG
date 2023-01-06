@@ -181,8 +181,11 @@ public class WelcomePresenter<JavaScriptSerializer> extends WelcomeContract.Pres
             public void onSuccess(HttpResponse<Object> response) {
                 Object data = response.getData();
                 Map data1 = (Map) data;
+                int mapSize =data1.size();
                 ThreadPoolManagerUtils.getInstance().execute(() -> {
                     long s1 = System.currentTimeMillis();
+                    int i=0;
+                    Bitmap currentBitmap=null;
                     for (Object o : data1.entrySet()) {
                         String[] split = o.toString().split("=");
                         if (split != null && split.length == 2) {
@@ -198,10 +201,10 @@ public class WelcomePresenter<JavaScriptSerializer> extends WelcomeContract.Pres
                             if (currentPlu != null && !split[1].equals(currentPlu.getPreviewImage()) && StringUtils.isNotEmpty(split[1])) {
                                 currentPlu.setPreviewImage(split[1]);
                                 PluDtoDaoHelper.updateCommdity(currentPlu);
-                                Bitmap currentBitmap = NetWorkUtil.GetImageInputStream(split[1]);
+                                currentBitmap = NetWorkUtil.GetImageInputStream(split[1]);
                                 if (currentBitmap != null) {
                                     savaImageToPath(currentBitmap, AiPosListView.ROOT_PATH, (split[0] + ".jpg"));
-                                    XLog.d("下载图片成功："+split[0]);
+                                    XLog.d((i++)+"/"+mapSize+"下载图片成功："+split[0]);
                                 } else {
                                     XLog.d("下载图片失败："+split[0]);
                                 }

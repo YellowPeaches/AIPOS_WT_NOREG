@@ -14,11 +14,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.appcompat.widget.AppCompatEditText;
-import androidx.appcompat.widget.AppCompatTextView;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.load.engine.Resource;
 import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import com.wintec.aiposui.R;
 import com.wintec.aiposui.adapter.CommonViewItemAdapter;
@@ -418,6 +416,6 @@ public class AiPosOperatingView extends AiPosLayout implements View.OnClickListe
             mWay = "六";
         }
         return mYear + "年" + mMonth + "月" + mDay+"日"+" "+"星期"+mWay+" "+mHour+":"+mMinute+":"+mSecond;
-//        return mYear + "年" + mMonth + "月" + mDay + "日" + " " + "星期" + mWay + " " + mHour + ":" + mMinute;
+//        return mMonth + "月" + mDay + "日" + " " + "星期" + mWay + " " + mHour + ":" + mMinute +"      V2.4.11";
     }
 }

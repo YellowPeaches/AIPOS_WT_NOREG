@@ -102,7 +102,7 @@ public class ShowInfo extends BaseActivity {
         int height = QMUIResHelper.getAttrDimen(mContext, R.attr.qmui_list_item_height_higher);
         addSettingItem("SN", "设备SN", height, Const.SN);
         addSettingItem("BranchId", "门店编码", height, Const.getSettingValue(Const.KEY_BRANCH_ID));
-        addSettingItem("ScaleInfo", "称台信息", height, Const.getSettingValue(Const.KEY_SCALE));
+        addSettingItem("ScaleInfo", "秤台信息", height, Const.getSettingValue(Const.KEY_SCALE));
         addSettingItem("APPvERSION", "应用版本", height, DownloadUtil.getAppVersionName(mContext));
         addSettingItem("PosCode", "POS编码", height, Const.getSettingValue(Const.KEY_POS_ID));
         addSettingItem("BACK_VERSION", "使用备份版本", height, Const.getSettingValue(Const.BACK_VERSION));
@@ -185,7 +185,6 @@ public class ShowInfo extends BaseActivity {
     }
 
     public String getIP(Context context) {
-
         try {
             for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements(); ) {
                 NetworkInterface intf = en.nextElement();

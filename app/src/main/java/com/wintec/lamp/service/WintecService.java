@@ -10,31 +10,17 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.RemoteException;
-import android.text.Layout;
 import android.util.Log;
-import android.widget.RelativeLayout;
 
-import com.google.gson.internal.$Gson$Types;
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.MultiFormatWriter;
-import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
-import com.google.zxing.oned.Code128Writer;
-import com.google.zxing.oned.EAN13Writer;
 import com.wintec.aiposui.utils.CommUtils;
-import com.wintec.lamp.R;
-import com.wintec.lamp.ScaleActivityUI;
 import com.wintec.lamp.base.Const;
-import com.wintec.lamp.dao.entity.Commdity;
 import com.wintec.lamp.dao.entity.PluDto;
 import com.wintec.lamp.dao.entity.TagMiddle;
 import com.wintec.lamp.dao.helper.TagMiddleHelper;
 import com.wintec.lamp.utils.DateUtils;
 import com.wintec.lamp.utils.PriceUtils;
-import com.wintec.lamp.utils.scale.ScalesObject;
 
-import java.lang.reflect.Array;
-import java.util.Arrays;
 import java.util.List;
 
 import cn.wintec.aidl.LabelPrinterService;
@@ -54,7 +40,7 @@ public class WintecService {
     private static ScaleService scaleService;
     private static Handler mhandler;
     private final static int FLUSH_TOTAL = 15;    // 通知识别
-    private final static int SHOW_FAIL = 16;    // 通知识别
+    private final static int SHOW_FAIL = 16;    //
     public static Context mContext;
 
     public interface ScalesCallback {
@@ -386,7 +372,11 @@ public class WintecService {
         for (int i = 0; i < prefix.length(); i++) {
             barCode[i] = prefix.charAt(i);
         }
-        jointBarCode(barCode, Const.BAR_CODE_PLU_COORDINATE, Const.BAR_CODE_PLU_LENGTH, PriceUtils.toCodeBarPLU(commdity.getPluNo()));
+        if ("1".equals(Const.getSettingValue(Const.ITEM_NO_REPLACE_PLU))) {
+            jointBarCode(barCode, Const.BAR_CODE_PLU_COORDINATE, Const.BAR_CODE_PLU_LENGTH, PriceUtils.toCodeBarPLU(commdity.getItemNo()));
+        } else {
+            jointBarCode(barCode, Const.BAR_CODE_PLU_COORDINATE, Const.BAR_CODE_PLU_LENGTH, PriceUtils.toCodeBarPLU(commdity.getPluNo()));
+        }
         jointBarCode(barCode, Const.BAR_CODE_TOTAL_COORDINATE, Const.BAR_CODE_TOTAL_LENGTH, PriceUtils.toPrinterPrice(total));
         jointBarCode(barCode, Const.BAR_CODE_WEIGHT_COORDINATE, Const.BAR_CODE_WEIGHT_LENGTH, PriceUtils.toPrinterWeight(net));
         jointBarCode(barCode, Const.BAR_CODE_PRICE_COORDINATE, Const.BAR_CODE_PRICE_LENGTH, PriceUtils.toPrinterPrice(discountPrice));

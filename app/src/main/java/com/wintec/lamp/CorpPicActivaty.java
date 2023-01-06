@@ -20,7 +20,6 @@ import com.wintec.lamp.view.CropView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-//import com.wmdigit.wmpos.bean.ScaleSetting;
 
 public class CorpPicActivaty extends CamSupportActivity implements View.OnClickListener {
 

@@ -2,7 +2,6 @@ package com.wintec.aiposui.view;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.TextView;
@@ -209,7 +208,9 @@ public class AiPosTitleView extends AiPosLayout {
     public TextView getWeightView(){
         return tv_weight;
     }
-
+    public TextView getTv_price() {
+        return tv_price;
+    }
     public TextView getTv_total() {
         return tv_total;
     }

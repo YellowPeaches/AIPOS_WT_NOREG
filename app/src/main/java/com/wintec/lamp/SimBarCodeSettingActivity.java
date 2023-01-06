@@ -1,15 +1,13 @@
 package com.wintec.lamp;
 
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
-import android.widget.PopupWindow;
 import android.widget.Toast;
+
+import androidx.annotation.Nullable;
 
 import com.qmuiteam.qmui.skin.QMUISkinManager;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
@@ -19,29 +17,16 @@ import com.qmuiteam.qmui.widget.dialog.QMUIBottomSheet;
 import com.qmuiteam.qmui.widget.grouplist.QMUICommonListItemView;
 import com.qmuiteam.qmui.widget.grouplist.QMUIGroupListView;
 import com.qmuiteam.qmui.widget.popup.QMUIPopup;
-import com.qmuiteam.qmui.widget.popup.QMUIPopups;
 import com.wintec.aiposui.view.dialog.AiTipDialog;
-import com.wintec.lamp.base.BaseActivity;
 import com.wintec.lamp.base.BaseMvpActivity;
-import com.wintec.lamp.base.BaseMvpActivityYM;
 import com.wintec.lamp.base.Const;
 import com.wintec.lamp.contract.BarSettingContart;
-import com.wintec.lamp.contract.ScaleContract;
-import com.wintec.lamp.dao.entity.Commdity;
-import com.wintec.lamp.dao.entity.PluDto;
 import com.wintec.lamp.data.EditType;
 import com.wintec.lamp.entity.EditEntity;
 import com.wintec.lamp.presenter.BarSettingPresenter;
-import com.wintec.lamp.presenter.ScalePresenter;
-import com.wintec.lamp.presenter.SettingPresenter;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-
-import androidx.annotation.Nullable;
 
 import butterknife.BindView;
 
@@ -361,6 +346,8 @@ public class SimBarCodeSettingActivity extends BaseMvpActivity<BarSettingPresent
 //        addSettingItem(Const.BAR_CODE_WEIGHT_LENGTH, "重量长度", height, false);
 //        addSettingItem(Const.BAR_CODE_PRICE_LENGTH, "单价长度", height, false);
         addSettingItem(Const.BAR_CODE_FORMAT, "条码格式", height, false);
+        addSettingItem(Const.ITEM_NO_REPLACE_PLU, "货号替换PLU", height, true);
+        addSettingItem(Const.DISCOUNT_LINEATION, "折扣变价划线", height, true);
         addSettingItem(Const.KEY_ODD_EVEN_CHECK, "校验位设置", height, true);
         addSettingItem(Const.BAR_CODE_PIECT_FLAG, "计数商品数量位", height, false);
         addSettingItem(Const.BAR_CODE_IS_CHECK, "是否打印校验位", height, true);
@@ -383,6 +370,8 @@ public class SimBarCodeSettingActivity extends BaseMvpActivity<BarSettingPresent
         QMUICommonListItemView gFlagSwith = setSwith(Const.BAR_CODE_GRAM_UNIT);
         QMUICommonListItemView qrNumberFlagSwith = setSwith(Const.QRCODE_NUMBER_FLAG);
         QMUICommonListItemView multiPriceSign = setSwith(Const.BAR_CODE_MULTI_PRICE_SIGN);
+        QMUICommonListItemView itemRepleacPLU = setSwith(Const.ITEM_NO_REPLACE_PLU);
+        QMUICommonListItemView discountLineation = setSwith(Const.DISCOUNT_LINEATION);
         int size = QMUIDisplayHelper.dp2px(mContext, 60);
         QMUIGroupListView.newSection(mContext)
                 .setTitle("条码设置")
@@ -434,6 +423,12 @@ public class SimBarCodeSettingActivity extends BaseMvpActivity<BarSettingPresent
                                 listItems19, true, false, Const.BAR_CODE_FORMAT, itemViewMap.get(Const.BAR_CODE_FORMAT));
                     }
                 })
+                .addItemView(itemViewMap.get(Const.ITEM_NO_REPLACE_PLU), v -> {
+                    itemRepleacPLU.getSwitch().performClick();
+                })
+                .addItemView(itemViewMap.get(Const.DISCOUNT_LINEATION), v -> {
+                    discountLineation.getSwitch().performClick();
+                })
                 .addItemView(itemViewMap.get(Const.BAR_CODE_PIECT_FLAG), v -> {
                     String[] listItems = new String[]{
                             "个位开始",
@@ -483,7 +478,7 @@ public class SimBarCodeSettingActivity extends BaseMvpActivity<BarSettingPresent
                     qrNumberFlagSwith.getSwitch().performClick();
                 })
                 .addItemView(itemViewMap.get(Const.SCALE_NO), v -> {
-                    startEdit(Const.SCALE_NO, "秤号", Const.getSettingValue(Const.SCALE_NO), EditType.Edit_TYPE_INTEGER);
+                    startEdit(Const.SCALE_NO, "秤号", Const.getSettingValue(Const.SCALE_NO), EditType.Edit_TYPE_TEXT);
                 })
                 .addItemView(itemViewMap.get(Const.KEY_BRANCH_NAME), v -> {
                     startEdit(Const.KEY_BRANCH_NAME, "门店名称", Const.getSettingValue(Const.KEY_BRANCH_NAME), EditType.Edit_TYPE_TEXT);
@@ -508,6 +503,8 @@ public class SimBarCodeSettingActivity extends BaseMvpActivity<BarSettingPresent
         itemViewMap.get(Const.BAR_CODE_OR_QRCODE_FLAG).setDetailText("");
         itemViewMap.get(Const.BAR_CODE_GRAM_UNIT).setDetailText("");
         itemViewMap.get(Const.BAR_CODE_MULTI_PRICE_SIGN).setDetailText("");
+        itemViewMap.get(Const.ITEM_NO_REPLACE_PLU).setDetailText("");
+        itemViewMap.get(Const.DISCOUNT_LINEATION).setDetailText("");
 //        itemViewMap.get(Const.BAR_ONECODE_FLAG).setDetailText("");
     }
 

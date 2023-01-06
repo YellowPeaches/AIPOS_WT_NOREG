@@ -11,8 +11,6 @@ import com.squareup.leakcanary.RefWatcher;
 import com.wintec.aiposui.view.AiPosAllView;
 import com.wintec.aiposui.view.dialog.AiTipDialog;
 import com.wintec.detection.WtAISDK;
-import com.wintec.detection.utils.LogUtils;
-import com.wintec.detection.utils.StringUtils;
 import com.wintec.lamp.R;
 import com.wintec.lamp.dao.DaoMaster;
 import com.wintec.lamp.dao.DaoSession;
@@ -20,6 +18,8 @@ import com.wintec.lamp.dao.helper.GreenDaoUpgradeHelper;
 import com.wintec.lamp.network.NetWorkManager;
 import com.wintec.lamp.utils.ContextUtils;
 import com.wintec.lamp.utils.CrashHandler;
+import com.wintec.lamp.utils.wintecLable.Handler;
+import com.wintec.lamp.utils.wintecLable.SocketServer;
 
 import java.util.List;
 
@@ -46,19 +46,13 @@ public class MyApp extends BaseApp {
         CrashHandler.getInstance().init(this);
 
         refWatcher = setupLeakCanary();
-        float minScore = 0.65F;   //置信度
-        int showNum = 5;          //回传结果个数
-        if (StringUtils.isNotBlank(Const.getSettingValue(Const.DETECT_THRESHOLD))) {
-            minScore = Float.parseFloat(Const.getSettingValue(Const.DETECT_THRESHOLD));
-        }
-        if (StringUtils.isNotBlank(Const.getSettingValue(Const.KEY_GOODS_COUNT))) {
-            showNum = Integer.parseInt(Const.getSettingValue(Const.KEY_GOODS_COUNT));
-        }
+        //置信度
+        float minScore = Float.parseFloat(Const.getSettingValueWithDef(Const.DETECT_THRESHOLD,"0.65"));
+        //回传结果个数
+        int showNum = Integer.parseInt(Const.getSettingValueWithDef(Const.KEY_GOODS_COUNT,"5"));
 //        int code = WtAISDK.api_InitSDK(this, false);
         int code = WtAISDK.api_InitSDK(this, false, 0, minScore, showNum);
-//        int code = WtAISDK.api_InitSDK(this, false, 1, minScore, showNum,true);
-        LogUtils.d("code:" + code);
-
+        WtAISDK.api_setParam(Const.SN, "zkyt", "210629001", 2);
         // 初始化网络框架
         NetWorkManager.getInstance().init();
 //        检查摄像头
@@ -71,6 +65,19 @@ public class MyApp extends BaseApp {
 
         //根据摄像头选择 CameraCharacteristics.LENS_FACING_FRONT
         WtAISDK.api_setCameraId(CameraCharacteristics.LENS_FACING_FRONT);
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                SocketServer.getInstance(new Handler() {
+                    @Override
+                    public void returnMe() {
+
+                    }
+                }, 9000).init();
+            }
+        }).start();
+
     }
 
 

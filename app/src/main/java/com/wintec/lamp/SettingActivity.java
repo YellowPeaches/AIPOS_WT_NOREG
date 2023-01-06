@@ -154,7 +154,7 @@ public class SettingActivity extends BaseMvpActivity<SettingPresenter> implement
         //  addSettingItem(Const.KEY_SCALE, "称台设置", height, true);
         addSettingItem("ClearPlu", "清除本地商品", height, true);
         addSettingItem("ShowInfo", "详细信息", height, true);
-        addSettingItem("ToCalibrate", "重新标定", height, false);
+        addSettingItem("ToCalibrate", "裁剪识别范围", height, false);
         addSettingItem("UpdateAPP", "检测更新", height, true);
         int size = QMUIDisplayHelper.dp2px(mContext, 60);
         QMUIGroupListView.newSection(mContext)
@@ -217,7 +217,7 @@ public class SettingActivity extends BaseMvpActivity<SettingPresenter> implement
 
     private void checkPasswordAndClear(NUIKeyDialog dialog, String code) {
         dialog.dismiss();
-        if (code.equals(Const.getSettingValue(Const.KEY_POS_PASSWORD))) {
+        if (code.equals(Const.getSettingValueWithDef(Const.KEY_POS_PASSWORD,"11111111"))) {
             QMUIBottomSheet.BottomListSheetBuilder builder = new QMUIBottomSheet.BottomListSheetBuilder(getActivity());
             builder.setGravityCenter(true)
                     .setSkinManager(QMUISkinManager.defaultInstance(getContext()))
@@ -246,7 +246,7 @@ public class SettingActivity extends BaseMvpActivity<SettingPresenter> implement
     private void checkPassword(NUIKeyDialog dialog, String code) {
 
         dialog.dismiss();
-        if (code.equals(Const.getSettingValue(Const.KEY_POS_PASSWORD))) {
+        if (code.equals(Const.getSettingValueWithDef(Const.KEY_POS_PASSWORD,"11111111"))) {
             startActivity(ButtonSettingActivity.class);
         } else {
             aiTipDialog.showFail("密码不正确", groupListView);

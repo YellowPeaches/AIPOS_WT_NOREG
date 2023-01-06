@@ -31,7 +31,6 @@
             android:text="开始裁剪"
             android:textSize="27sp"
             android:textColor="@color/white"
-
             />
     </RelativeLayout>
 

@@ -1,19 +1,15 @@
 package com.wintec.aiposui.view;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.Environment;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -23,41 +19,26 @@ import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.DecodeFormat;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.engine.GlideException;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.RequestOptions;
-import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.target.SimpleTarget;
-import com.bumptech.glide.request.target.Target;
 import com.bumptech.glide.request.transition.Transition;
-import com.bumptech.glide.signature.ObjectKey;
 import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.wintec.aiposui.R;
 import com.wintec.aiposui.adapter.CommonViewItemAdapter;
 import com.wintec.aiposui.model.GoodsModel;
-import com.wintec.aiposui.utils.BitmapUtils;
 import com.wintec.aiposui.utils.CommUtils;
-import com.wintec.aiposui.utils.GlideCacheUtil;
-import com.wintec.aiposui.utils.ImageUtils;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 
 /**
@@ -84,11 +65,13 @@ public class AiPosListView extends AiPosLayout {
     private TextView txt_status;
     private TextView tv_version;
     private TextView tv_describe;
+    private TextView tv_appversion;
     private ImageView img_background;
     private ImageView logo_image;
     //    private Animation anim_out, anim_in;
     CommonViewItemAdapter<GoodsModel> adapter;
     private int status;
+    Context context = super.mContext;
 
     public AiPosListView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -105,6 +88,13 @@ public class AiPosListView extends AiPosLayout {
         txt_status.setVisibility(View.INVISIBLE);
         img_background = view.findViewById(R.id.img_background);
         tv_describe = view.findViewById(R.id.txt_describe);
+        tv_appversion = view.findViewById(R.id.tv_appversion);
+
+        String version = CommUtils.getAppVersionName(super.mContext);
+        String ip = CommUtils.getIP(super.mContext);
+        ip = ip == null ? "未连接网络" : ip;
+        tv_appversion.setText("IP:" + ip + "   " + version);
+
         if (isLandscape) {
             logo_image = view.findViewById(R.id.logo_image);
             File file = new File(LOGO_PATH + "logo.jpg");
@@ -112,6 +102,8 @@ public class AiPosListView extends AiPosLayout {
                 logo_image.setImageBitmap(getLoacalBitmap(LOGO_PATH + "logo.jpg"));
             }
         }
+
+
         // 根据横竖屏加载不同UI
         adapter = new CommonViewItemAdapter<GoodsModel>(isLandscape ? R.layout.item_goods : R.layout.item_goods_port) {
             @Override
@@ -472,6 +464,25 @@ public class AiPosListView extends AiPosLayout {
             e.printStackTrace();
             return null;
         }
+    }
+
+    /**
+     * 返回当前程序版本名
+     */
+    public String getAppVersionName(Context context) {
+        String versionName = "";
+        try {
+            // ---get the package info---
+            PackageManager pm = context.getPackageManager();
+            PackageInfo pi = pm.getPackageInfo(context.getPackageName(), 0);
+            versionName = pi.versionName;
+            if (versionName == null || versionName.length() <= 0) {
+                return "";
+            }
+        } catch (Exception e) {
+            Log.e("VersionInfo", "Exception", e);
+        }
+        return versionName;
     }
 
 }

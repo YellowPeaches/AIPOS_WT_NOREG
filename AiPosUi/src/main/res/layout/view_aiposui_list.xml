@@ -23,16 +23,6 @@
         android:visibility="gone"
         android:gravity="center|bottom"/>
 
-    <com.wintec.aiposui.view.control.CommonCustomTextView
-        android:id="@+id/txt_describe"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text=""
-        android:layout_margin="@dimen/dp_10"
-        android:textColor="@color/Grey500"
-        android:textSize="22sp"
-        android:gravity="right|bottom"/>
-
     <TextView
         android:id="@+id/tv_scales_size"
         android:layout_width="wrap_content"
@@ -88,13 +78,14 @@
         app:layout_constraintBottom_toBottomOf="@+id/ghline"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_aipos_list"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="-10dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_scales_size"/>
+        app:layout_constraintTop_toBottomOf="@id/tv_scales_size" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"
@@ -122,6 +113,21 @@
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"/>
+
+    <TextView
+        android:id="@+id/tv_appversion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="919dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="503dp"
+        android:text="  "
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/rv_aipos_list"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/txt_describe"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
