@@ -42,7 +42,7 @@ android {
         applicationId "com.wintec.lamp"
         minSdkVersion 25
         targetSdkVersion 31
-        versionName "V2.5.02NRS"
+        versionName "V2.5.04NR"
         versionCode 10213
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         ndk {

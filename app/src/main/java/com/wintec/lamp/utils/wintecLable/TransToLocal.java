@@ -1,4 +1,4 @@
-package com.wintec.lamp.utils.wintecLable;
+ package com.wintec.lamp.utils.wintecLable;
 
 import com.elvishew.xlog.XLog;
 import com.wintec.detection.utils.StringUtils;
@@ -120,6 +120,7 @@ public class TransToLocal {
         oneLabelAttribute.setOrdinate((int) (Integer.valueOf(oneAttribute[2]) / 1.98));
         oneLabelAttribute.setFontSize((int) (Integer.valueOf(oneAttribute[6]) + 8));
         oneLabelAttribute.setCodeSystem(0); //是否打印内容   0打印标题与内容,1仅打印内容,2仅打印标题
+        oneLabelAttribute.setBz1(" ");
 
         int angle = rotate(oneAttribute[5]);
         oneLabelAttribute.setUnderline(angle);
@@ -251,6 +252,7 @@ public class TransToLocal {
             oneLabelAttribute.setCodeSystem(2); //是否打印内容   0打印标题与内容,1仅打印内容,2仅打印标题
             oneLabelAttribute.setDivId("drag101");
             oneLabelAttribute.setTagName(oneAttribute[8]);   //标签标题
+//            oneLabelAttribute.setBz1(oneAttribute[8]);   //标签标题
         }
 
         return oneLabelAttribute;

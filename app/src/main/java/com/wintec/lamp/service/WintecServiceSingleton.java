@@ -591,25 +591,28 @@ public class WintecServiceSingleton {
 
             //drag19单价drag20总价
             //用于改价和折扣
-            if ("drag19".equals(item.getDivId()) && status != 1 && "1".equals(Const.getSettingValueWithDef("DISCOUNT_LINEATION", "0"))) {
-                String lable = null;
-                if (!isKg && commdity.getPriceUnitA() == 0) {
-                    lable = CommUtils.Float2String(new BigDecimal(discountPrice).divide(new BigDecimal(2)).floatValue(), 2);
-                } else {
-                    lable = " " + commdity.getUnitPriceA()+" ";
+            {
+                if ("drag19".equals(item.getDivId()) && status != 1 && "1".equals(Const.getSettingValueWithDef("DISCOUNT_LINEATION", "0"))) {
+                    String lable = null;
+                    if (!isKg && commdity.getPriceUnitA() == 0) {
+                        lable = CommUtils.Float2String(new BigDecimal(discountPrice).divide(new BigDecimal(2)).floatValue(), 2);
+                    } else {
+                        lable = " " + commdity.getUnitPriceA() + " ";
+                    }
+                    list.add(lable);
+                } else if ("drag20".equals(item.getDivId()) && status != 1 && "1".equals(Const.getSettingValueWithDef("DISCOUNT_LINEATION", "0"))) {
+                    float price = Float.parseFloat(CommUtils.Float2String(commdity.getUnitPriceA(), 2));
+                    float total1 = 0;
+                    if (commdity.getPriceUnitA() == 0) {
+                        total1 = price * mNet;
+                    } else {
+                        total1 = price * Integer.valueOf(num);
+                    }
+                    String mTotal = CommUtils.priceToString(Float.valueOf(CommUtils.Float2String(total1, 2)));
+                    list.add(" " + mTotal + " ");
                 }
-                list.add(lable);
-            } else if ("drag20".equals(item.getDivId()) && status != 1 && "1".equals(Const.getSettingValueWithDef("DISCOUNT_LINEATION", "0"))) {
-                float price = Float.parseFloat(CommUtils.Float2String(commdity.getUnitPriceA(), 2));
-                float total1 = 0;
-                if (commdity.getPriceUnitA() == 0) {
-                    total1 = price * mNet;
-                } else {
-                    total1 = price * Integer.valueOf(num);
-                }
-                String mTotal = CommUtils.priceToString(Float.valueOf(CommUtils.Float2String(total1, 2)));
-                list.add(" "+mTotal + " ");
             }
+
             String lable = getLable(commdity, finalTotal, mNet + "", num, discountPrice, isKg, status, tare, item);
             //利群四方店特殊需求，不打印单价
             if (Const.sellByNum) {
@@ -1182,7 +1185,7 @@ public class WintecServiceSingleton {
                 case "drag4":
                     tagName = "件数";
                     if (item.getBz1() == null || "".equals(item.getBz1())) {
-                        unit = "件";
+                        unit = "pcs";
                     } else {
                         unit = item.getBz1();
                     }
@@ -1190,7 +1193,7 @@ public class WintecServiceSingleton {
                     break;
                 case "drag19":
                     if (item.getBz1() == null || "".equals(item.getBz1())) {
-                        unit = "元/件";
+                        unit = "元/pcs";
                     } else {
                         unit = item.getBz1();
                     }
@@ -1200,6 +1203,15 @@ public class WintecServiceSingleton {
             }
         }
         if (item.getCodeSystem() == 2) {
+            if(tagName.contains("//")) {
+                tagName=" "+tagName+" ";
+                final String[] split = tagName.split("//");
+                if(commdity.getPriceUnitA() == 1){
+                    tagName=split[1];
+                }else {
+                    tagName=split[0];
+                }
+            }
             return tagName;
         }
         String value = "";
