@@ -2,17 +2,15 @@ package com.wintec.aiposui.view.dialog;
 
 import android.content.Context;
 import android.content.res.Configuration;
-import android.os.Looper;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.appcompat.app.AppCompatDialog;
 
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 import com.wintec.aiposui.R;
 import com.wintec.aiposui.model.GoodsModel;
 import com.wintec.aiposui.view.control.NUIKeyView;
-
-
-import androidx.appcompat.app.AppCompatDialog;
 
 public class NUIKeyDialog extends AppCompatDialog {
     public NUIKeyDialog(Context context) {
@@ -109,6 +107,10 @@ public class NUIKeyDialog extends AppCompatDialog {
                     keyView.setInput(p+"");
                     show();
                 }
+                public void showWithParams(String p) {
+                    keyView.setInput(p);
+                    show();
+                }
                 @Override
                 public void showWithPlu(GoodsModel goodsModel) {
                     keyView.setGoodModel(goodsModel);
@@ -146,7 +148,9 @@ public class NUIKeyDialog extends AppCompatDialog {
     public void showWithParams(int param) {
 
     }
+    public void showWithParams(String param) {
 
+    }
     public void showWithPlu(GoodsModel goodsModel) {
 
     }

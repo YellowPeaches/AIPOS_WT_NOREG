@@ -1917,11 +1917,13 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
             } else {
                 discountKeyboard.show();
             }
-        } else if (tempPriceFlag) {
+        } else if (tempPriceFlag) { //临时改价
             if ("1".equals(Const.getSettingValueWithDef(Const.PLU_ATTR_DISPRICE_FLAG, "0")) && !goodsModel.getTempPrice()) {
                 aiTipDialog.showFail("该商品不允许改价", aiPosAllView);
             } else {
-                tempPriceKeyboard.show();
+                //折扣显示原价
+                tempPriceKeyboard.showWithParams(goodsModel.getPrice());
+//                tempPriceKeyboard.show();
             }
         } else if (priceChangeFlag) {
             if ("1".equals(Const.getSettingValueWithDef(Const.PLU_ATTR_DISPRICE_FLAG, "0")) && !goodsModel.getTempPrice()) {
