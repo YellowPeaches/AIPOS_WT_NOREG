@@ -86,6 +86,8 @@ public class ButtonSettingActivity extends BaseActivity {
         });
         itemViewMap = new HashMap<>();
         int height = QMUIResHelper.getAttrDimen(mContext, R.attr.qmui_list_item_height_higher);
+        addSettingItem(Const.PRINTERER_SPEED, "打印速度", height, false);
+        addSettingItem(Const.PRINTER_CONCENTRATION, "打印浓度", height, false);
         addSettingItem(Const.KEY_UPPRICE_FLAG, "永久改价", height, false);
         addSettingItem(Const.KEY_DISCOUNT_FLAG, "折扣", height, false);
         addSettingItem(Const.KEY_TEMPPRICE_FLAG, "临时改价", height, false);
@@ -112,6 +114,12 @@ public class ButtonSettingActivity extends BaseActivity {
         QMUIGroupListView.newSection(mContext)
                 .setTitle("基本设置")
                 .setLeftIconSize(size, size)
+                .addItemView(itemViewMap.get(Const.PRINTERER_SPEED), v -> {
+                    startEdit(Const.PRINTERER_SPEED, "打印速度[0-15]", Const.getSettingValue(Const.PRINTERER_SPEED), EditType.Edit_TYPE_INTEGER);
+                })
+                .addItemView(itemViewMap.get(Const.PRINTER_CONCENTRATION), v -> {
+                    startEdit(Const.PRINTER_CONCENTRATION, "打印浓度[0-7]", Const.getSettingValue(Const.PRINTER_CONCENTRATION), EditType.Edit_TYPE_INTEGER);
+                })
                 .addItemView(itemViewMap.get(Const.KEY_UPPRICE_FLAG), v -> {
                     upPriceSwith.getSwitch().performClick();
                 })
@@ -156,12 +164,14 @@ public class ButtonSettingActivity extends BaseActivity {
         itemViewMap.get(Const.ONE_TEMPPRICE_FLAG).setDetailText("");
         itemViewMap.get(Const.PLU_ATTR_DISPRICE_FLAG).setDetailText("");
 
+
     }
 
     @Override
     protected void initData() {
         super.initData();
     }
+
 
     private void addSettingItem(String key, String title, int height, Boolean isBtn) {
         if (!isBtn) {

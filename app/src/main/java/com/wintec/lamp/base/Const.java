@@ -137,9 +137,12 @@ public class Const {
     public final static String VOIDCE_BROADCAST_FLAG = "VOIDCE_BROADCAST_FLAG";
     // 预览图开关
     public final static String PREVIEW_FLAG = "PREVIEW_FLAG";
-
     // 模糊搜索位数
     public final static String SEARCH_LENGHT = "SEARCH_LENGHT";
+    //宁致打印机速度
+    public final static String PRINTERER_SPEED = "PRINTERER_SPEED";
+    //宁致打印机浓度
+    public final static String PRINTER_CONCENTRATION = "PRINTER_CONCENTRATION";
 
     //是否允许永久改价
     public final static String KEY_UPPRICE_FLAG = "KEY_UPPRICE_FLAG";

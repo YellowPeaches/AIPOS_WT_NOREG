@@ -1,25 +1,25 @@
 package com.wintec.lamp;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
-
-import butterknife.BindView;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
-import com.qmuiteam.qmui.util.QMUIViewHelper;
 import com.qmuiteam.qmui.widget.QMUITopBarLayout;
 import com.wintec.lamp.base.BaseActivity;
+import com.wintec.lamp.base.Const;
 import com.wintec.lamp.data.EditType;
 import com.wintec.lamp.entity.EditEntity;
+import com.wintec.lamp.service.WintecServiceSingleton;
 import com.wintec.lamp.utils.CommUtils;
+
+import butterknife.BindView;
+import cn.wintec.aidl.LabelPrinterService;
+import cn.wintec.aidl.WintecManagerService;
 
 public class EditActivity extends BaseActivity {
 
@@ -29,12 +29,20 @@ public class EditActivity extends BaseActivity {
     EditText edit_value;
 
     private EditEntity entity;
+    private WintecManagerService wintecManagerService;  // wintec服务
+    private LabelPrinterService labelPrinterService;    // 标签打印机服务
 
     @Override
     protected void init(Bundle savedInstanceState) {
         super.init(savedInstanceState);
         Intent intent = getIntent();
         entity = (EditEntity) intent.getSerializableExtra("value");
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        WintecServiceSingleton.getInstance().bind();
     }
 
     @Override
@@ -78,7 +86,35 @@ public class EditActivity extends BaseActivity {
                         return;
                     }
                 }
+                //修改宁致打印机速度.浓度
+                if ("PRINTERER_SPEED".equals(entity.getKey()) || "PRINTER_CONCENTRATION".equals(entity.getKey())) {
+                    if ("宁致打印机".equals(Const.getSettingValue(Const.PRINT_SETTING))) {
+                        int speed = Integer.parseInt(value);
+                        boolean status = false;
+                        if ("PRINTERER_SPEED".equals(entity.getKey())) {
+                            if (speed < 0 || speed > 15) {
+                                MyToast("打印速度在[0-15]设置");
+                                return;
+                            }
+                            status = WintecServiceSingleton.getInstance().commandSetting(new byte[]{0x1F, 0x60, 0x01, (byte) speed});
+                        } else {
+                            if (speed < 0 || speed > 7) {
+                                MyToast("打印浓度在[0-7]设置");
+                                return;
+                            }
+                            status = WintecServiceSingleton.getInstance().commandSetting(new byte[]{0x1F, 0x70, 0x01, (byte) speed});
+                        }
+                        if (status) {
+                            Toast.makeText(getApplicationContext(), "设置成功", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(getApplicationContext(), "设置失败", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        MyToast("当前品牌打印机不支持修改");
+                        return;
+                    }
 
+                }
                 entity.setDetailText(value);
                 Intent intent = new Intent();
                 intent.putExtra("value", entity);

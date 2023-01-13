@@ -489,7 +489,7 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
             }
             if (!priceChangeFlagFoever) {
                 if (taskId != null || "".equals(taskId)) {
-                    if (!taskId.equals(detectRe.getTaskId())) {
+                    if (!detectRe.getTaskId().equals(taskId)) {
                         XLog.tag("error").e("存在问题，任务id和sessionid不一致");
                     }
                     api_confirmResult(taskId, dto.parse().getGoodsId(), dto.parse().getGoodsName(), false);
@@ -499,7 +499,7 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
                         return;
                     }
 
-                    if (detectRe != null && taskId != null && !"".equals(taskId) && !isZero && !taskId.equals(preTaskId)) {
+                    if (detectRe != null && taskId != null && !"".equals(taskId) && !isZero && !preTaskId.equals(taskId)) {
                         preTaskId = taskId;
                         boolean isDetect = false;
                         if (this.detectRe.getTaskId() == null || !this.detectRe.getTaskId().contains(dto.getPluNo())) {
@@ -2749,7 +2749,7 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
                 PluDto commdity = new PluDto(plu);
                 String pluName = plu.getNameTextA();
                 //去除商品名里的字母
-                pluName =pluName.replaceAll("[a-zA-Z]", "");
+//                pluName = pluName.replaceAll("[a-zA-Z]", "");
                 commdity.setInitials(PinyinUtil.getFirstSpell(pluName));
                 commdity.setBranchId(Const.getSettingValue(Const.KEY_BRANCH_ID));
                 PluDto commdityByItemCode = PluDtoDaoHelper.getCommdityByScalesCodeLocal(commdity.getPluNo());

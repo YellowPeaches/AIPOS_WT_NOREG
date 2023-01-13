@@ -153,6 +153,9 @@ public class WintecServiceSingleton {
             intent.setPackage("cn.wintec.sdk");
             intent.setAction("cn.wintec.SERVICE");
             boolean isBindService = mContext.bindService(intent, connection, BIND_AUTO_CREATE);
+            if (isBindService) {
+
+            }
         }
     }
 
@@ -280,6 +283,10 @@ public class WintecServiceSingleton {
                 //老版本sdk2.1.8使用
 //                labelPrinterService.PRN_Hex(new byte[]{0x1F, 0x11, (byte) 0x81});
                 labelPrinterService.PRN_Hex(new byte[]{0x1D, 0x0C});
+                boolean b = labelPrinterService.PRN_Hex(new byte[]{0x1F, 0x60, 0x01, 0x1});
+                if (b) {
+
+                }
                 //老版本sdk2.1.8使用
 //                labelPrinterService.PRN_Hex(new byte[]{0x1F, 0x11, (byte) 0x80});
             } else {
@@ -290,6 +297,24 @@ public class WintecServiceSingleton {
             XLog.e(e);
         }
 
+    }
+
+    /**
+     * @description:
+     * @param byte[] cmd  指令
+     * @return: boolean   执行是否成功
+     * @author: dean
+     * @time: 2023/1/12 15:10
+     */
+    public boolean commandSetting(byte[] cmd) {
+        boolean success = false;
+        try {
+//            new byte[]{0x1F, 0x60, 0x01, 0x10}
+            success = labelPrinterService.PRN_Hex(cmd);
+        } catch (Exception e) {
+            XLog.e("指令执行出错\n" + e.toString());
+        }
+        return success;
     }
 
     public void scaleClose() {
@@ -629,7 +654,7 @@ public class WintecServiceSingleton {
                     paint.setFakeBoldText(false);
                     paint.setStrikeThruText(true);
                     Integer fontSize = item.getFontSize();
-                    paint.setTextSize(fontSize>36? (float) (fontSize * 0.6) :fontSize);
+                    paint.setTextSize(fontSize > 36 ? (float) (fontSize * 0.6) : fontSize);
                 }
                 Path path = new Path();
                 switch (item.getUnderline()) {
@@ -1203,13 +1228,13 @@ public class WintecServiceSingleton {
             }
         }
         if (item.getCodeSystem() == 2) {
-            if(tagName.contains("//")) {
-                tagName=" "+tagName+" ";
+            if (tagName.contains("//")) {
+                tagName = " " + tagName + " ";
                 final String[] split = tagName.split("//");
-                if(commdity.getPriceUnitA() == 1){
-                    tagName=split[1];
-                }else {
-                    tagName=split[0];
+                if (commdity.getPriceUnitA() == 1) {
+                    tagName = split[1];
+                } else {
+                    tagName = split[0];
                 }
             }
             return tagName;
