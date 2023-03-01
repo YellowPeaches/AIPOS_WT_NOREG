@@ -489,7 +489,7 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
             }
             if (!priceChangeFlagFoever) {
                 if (taskId != null || "".equals(taskId)) {
-                    if (!detectRe.getTaskId().equals(taskId)) {
+                    if (!taskId.equals(detectRe.getTaskId())) {
                         XLog.tag("error").e("存在问题，任务id和sessionid不一致");
                     }
                     api_confirmResult(taskId, dto.parse().getGoodsId(), dto.parse().getGoodsName(), false);
@@ -499,7 +499,7 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
                         return;
                     }
 
-                    if (detectRe != null && taskId != null && !"".equals(taskId) && !isZero && !preTaskId.equals(taskId)) {
+                    if (detectRe != null && taskId != null && !"".equals(taskId) && !isZero && !taskId.equals(preTaskId)) {
                         preTaskId = taskId;
                         boolean isDetect = false;
                         if (this.detectRe.getTaskId() == null || !this.detectRe.getTaskId().contains(dto.getPluNo())) {
@@ -583,7 +583,8 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
         List<PluDto> commdityBySearchKey;
         isNum = isNumeric(key);
         if (isNum) {
-            if (key.length() < Integer.valueOf(Const.getSettingValueWithDef(Const.SEARCH_LENGHT, "0"))) {
+            if (key.length() < Integer.valueOf(Const.getSettingValueWithDef(Const.SEARCH_LENGHT, "0")) &&
+                    key.length() > 8) {
                 return;
             }
             aiPosAllView.getListView().clear();

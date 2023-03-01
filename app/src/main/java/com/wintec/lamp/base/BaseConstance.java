@@ -9,7 +9,7 @@ package com.wintec.lamp.base;
 public class BaseConstance {
     public static final String HTTP_SUCCESS_CODE = "200";
     public static final String BASE_URL = "http://114.115.174.123:8090/";  //地址//云服务器
-//    public static final String BASE_URL = "http://192.168.23.130:8090/";  //地址
+//    public static final String BASE_URL = "http://192.168.23.224:8090/";  //地址
 
     public static final String TOKEN_FAIL = "action.com.wintec.lamp.android.login";
     public static final String TOKEN_CATEGORY = "cate.com.wintec.lamp.android.login";

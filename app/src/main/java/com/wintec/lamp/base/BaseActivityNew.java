@@ -33,7 +33,7 @@ import com.elvishew.xlog.printer.file.backup.FileSizeBackupStrategy;
 import com.elvishew.xlog.printer.file.clean.FileLastModifiedCleanStrategy;
 import com.elvishew.xlog.printer.file.naming.FileNameGenerator;
 import com.wintec.lamp.R;
-import com.wintec.lamp.utils.nanoHttp.MyNanoHttpdServer;
+import com.wintec.lamp.utils.nanoHttp.MyNanoHttpdServer2;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -54,7 +54,7 @@ public class BaseActivityNew extends AppCompatActivity {
     private Dialog mDialog;
     protected Activity mContext;
 
-    private MyNanoHttpdServer myNanoHttpdServer;
+    private MyNanoHttpdServer2 myNanoHttpdServer;
 
     private static int logLevel = LogLevel.INFO;
     private static String ROOT_PATH = Environment.getExternalStoragePublicDirectory("DIRECTORY_DOCUMENTS").getPath() + "//aipos_log//";
@@ -96,7 +96,7 @@ public class BaseActivityNew extends AppCompatActivity {
         com.elvishew.xlog.XLog.i("xlog初始化日志完成");
 
         try {
-            myNanoHttpdServer = new MyNanoHttpdServer(2405);
+            myNanoHttpdServer = new MyNanoHttpdServer2(2405);
             myNanoHttpdServer.start();
             XLog.i("WebServer start");
         } catch (Exception e) {

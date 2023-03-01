@@ -6,6 +6,7 @@ apply from: 'and_res_guard.gradle'
 static def getNowTime() {
     return new Date().format("yyyyMMddHHmmss", TimeZone.getTimeZone("GMT+8"));
 }
+
 android {
     /**
      * 重命名APK
@@ -42,7 +43,7 @@ android {
         applicationId "com.wintec.lamp"
         minSdkVersion 25
         targetSdkVersion 31
-        versionName "V2.5.04NR"
+        versionName "V2.5.05NR"
         versionCode 10213
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         ndk {
