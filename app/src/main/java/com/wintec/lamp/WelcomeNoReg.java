@@ -310,6 +310,7 @@ public class WelcomeNoReg extends BaseMvpActivity<WelcomePresenter> implements W
 
         //识别阈值默认值
         Const.setSettingValue(Const.DETECT_THRESHOLD, "0.65");
+        Const.setSettingValue(Const.SEARCH_BY, "PLU");
         //获取称重串口
         if (Build.VERSION.SDK_INT < 30)
             Const.setSettingValue(Const.GET_WEIGHT_PORT, "/dev/ttySAC1");
@@ -534,7 +535,7 @@ public class WelcomeNoReg extends BaseMvpActivity<WelcomePresenter> implements W
         } else {
 
         }
-        if("1650SC10694063".equals(sn)||"1652SC101203T42009".equals(sn)){
+        if("0213Z1106G2007".equals(sn)||"1650SC10694063".equals(sn)||"1652SC101203T42009".equals(sn)){
             ans =true;
         }
         return ans;

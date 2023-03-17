@@ -24,13 +24,13 @@ import com.wintec.aiposui.view.keyboard.KeyBoardEditText;
  */
 public class AiPosTitleView extends AiPosLayout {
     //品名
-    private TextView tv_goods_name,tv_goods_type;
+    private TextView tv_goods_name, tv_goods_type;
     //单价
-    private TextView tv_price,tv_price_txt;
+    private TextView tv_price, tv_price_txt;
     //单位
-    private TextView tv_unit,tv_unit_txt;
+    private TextView tv_unit, tv_unit_txt;
     //总计
-    private TextView tv_total,tv_total_txt;
+    private TextView tv_total, tv_total_txt;
     //称重
     private CommonCustomTextView tv_weight;
     //皮重
@@ -52,34 +52,34 @@ public class AiPosTitleView extends AiPosLayout {
         super(context, attrs);
     }
 
+
     @Override
     protected void init(View view, boolean isLandscape) {
-        if (isLandscape){
+        if (isLandscape) {
             tv_txt_net = view.findViewById(R.id.tv_txt_net);
-            tv_goods_name=view.findViewById(R.id.tv_goods_name);
-            tv_goods_type=view.findViewById(R.id.tv_goods_type);
+            tv_goods_name = view.findViewById(R.id.tv_goods_name);
+            tv_goods_type = view.findViewById(R.id.tv_goods_type);
             //单价
-            tv_price=view.findViewById(R.id.tv_price);
-            tv_price_txt=view.findViewById(R.id.tv_price_txt);
+            tv_price = view.findViewById(R.id.tv_price);
+            tv_price_txt = view.findViewById(R.id.tv_price_txt);
             //单位
-            tv_unit=view.findViewById(R.id.tv_unit);
-            tv_unit_txt=view.findViewById(R.id.tv_unit_txt);
+            tv_unit = view.findViewById(R.id.tv_unit);
+            tv_unit_txt = view.findViewById(R.id.tv_unit_txt);
             //总计
-            tv_total=view.findViewById(R.id.tv_total);
-            tv_total_txt=view.findViewById(R.id.tv_total_txt);
+            tv_total = view.findViewById(R.id.tv_total);
+            tv_total_txt = view.findViewById(R.id.tv_total_txt);
             tv_hint = view.findViewById(R.id.tv_hint_text);
             tv_scales_status = view.findViewById(R.id.tv_scales_status);
             tv_tare_status = view.findViewById(R.id.tv_tare_status);
             layout_weight = view.findViewById(R.id.layout_weight);
-        }
-        else{
+        } else {
             keyBoardEditText = view.findViewById(R.id.edit_scalesCode);
             tv_hint = view.findViewById(R.id.hint_text);
         }
         //皮重
-        tv_tare=view.findViewById(R.id.tv_tare);
+        tv_tare = view.findViewById(R.id.tv_tare);
         //称重
-        tv_weight=view.findViewById(R.id.tv_weight);
+        tv_weight = view.findViewById(R.id.tv_weight);
 
     }
 
@@ -87,7 +87,7 @@ public class AiPosTitleView extends AiPosLayout {
         return keyBoardEditText;
     }
 
-    public void clearInput(){
+    public void clearInput() {
         keyBoardEditText.setText("");
     }
 
@@ -101,72 +101,71 @@ public class AiPosTitleView extends AiPosLayout {
         return R.layout.view_aiposui_title_port;
     }
 
-    public void setScaleOverload(String weight){
-        if (mIsLandscape){
+    public void setScaleOverload(String weight) {
+        if (mIsLandscape) {
             tv_scales_status.setText("过载");
             layout_weight.setBackground(this.getResources().getDrawable(R.drawable.bg_title_item_red));
             setWeight("---");
         }
     }
 
-    public void setScaleLoseload(String weight){
-        if (mIsLandscape){
+    public void setScaleLoseload(String weight) {
+        if (mIsLandscape) {
             tv_scales_status.setText("欠载");
             layout_weight.setBackground(this.getResources().getDrawable(R.drawable.bg_title_item_red));
             setWeight(weight);
         }
     }
 
-    public void setScalesStatusZero(){
+    public void setScalesStatusZero() {
         tv_scales_status.setText("零点 稳定");
     }
 
-    public void clearScalesStatus(){
+    public void clearScalesStatus() {
         tv_scales_status.setText("");
     }
 
-    public void setScalesStatusStable(){
+    public void setScalesStatusStable() {
         tv_scales_status.setText("稳定");
     }
 
-    public void setGoods(GoodsModel model, String net, int num, String total ,boolean isKg){
-        if(!mIsLandscape){
+    public void setGoods(GoodsModel model, String net, int num, String total, boolean isKg) {
+        if (!mIsLandscape) {
             return;
         }
-        if(model==null){
+        if (model == null) {
 
             tv_goods_name.setText("— — — —");
             //tv_goods_type.setText("暂无");
             tv_price.setText("0.00");
-            if(isKg){
+            if (isKg) {
                 tv_price_txt.setText("单价(元/kg)");
-            }else {
+            } else {
                 tv_price_txt.setText("单价(元/500g)");
             }
             tv_unit.setText("0.000");
             tv_unit_txt.setText("重量(kg)");
             tv_total.setText("0.00");
-        }else{
+        } else {
             tv_goods_name.setText(model.getGoodsName());
             tv_goods_type.setText(model.getGoodsType());
-            if(isKg){
+            if (isKg) {
                 tv_price.setText(model.getPrice());
-            }else {
-                tv_price.setText(CommUtils.Float2String(Float.parseFloat(model.getPrice())/2,2));
+            } else {
+                tv_price.setText(CommUtils.Float2String(Float.parseFloat(model.getPrice()) / 2, 2));
             }
-            if(model.getUnitId()==0){
-                if(isKg){
+            if (model.getUnitId() == 0) {
+                if (isKg) {
                     tv_price_txt.setText("单价(元/kg)");
-                }else {
+                } else {
                     tv_price_txt.setText("单价(元/500g)");
                 }
                 tv_unit_txt.setText("重量(kg)");
                 tv_unit.setText(net);
-            }
-            else{
+            } else {
                 tv_price_txt.setText("单价(元/件)");
                 tv_unit_txt.setText("件");
-                tv_unit.setText(num+"");
+                tv_unit.setText(num + "");
             }
 
             tv_total.setText(total);
@@ -174,29 +173,28 @@ public class AiPosTitleView extends AiPosLayout {
 
     }
 
-    public void setWeight(String weight){
+    public void setWeight(String weight) {
         tv_weight.setText(weight);
     }
 
-    public void setWeight(String weight, int type){
+    public void setWeight(String weight, int type) {
         layout_weight.setBackground(this.getResources().getDrawable(R.drawable.bg_title_item_2));
-        if (mIsLandscape){
+        if (mIsLandscape) {
             tv_weight.setText(weight);
-            if (!tv_txt_net.getText().toString().equals("净重(kg)")){
+            if (!tv_txt_net.getText().toString().equals("净重(kg)")) {
                 tv_txt_net.setText("净重(kg)");
                 tv_txt_net.setTextColor(Color.WHITE);
             }
 
-        }
-        else{
+        } else {
             tv_weight.setText(weight);
         }
-        switch (type){
+        switch (type) {
             // 变化中
             case 0:
                 tv_weight.setTextColor(Color.YELLOW);
                 break;
-                // 1 稳重 2清零
+            // 1 稳重 2清零
             case 1:
             case 2:
                 tv_weight.setTextColor(Color.WHITE);
@@ -205,19 +203,21 @@ public class AiPosTitleView extends AiPosLayout {
 
     }
 
-    public TextView getWeightView(){
+    public TextView getWeightView() {
         return tv_weight;
     }
+
     public TextView getTv_price() {
         return tv_price;
     }
+
     public TextView getTv_total() {
         return tv_total;
     }
 
-    public String getWeight(){
+    public String getWeight() {
         String weight = "0.000";
-        try{
+        try {
             String tmp = tv_weight.getText().toString();
             weight = tmp;
 //            if (mIsLandscape){
@@ -227,60 +227,59 @@ public class AiPosTitleView extends AiPosLayout {
 //                weight = tmp;
 //            }
 
-        }catch (Exception e){
+        } catch (Exception e) {
             weight = "0.000";
         }
         return weight;
     }
 
-    public void setTare(String tare, boolean isPreSetTare){
-        if (isPreSetTare){
+    public void setTare(String tare, boolean isPreSetTare) {
+        if (isPreSetTare) {
             tv_tare_status.setText("预置");
-        }else{
+        } else {
             tv_tare_status.setText("");
         }
 
         tv_tare.setText(tare);
     }
 
-    public String getTare(){
+    public String getTare() {
         String tare = tv_tare.getText().toString();
 //        String tare = text.replace("kg", "");
         try {
             Float i = Float.parseFloat(tare) * 1000;
-            return i.intValue()+"";
-        }catch (Exception e)
-        {
-            return  "0";
+            return i.intValue() + "";
+        } catch (Exception e) {
+            return "0";
         }
 
     }
-    public String getTareBySecend(){
+
+    public String getTareBySecend() {
 
 //        String tare = text.replace("kg", "");
         try {
-           return tv_tare.getText().toString();
-        }catch (Exception e)
-        {
-            return  "0";
+            return tv_tare.getText().toString();
+        } catch (Exception e) {
+            return "0";
         }
 
     }
-    public void setHint(String hint){
-        if (tv_hint!=null && hint!=null){
+
+    public void setHint(String hint) {
+        if (tv_hint != null && hint != null) {
             tv_hint.setText(hint);
         }
     }
 
-    public void clearHint(){
-        if (tv_hint!=null){
+    public void clearHint() {
+        if (tv_hint != null) {
             tv_hint.setText("");
         }
     }
-    public void setTvPriceTxt(boolean isKg)
-    {
-        if(!isKg)
-        {
+
+    public void setTvPriceTxt(boolean isKg) {
+        if (!isKg) {
             tv_price_txt.setText("单价(元/500g)");
         }
     }

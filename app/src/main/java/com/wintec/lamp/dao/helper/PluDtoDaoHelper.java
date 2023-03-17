@@ -170,6 +170,10 @@ public class PluDtoDaoHelper {
         MyApp.getDaoInstant().getPluDtoDao().deleteAll();
     }
 
+    public static long queryAllCount() {
+       return MyApp.getDaoInstant().getPluDtoDao().count();
+    }
+
     /**
      * @description:  根据plu删除一条商品数据
      * @param deleteOne   PluDto
@@ -224,7 +228,17 @@ public class PluDtoDaoHelper {
         return list;
 //        }
     }
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public static List<PluDto> getCommdityByItemCode(String scalesCode, int limit, int offset)    {
+        List<PluDto> list = MyApp.getDaoInstant().getPluDtoDao().queryBuilder()
+                .where(PluDtoDao.Properties.ItemNo.like("%" + scalesCode + "%"))
+                .orderRaw("length (plu_no)")
+                .offset(offset * limit)
+                .limit(limit)
+                .list();
 
+        return list;
+    }
     /**
      * 查询包含当前打秤码的总条数
      *

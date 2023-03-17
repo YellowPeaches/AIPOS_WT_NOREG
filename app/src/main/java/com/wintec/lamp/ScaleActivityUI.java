@@ -7,6 +7,9 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -267,6 +270,9 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
     private boolean priceChangeFlagFoever = false;  //永久改价不学习
     //多品一签flag
     private boolean allGoodsOneTagFlag = false;
+    //欠载时间间隔判断
+    public long lastUnderloadTime = 0L;
+
     private GoodsModel disTempModel;
     private Handler scalesHandler = new Handler() {
         @SuppressLint("HandlerLeak")
@@ -317,15 +323,25 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
                             Const.IS_NOT_LOADING = false;
                             aiTipDialog.dataLoading("正在加载识别数据", aiPosAllView, Const.DATA_LOADING_TIME);
                         }
+
+//                    if (WtAISDK.api_getStartUpState()) {
+//                        if (Const.IS_NOT_LOADING) {
+//                            Const.IS_NOT_LOADING = false;
+//                            aiTipDialog.dataLoading("正在加载识别数据", aiPosAllView, Const.DATA_LOADING_TIME);
+//                        }
                     } else {
+                        if (!WtAISDK.api_getStartUpState()) {
+                            aiTipDialog.dataLoading("正在加载识别数据", aiPosAllView, Const.DATA_LOADING_TIME);
+                            break;
+                        }
                         aiPosAllView.getListView().recognizing();
                         resetPage();
                         if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
                             aiPosAllView.getListView().noResult();
                             return;
                         }
-                        long starttime = System.currentTimeMillis();
 
+                        long starttime = System.currentTimeMillis();
                         final DetectResult[] detectResult = {null};
                         int detectCount = 0;
                         if (detectFlagOver) {
@@ -340,7 +356,7 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
                             String detectTime = (System.currentTimeMillis() - starttime) + "ms";
                             XLog.i("上次识别还未完成:" + detectTime);
                         }
-                        while (detectResult[0] == null && System.currentTimeMillis() - starttime < 460) {
+                        while (detectResult[0] == null && System.currentTimeMillis() - starttime < 500) {
                             detectCount++;
                         }
                         detectFlagOver = true;
@@ -488,9 +504,9 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
                 return;
             }
             if (!priceChangeFlagFoever) {
-                if (taskId != null || "".equals(taskId)) {
+                if (StringUtils.isNotEmpty(taskId)) {
                     if (!taskId.equals(detectRe.getTaskId())) {
-                        XLog.tag("error").e("存在问题，任务id和sessionid不一致");
+                        XLog.e("存在问题，任务id和sessionid不一致");
                     }
                     api_confirmResult(taskId, dto.parse().getGoodsId(), dto.parse().getGoodsName(), false);
                     XLog.i("未命中");
@@ -588,7 +604,13 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
                 return;
             }
             aiPosAllView.getListView().clear();
-            commdityBySearchKey = PluDtoDaoHelper.getCommdityByScalesCode2(key.toString(), allGoodsOneTagFlag ? 8 : 10, currentItemPage);
+            if ("PLU".equals(Const.getSettingValueWithDef(Const.SEARCH_BY, "PLU"))) {
+                //plu搜索
+                commdityBySearchKey = PluDtoDaoHelper.getCommdityByScalesCode2(key.toString(), allGoodsOneTagFlag ? 8 : 10, currentItemPage);
+            } else {
+                //货号搜索
+                commdityBySearchKey = PluDtoDaoHelper.getCommdityByItemCode(key.toString(), allGoodsOneTagFlag ? 8 : 10, currentItemPage);
+            }
             calTotalPage(key.toString(), true);
 
         } else {
@@ -2187,6 +2209,17 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
             isZero = true;
             aiPosAllView.getTitleView().setScaleLoseload(CommUtils.Float2String(net, point));
             isCanDectect.set(true);
+
+            //是否播放欠载提示音
+            if ("1".equals(Const.getSettingValue("VOIDCE_UNDERLOAD_FLAG")) && net < -0.005F) {
+                long currentUnderload = System.currentTimeMillis();
+                if ((currentUnderload - lastUnderloadTime) > 1500) {
+                    Uri uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
+                    Ringtone ringtone = RingtoneManager.getRingtone(context, uri);
+                    ringtone.play();
+                    lastUnderloadTime = currentUnderload;
+                }
+            }
             return;
         }
         // 变化中
@@ -2742,7 +2775,20 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
         }
     }
 
+    Long transStartTime = 0L;
+
     private void insert(List<DataBean> dataBeans) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if ((System.currentTimeMillis() - transStartTime) > 1000*20) {
+                    aiTipDialog.dataLoading("正在传秤中", aiPosAllView, 3000);
+                    transStartTime = System.currentTimeMillis();
+                }
+            }
+        });
+
+
 //        ThreadPoolManagerUtils.getInstance().execute(() ->{
         dataBeans.forEach(item -> {
             if (item instanceof Plu) {

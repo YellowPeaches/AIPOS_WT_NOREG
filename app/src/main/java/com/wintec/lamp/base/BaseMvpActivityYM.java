@@ -55,6 +55,7 @@ public abstract class BaseMvpActivityYM<T extends BaseMvpPresenter> extends Base
 
         int countFeature = WtAISDK.api_getFeatureCount();
         double sleepTime = (26000.0 / 18000 * countFeature) + 1000;
+
         Const.DATA_LOADING_TIME = (int) sleepTime;
         new Thread() {
             @Override

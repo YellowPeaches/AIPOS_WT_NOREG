@@ -1,6 +1,7 @@
 package com.wintec.aiposui.view;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -72,6 +73,9 @@ public class AiPosListView extends AiPosLayout {
     CommonViewItemAdapter<GoodsModel> adapter;
     private int status;
     Context context = super.mContext;
+
+    SharedPreferences setting = this.context.getSharedPreferences("wintec_pay", Context.MODE_PRIVATE);
+    String searchBy = setting.getString("SEARCH_BY", "PLU");
 
     public AiPosListView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -162,7 +166,11 @@ public class AiPosListView extends AiPosLayout {
                             });
 
                 }
-                helper.setText(R.id.tv_scales_code, item.getScalesCode());
+                if ("PLU".equals(searchBy)) {
+                    helper.setText(R.id.tv_scales_code, item.getScalesCode());
+                }else{
+                    helper.setText(R.id.tv_scales_code, item.getItemNo());
+                }
                 helper.setText(R.id.tv_goods_name, item.getGoodsName());
                 helper.setText(R.id.tv_goods_total, item.getTotal());
                 if (item.isKg()) {

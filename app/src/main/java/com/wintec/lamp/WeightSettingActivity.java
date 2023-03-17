@@ -85,6 +85,7 @@ public class WeightSettingActivity extends BaseActivity {
         addSettingItem(Const.DETECT_THRESHOLD, "识别阈值", height, true);
 //        addSettingItem(Const.ROTATION_SETTING, "回转距离(单位 1/8mm)", height, true);
         addSettingItem(Const.VOIDCE_BROADCAST_FLAG, "语音播报", height, true);
+        addSettingItem(Const.VOIDCE_UNDERLOAD_FLAG, "欠载提示音", height, true);
         addSettingItem(Const.PREVIEW_FLAG, "商品预览图", height, true);
         addSettingItem("UpPLUS", "上传商品匹配", height, true);
 //        addSettingItem("DownLoadIMG", "下载商品预览图", height, true);
@@ -92,8 +93,10 @@ public class WeightSettingActivity extends BaseActivity {
 
         addSettingItem(Const.KEY_MODE, "收银模式", height, true);
         addSettingItem(Const.GET_WEIGHT_PORT, "秤台取重串口", height, true);
+        addSettingItem(Const.SEARCH_BY, "打秤搜索方式", height, true);
         QMUICommonListItemView resultDisplaySwith = setSwith(Const.RESULT_DISPLAY);
         QMUICommonListItemView voidceBroadcastSwith = setSwith(Const.VOIDCE_BROADCAST_FLAG);
+        QMUICommonListItemView underloadSwith = setSwith(Const.VOIDCE_UNDERLOAD_FLAG);
         QMUICommonListItemView prviewSwith = setSwith(Const.PREVIEW_FLAG);
         int size = QMUIDisplayHelper.dp2px(mContext, 60);
         QMUIGroupListView.newSection(mContext)
@@ -144,6 +147,12 @@ public class WeightSettingActivity extends BaseActivity {
 ////                            true, false, "总价小数点",
 ////                            listItems, true, false, Const.TOTAL_PRICE_POINT, itemViewMap.get(Const.TOTAL_PRICE_POINT));
 //                })
+                .addItemView(itemViewMap.get(Const.SEARCH_BY), v -> {
+                    String[] listItems = new String[]{"PLU", "货号",};
+                    showSimpleBottomSheetList(
+                            true, false, "搜索方式",
+                            listItems, true, false, Const.SEARCH_BY, itemViewMap.get(Const.SEARCH_BY));
+                })
                 .addItemView(itemViewMap.get(Const.KEY_GOODS_COUNT), v -> {
                     String[] listItems = new String[]{
                             "1",
@@ -215,6 +224,9 @@ public class WeightSettingActivity extends BaseActivity {
                 .addItemView(itemViewMap.get(Const.VOIDCE_BROADCAST_FLAG), v -> {
                     voidceBroadcastSwith.getSwitch().performClick();
                 })
+                .addItemView(itemViewMap.get(Const.VOIDCE_UNDERLOAD_FLAG), v -> {
+                    underloadSwith.getSwitch().performClick();
+                })
                 .addItemView(itemViewMap.get(Const.PREVIEW_FLAG), v -> {
                     prviewSwith.getSwitch().performClick();
                 })
@@ -265,6 +277,7 @@ public class WeightSettingActivity extends BaseActivity {
                 .addTo(groupListView);
         itemViewMap.get(Const.RESULT_DISPLAY).setDetailText("");
         itemViewMap.get(Const.VOIDCE_BROADCAST_FLAG).setDetailText("");
+        itemViewMap.get(Const.VOIDCE_UNDERLOAD_FLAG).setDetailText("");
         itemViewMap.get(Const.PREVIEW_FLAG).setDetailText("");
     }
 

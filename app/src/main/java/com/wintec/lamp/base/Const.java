@@ -135,6 +135,8 @@ public class Const {
 
     // 语音播报开关
     public final static String VOIDCE_BROADCAST_FLAG = "VOIDCE_BROADCAST_FLAG";
+    // 欠载提示音开关
+    public final static String VOIDCE_UNDERLOAD_FLAG = "VOIDCE_UNDERLOAD_FLAG";
     // 预览图开关
     public final static String PREVIEW_FLAG = "PREVIEW_FLAG";
     // 模糊搜索位数
@@ -240,6 +242,8 @@ public class Const {
     public static final String APK_DOWNLOAD_URL = "downloadUrl";
     //识别阈值
     public final static String DETECT_THRESHOLD = "DETECT_THRESHOLD";
+    //搜索方式
+    public final static String SEARCH_BY = "SEARCH_BY";
 
     //获取数据方式
     public final static String KEY_GET_DATA_MODE = "KEY_GET_DATA_MODE";

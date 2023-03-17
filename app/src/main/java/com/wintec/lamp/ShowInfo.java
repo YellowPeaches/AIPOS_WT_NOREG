@@ -18,6 +18,7 @@ import com.wintec.aiposui.view.dialog.AiTipDialog;
 import com.wintec.aiposui.view.dialog.NUIKeyDialog;
 import com.wintec.lamp.base.BaseActivity;
 import com.wintec.lamp.base.Const;
+import com.wintec.lamp.dao.helper.PluDtoDaoHelper;
 import com.wintec.lamp.utils.updateapp.DownloadUtil;
 
 import java.net.Inet4Address;
@@ -107,6 +108,7 @@ public class ShowInfo extends BaseActivity {
         addSettingItem("PosCode", "POS编码", height, Const.getSettingValue(Const.KEY_POS_ID));
         addSettingItem("BACK_VERSION", "使用备份版本", height, Const.getSettingValue(Const.BACK_VERSION));
         addSettingItem("POS_IP", "POS IP", height, getIP(mContext));
+        addSettingItem("PLU_TOTAL", "商品数量", height, queryGoodsCount() + "");
         //设置switch
         int size = QMUIDisplayHelper.dp2px(mContext, 60);
         QMUIGroupListView.Section section = QMUIGroupListView.newSection(mContext)
@@ -199,6 +201,10 @@ public class ShowInfo extends BaseActivity {
             ex.printStackTrace();
         }
         return null;
+    }
+
+    private long queryGoodsCount() {
+        return PluDtoDaoHelper.queryAllCount();
     }
 
 }
