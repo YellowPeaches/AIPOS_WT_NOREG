@@ -209,7 +209,7 @@ public class Const {
 
     // 服务器IP
     public static String BASE_URL = "http://114.115.174.123:8090/";//云服务器
-    //        public static String BASE_URL = "http://192.168.23.130:8090/";
+//            public static String BASE_URL = "http://192.168.23.130:8090/";
     // 长连接端口号
     public static int Port = 8090;
     // web端口号

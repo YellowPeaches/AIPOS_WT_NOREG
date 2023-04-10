@@ -16,6 +16,10 @@ public class AiTipDialog {
 
     private QMUITipDialog tipDialog;
 
+    public  AiTipDialog() {
+
+    }
+
     public void showSuccess(String tipWord, View parentView) {
         tipDialog = new QMUITipDialog.Builder(parentView.getContext())
                 .setIconType(QMUITipDialog.Builder.ICON_TYPE_SUCCESS)
@@ -80,6 +84,21 @@ public class AiTipDialog {
         if (tipDialog != null && tipDialog.isShowing()) {
             tipDialog.dismiss();
         }
+    }
+
+    public QMUITipDialog showInfo(String tipWord, View parentView, Integer delayMillis) {
+        tipDialog = new QMUITipDialog.Builder(parentView.getContext())
+                .setIconType(QMUITipDialog.Builder.ICON_TYPE_INFO)
+                .setTipWord(tipWord)
+                .create();
+        tipDialog.show();
+        parentView.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                tipDialog.dismiss();
+            }
+        }, delayMillis);
+        return tipDialog;
     }
 
 }

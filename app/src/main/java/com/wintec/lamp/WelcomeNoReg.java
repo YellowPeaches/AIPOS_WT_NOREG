@@ -12,7 +12,6 @@ import android.widget.Toast;
 
 import com.elvishew.xlog.XLog;
 import com.wintec.detection.WtAISDK;
-import com.wintec.detection.utils.StringUtils;
 import com.wintec.lamp.base.BaseMvpActivity;
 import com.wintec.lamp.base.Const;
 import com.wintec.lamp.bean.VersionBean;
@@ -521,23 +520,23 @@ public class WelcomeNoReg extends BaseMvpActivity<WelcomePresenter> implements W
     }
 
     private boolean checkSN(String sn) {
-        boolean ans = false;
-        if (StringUtils.isNotEmpty(sn)) {
-            String year = sn.substring(6, 7);
-            String month = sn.substring(7, 8);
-            String day = sn.substring(8, 10);
-            if (Integer.parseInt(year) > 2) {
-                ans = true;
-            } else if (Integer.parseInt(year) == 2 && (month.equals("A") || month.equals("B") || month.equals("C")
-                    || month.equals("8") || month.equals("9"))) {
-                ans = true;
-            }
-        } else {
-
-        }
-        if("0213Z1106G2007".equals(sn)||"1650SC10694063".equals(sn)||"1652SC101203T42009".equals(sn)){
-            ans =true;
-        }
-        return ans;
+//        boolean ans = false;
+//        if (StringUtils.isNotEmpty(sn)) {
+//            String year = sn.substring(6, 7);
+//            String month = sn.substring(7, 8);
+//            String day = sn.substring(8, 10);
+//            if (Integer.parseInt(year) > 2) {
+//                ans = true;
+//            } else if (Integer.parseInt(year) == 2 && (month.equals("A") || month.equals("B") || month.equals("C")
+//                    || month.equals("8") || month.equals("9"))) {
+//                ans = true;
+//            }
+//        } else {
+//
+//        }
+//        if("0213Z1106G2007".equals(sn)||"1650SC10694063".equals(sn)||"1652SC101203T42009".equals(sn)){
+//            ans =true;
+//        }
+        return true;
     }
 }

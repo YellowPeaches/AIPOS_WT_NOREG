@@ -1,9 +1,7 @@
 package com.wintec.lamp;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -31,7 +29,6 @@ import android.widget.PopupWindow;
 import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
-import androidx.core.app.ActivityCompat;
 
 import com.bigkoo.pickerview.TimePickerView;
 import com.elvishew.xlog.XLog;
@@ -242,6 +239,7 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
     // 两次点击按钮之间的点击间隔不能少于1000毫秒
     private static final int MIN_CLICK_DELAY_TIME = 1000;
     private static long lastClickTime;
+    private static long lastDetectTime;
 
     private int netChangeCount = 0;
     //连续打印页面
@@ -334,54 +332,54 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
                             aiTipDialog.dataLoading("正在加载识别数据", aiPosAllView, Const.DATA_LOADING_TIME);
                             break;
                         }
-                        aiPosAllView.getListView().recognizing();
-                        resetPage();
-                        if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                            aiPosAllView.getListView().noResult();
-                            return;
-                        }
-
-                        long starttime = System.currentTimeMillis();
-                        final DetectResult[] detectResult = {null};
-                        int detectCount = 0;
-                        if (detectFlagOver) {
-                            new Thread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    detectResult[0] = api_Detect();
-                                }
-                            }).start();
-                            detectFlagOver = false;
-                        } else {
-                            String detectTime = (System.currentTimeMillis() - starttime) + "ms";
-                            XLog.i("上次识别还未完成:" + detectTime);
-                        }
-                        while (detectResult[0] == null && System.currentTimeMillis() - starttime < 500) {
-                            detectCount++;
-                        }
-                        detectFlagOver = true;
-//                        detectResult = api_Detect();
-
-                        if (detectResult[0] == null) {
-                            String detectTime = (System.currentTimeMillis() - starttime) + "ms";
-                            XLog.i("识别超时:" + detectTime);
-                            aiPosAllView.getListView().noResult();
-                            return;
-                        }
-                        String detectTime = (System.currentTimeMillis() - starttime) + "ms";
-                        XLog.i("识别耗时:" + detectTime + "-ResultCode:" + detectResult[0].getErrorCode() + " || GoodsIds:" + detectResult[0].getGoodsIds() + " || ModelIds:" + detectResult[0].getModelIds());
-
-                        if (detectResult[0].getErrorCode() == 0) {
-                            detectRe = detectResult[0];
-                            if ("在线取数".equals(Const.getSettingValue(Const.KEY_GET_DATA_MODE)) && NetWorkUtil.isNetworkAvailable(context)) {
-                                ThreadPoolManagerUtils.getInstance().execute(() -> {
-                                    getPriceBypluList(detectRe.getGoodsIds());
-                                });
-                            }
-                            scalesHandler.sendEmptyMessage(SCALES_SHOW_PLU);
-                        } else {
-                            aiPosAllView.getListView().noResult();
-                        }
+//                        aiPosAllView.getListView().recognizing();
+//                        resetPage();
+//                        if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+//                            aiPosAllView.getListView().noResult();
+//                            return;
+//                        }
+//
+//                        long starttime = System.currentTimeMillis();
+//                        final DetectResult[] detectResult = {null};
+//                        int detectCount = 0;
+//                        if (detectFlagOver) {
+//                            new Thread(new Runnable() {
+//                                @Override
+//                                public void run() {
+//                                    detectResult[0] = api_Detect();
+//                                }
+//                            }).start();
+//                            detectFlagOver = false;
+//                        } else {
+//                            String detectTime = (System.currentTimeMillis() - starttime) + "ms";
+//                            XLog.i("上次识别还未完成:" + detectTime);
+//                        }
+//                        while (detectResult[0] == null && System.currentTimeMillis() - starttime < 500) {
+//                            detectCount++;
+//                        }
+//                        detectFlagOver = true;
+////                        detectResult = api_Detect();
+//
+//                        if (detectResult[0] == null) {
+//                            String detectTime = (System.currentTimeMillis() - starttime) + "ms";
+//                            XLog.i("识别超时:" + detectTime);
+//                            aiPosAllView.getListView().noResult();
+//                            return;
+//                        }
+//                        String detectTime = (System.currentTimeMillis() - starttime) + "ms";
+//                        XLog.i("识别耗时:" + detectTime + "-ResultCode:" + detectResult[0].getErrorCode() + " || GoodsIds:" + detectResult[0].getGoodsIds() + " || ModelIds:" + detectResult[0].getModelIds());
+//
+//                        if (detectResult[0].getErrorCode() == 0) {
+//                            detectRe = detectResult[0];
+//                            if ("在线取数".equals(Const.getSettingValue(Const.KEY_GET_DATA_MODE)) && NetWorkUtil.isNetworkAvailable(context)) {
+//                                ThreadPoolManagerUtils.getInstance().execute(() -> {
+//                                    getPriceBypluList(detectRe.getGoodsIds());
+//                                });
+//                            }
+//                            scalesHandler.sendEmptyMessage(SCALES_SHOW_PLU);
+//                        } else {
+//                            aiPosAllView.getListView().noResult();
+//                        }
                     }
                     break;
                 case SHOW_FAIL:
@@ -467,10 +465,19 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
 
         //  timeLoop();
         aiPosAllView.getOperatingView().getBtn_print().setOnClickListener(r -> {
+            Long curDetectTime = System.currentTimeMillis();
+            if ((curDetectTime - lastDetectTime) < 600) {
+                aiTipDialog.showFail("请点击慢一些", aiPosAllView);
+                return;
+            }
             if (net >= weight / 1000) {
                 isCanDectect.set(false);
                 // 请求识别
-                scalesHandler.sendEmptyMessage(SCALES_DETECT);
+//                scalesHandler.sendEmptyMessage(SCALES_DETECT);
+//                scalesHandler.sendEmptyMessage(SCALES_CLEAR);
+                aiPosAllView.getListView().clear();
+                lastDetectTime = curDetectTime;
+                detectApi();
             } else {
                 aiTipDialog.showFail("请先放置商品", aiPosAllView);
             }
@@ -2247,7 +2254,22 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
 //            isCanDetectWithoutZero = false;
             isCanDectect.set(false);
             // 请求识别
-            scalesHandler.sendEmptyMessage(SCALES_DETECT);
+//            scalesHandler.sendEmptyMessage(SCALES_DETECT);
+            if (!Const.DATA_LOADING_OK) {
+                if (Const.IS_NOT_LOADING) {
+                    Const.IS_NOT_LOADING = false;
+                    aiTipDialog.dataLoading("正在加载识别数据", aiPosAllView, Const.DATA_LOADING_TIME);
+                    return;
+                }
+            } else {
+                if (!WtAISDK.api_getStartUpState()) {
+                    aiTipDialog.dataLoading("正在加载识别数据", aiPosAllView, Const.DATA_LOADING_TIME);
+                    return;
+                }
+            }
+            detectApi();
+
+
         }
 
         preNet = net;
@@ -2673,6 +2695,18 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
         clearMode();
     }
 
+    private void detectApi() {
+        ThreadPoolManagerUtils.getInstance().execute(() -> {
+            final long startTime = System.currentTimeMillis();
+            DetectResult detectResult = api_Detect();
+            final long endTime = System.currentTimeMillis();
+            detectRe = detectResult;
+            scalesHandler.sendEmptyMessage(SCALES_SHOW_PLU);
+            XLog.i("识别耗时:" + (endTime - startTime) + "ms -ResultCode:" + detectResult.getErrorCode() +
+                    " || GoodsIds:" + detectResult.getGoodsIds() + " || ModelIds:" + detectResult.getModelIds());
+        });
+    }
+
     /**
      * 清除数据
      *
@@ -2778,15 +2812,15 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
     Long transStartTime = 0L;
 
     private void insert(List<DataBean> dataBeans) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if ((System.currentTimeMillis() - transStartTime) > 1000*20) {
-                    aiTipDialog.dataLoading("正在传秤中", aiPosAllView, 3000);
-                    transStartTime = System.currentTimeMillis();
-                }
-            }
-        });
+//        runOnUiThread(new Runnable() {
+//            @Override
+//            public void run() {
+//                if ((System.currentTimeMillis() - transStartTime) > 1000 * 20) {
+//                    aiTipDialog.dataLoading("正在传秤中", aiPosAllView, 3000);
+//                    transStartTime = System.currentTimeMillis();
+//                }
+//            }
+//        });
 
 
 //        ThreadPoolManagerUtils.getInstance().execute(() ->{

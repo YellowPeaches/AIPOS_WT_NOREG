@@ -43,7 +43,7 @@ android {
         applicationId "com.wintec.lamp"
         minSdkVersion 25
         targetSdkVersion 31
-        versionName "V2.5.06NR"
+        versionName "V2.5.08NR"
         versionCode 10213
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         ndk {
@@ -145,7 +145,7 @@ dependencies {
     implementation 'com.tencent:mmkv-static:1.2.1'
 
     //识别sdk
-    implementation(name: 'Wintec_AiScaleSDK_3.0.35', ext: 'aar')
+    implementation(name: 'Wintec_AiScaleSDK_3.0.39NR', ext: 'aar')
 
     implementation 'androidx.room:room-runtime:2.2.6'
     annotationProcessor 'androidx.room:room-compiler:2.2.6'
