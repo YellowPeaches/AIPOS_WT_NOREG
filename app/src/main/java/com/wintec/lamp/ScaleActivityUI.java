@@ -633,7 +633,12 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
             aiPosAllView.getListView().idle();
         }
         commdityBySearchKey.forEach(item -> {
-            aiPosAllView.getListView().addData(item.parseNet(mNet, tradeMode, discount, tempPrice, tempTotal));
+            try {
+                aiPosAllView.getListView().addData(item.parseNet(mNet, tradeMode, discount, tempPrice, tempTotal));
+            } catch (Exception e) {
+                e.printStackTrace();
+                XLog.e(e);
+            }
         });
     }
 
@@ -807,7 +812,7 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
         aiPosAllView.getOperatingView().addOperatingBtn("走纸", R.mipmap.icon_zouzhi, new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ThreadPoolManagerUtils.getInstance().execute(new Runnable() {
+                new Thread(new Runnable() {
                     @Override
                     public void run() {
                         WintecServiceSingleton.getInstance().roll();
@@ -817,7 +822,7 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
                             getDataOnline();
                         }
                     }
-                });
+                }).start();
 
             }
         });
@@ -1479,7 +1484,7 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
     }
 
     /**
-     * @param null
+     * @param
      * @description: 调用在线取值
      * @return:
      * @author: dean
@@ -2614,13 +2619,15 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
 
 //                    TransactionHelper.insert(transaction);
 
-                    ThreadPoolManagerUtils.getInstance().execute(new Runnable() {
+                    new Thread(new Runnable() {
                         @Override
                         public void run() {
                             WintecServiceSingleton.getInstance().printImgLable(co, total, Integer.valueOf(count), isKg, tradeMode, aiPosAllView.getTitleView().getTare(), mNet);
-
+                            if(Const.printError){
+                                aiTipDialog.showFail("有纸未取走或打印异常", aiPosAllView,1500);
+                            }
                         }
-                    });
+                    }).start();
                 }
                 // 检查是否需要关闭折扣和临时改价状态
                 if (tempPriceFlag) {
@@ -3134,7 +3141,7 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
         if (imgDialog.isShowing()) {
             imgDialog.dismiss();
         }
-        WintecServiceSingleton.getInstance().unbind();
+//        WintecServiceSingleton.getInstance().unbind();
         super.onStop();
     }
 

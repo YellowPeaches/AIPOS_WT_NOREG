@@ -284,6 +284,11 @@ public class Const {
     public static int DATA_LOADING_TIME = 0;
     public static boolean IS_NOT_LOADING = true;
 
+
+
+    public static Boolean printError =false;
+
+
     //快麦打印机相关
     public static boolean isConnet = false;
     public static boolean isConnetFirst = true;

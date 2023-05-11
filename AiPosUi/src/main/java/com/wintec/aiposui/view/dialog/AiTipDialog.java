@@ -1,6 +1,7 @@
 package com.wintec.aiposui.view.dialog;
 
 import android.content.Context;
+import android.os.Handler;
 import android.view.View;
 
 import com.qmuiteam.qmui.widget.dialog.QMUITipDialog;
@@ -36,6 +37,7 @@ public class AiTipDialog {
         }, 600);
     }
 
+    Handler handler = new Handler();
     public void showFail(String tipWord, View parentView) {
         tipDialog = new QMUITipDialog.Builder(parentView.getContext())
                 .setIconType(QMUITipDialog.Builder.ICON_TYPE_FAIL)
@@ -52,6 +54,29 @@ public class AiTipDialog {
         }, 600);
     }
 
+
+    public void showFail(String tipWord, View parentView,int time) {
+        handler.post(() -> {
+            // Looper.prepare();
+            tipDialog = new QMUITipDialog.Builder(parentView.getContext())
+                    .setIconType(QMUITipDialog.Builder.ICON_TYPE_FAIL)
+                    .setTipWord(tipWord)
+                    .create();
+            tipDialog.setCancelable(true);
+            tipDialog.setCanceledOnTouchOutside(true);
+            if (!tipDialog.isShowing()) {
+                tipDialog.show();
+            }
+            // Looper.loop();
+        });
+
+        parentView.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                tipDialog.dismiss();
+            }
+        }, time);
+    }
 
     /**
      * loading提示框

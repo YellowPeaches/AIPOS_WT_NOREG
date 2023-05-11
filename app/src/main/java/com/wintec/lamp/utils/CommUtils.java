@@ -30,7 +30,7 @@ public class CommUtils {
         BigDecimal bigDecimal = new BigDecimal(value + "");
         switch (num) {
             case 2:
-                decimalFormat = new DecimalFormat("#0.000");
+                decimalFormat = new DecimalFormat("#0.00");
                 decimalFormat.setRoundingMode(RoundingMode.HALF_UP);
                 break;
             case 3:

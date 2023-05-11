@@ -163,7 +163,7 @@ public class WintecServiceSingleton {
         try {
             labelPrinterService.PRN_Close();
             scaleService.SCL_Close();
-        } catch (RemoteException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         if (mContext != null && connection != null) {
@@ -283,10 +283,6 @@ public class WintecServiceSingleton {
                 //老版本sdk2.1.8使用
 //                labelPrinterService.PRN_Hex(new byte[]{0x1F, 0x11, (byte) 0x81});
                 labelPrinterService.PRN_Hex(new byte[]{0x1D, 0x0C});
-                boolean b = labelPrinterService.PRN_Hex(new byte[]{0x1F, 0x60, 0x01, 0x1});
-                if (b) {
-
-                }
                 //老版本sdk2.1.8使用
 //                labelPrinterService.PRN_Hex(new byte[]{0x1F, 0x11, (byte) 0x80});
             } else {
@@ -300,8 +296,8 @@ public class WintecServiceSingleton {
     }
 
     /**
-     * @description:
      * @param byte[] cmd  指令
+     * @description:
      * @return: boolean   执行是否成功
      * @author: dean
      * @time: 2023/1/12 15:10
@@ -1149,6 +1145,7 @@ public class WintecServiceSingleton {
 //            } else if ("普瑞特打印机".equals(Const.getSettingValue(Const.PRINT_SETTING))) {
             boolean printSuccess = labelPrinterService.PRN_print(false);
             XLog.d("bitmap大小w*h:  %d * %d", bitmap.getWidth(), bitmap.getHeight());
+            Const.printError = !printSuccess;
             if (printSuccess) {
                 labelPrinterService.PRN_Hex(ByteUtils.hexToByteArr("0C"));
             }
