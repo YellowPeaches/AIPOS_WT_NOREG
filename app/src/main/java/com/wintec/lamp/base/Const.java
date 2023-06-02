@@ -145,6 +145,8 @@ public class Const {
     public final static String PRINTERER_SPEED = "PRINTERER_SPEED";
     //宁致打印机浓度
     public final static String PRINTER_CONCENTRATION = "PRINTER_CONCENTRATION";
+    //稳定再识别
+    public final static String STABLE_RE_IDENTIFICATION = "STABLE_RE_IDENTIFICATION";
 
     //是否允许永久改价
     public final static String KEY_UPPRICE_FLAG = "KEY_UPPRICE_FLAG";
@@ -209,7 +211,7 @@ public class Const {
 
     // 服务器IP
     public static String BASE_URL = "http://114.115.174.123:8090/";//云服务器
-//            public static String BASE_URL = "http://192.168.23.130:8090/";
+    //            public static String BASE_URL = "http://192.168.23.130:8090/";
     // 长连接端口号
     public static int Port = 8090;
     // web端口号
@@ -285,8 +287,8 @@ public class Const {
     public static boolean IS_NOT_LOADING = true;
 
 
-
-    public static Boolean printError =false;
+    public static Boolean printError = false;
+    public static Long identifyTimestamps = 0L;
 
 
     //快麦打印机相关

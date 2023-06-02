@@ -109,7 +109,7 @@ public class TransToLocal {
     }
 
     /**
-     * @param oneTagInfo     本地软件下发的一条组件信息
+     * @param oneAttribute     本地软件下发的一条组件信息
      * @param labelAttribute 默认组件
      * @return 处理好的组件信息
      */
@@ -226,6 +226,12 @@ public class TransToLocal {
             oneLabelAttribute.setDivId("drag9");
             oneLabelAttribute.setCodeSystem(1);
             oneLabelAttribute.setTagName("配料");
+        }
+        //皮重
+        if (oneAttribute[0].endsWith("=tareGram")) {
+            oneLabelAttribute.setDivId("drag26");
+            oneLabelAttribute.setCodeSystem(1);
+            oneLabelAttribute.setTagName("皮重");
         }
         //附加文本1
         if (oneAttribute[0].endsWith("=extraTextA")) {

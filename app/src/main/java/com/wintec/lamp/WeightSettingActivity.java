@@ -90,7 +90,7 @@ public class WeightSettingActivity extends BaseActivity {
         addSettingItem("UpPLUS", "上传商品匹配", height, true);
 //        addSettingItem("DownLoadIMG", "下载商品预览图", height, true);
         addSettingItem(Const.SEARCH_LENGHT, "模糊搜索位数", height, true);
-
+        addSettingItem(Const.STABLE_RE_IDENTIFICATION, "稳定后二次识别", height, true);
         addSettingItem(Const.KEY_MODE, "收银模式", height, true);
         addSettingItem(Const.GET_WEIGHT_PORT, "秤台取重串口", height, true);
         addSettingItem(Const.SEARCH_BY, "打秤搜索方式", height, true);
@@ -98,6 +98,7 @@ public class WeightSettingActivity extends BaseActivity {
         QMUICommonListItemView voidceBroadcastSwith = setSwith(Const.VOIDCE_BROADCAST_FLAG);
         QMUICommonListItemView underloadSwith = setSwith(Const.VOIDCE_UNDERLOAD_FLAG);
         QMUICommonListItemView prviewSwith = setSwith(Const.PREVIEW_FLAG);
+        QMUICommonListItemView stableReIdentification = setSwith(Const.STABLE_RE_IDENTIFICATION);
         int size = QMUIDisplayHelper.dp2px(mContext, 60);
         QMUIGroupListView.newSection(mContext)
                 .setTitle("基本设置")
@@ -272,6 +273,9 @@ public class WeightSettingActivity extends BaseActivity {
                 .addItemView(itemViewMap.get(Const.DETECT_THRESHOLD), v -> {
                     startEdit(Const.DETECT_THRESHOLD, "设置识别阈值(0-0.8)", Const.getSettingValue(Const.DETECT_THRESHOLD), EditType.Edit_TYPE_TEXT);
                 })
+                .addItemView(itemViewMap.get(Const.STABLE_RE_IDENTIFICATION), v -> {
+                    stableReIdentification.getSwitch().performClick();
+                })
 //                .setMiddleSeparatorInset(QMUIDisplayHelper.dp2px(mContext, 16), 0)
                 .setMiddleSeparatorInset(0, 0)
                 .addTo(groupListView);
@@ -279,6 +283,7 @@ public class WeightSettingActivity extends BaseActivity {
         itemViewMap.get(Const.VOIDCE_BROADCAST_FLAG).setDetailText("");
         itemViewMap.get(Const.VOIDCE_UNDERLOAD_FLAG).setDetailText("");
         itemViewMap.get(Const.PREVIEW_FLAG).setDetailText("");
+        itemViewMap.get(Const.STABLE_RE_IDENTIFICATION).setDetailText("");
     }
 
     @Override

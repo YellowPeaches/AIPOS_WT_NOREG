@@ -2146,6 +2146,14 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
             aiPosAllView.getTitleView().setWeight(CommUtils.Float2String(net, point), 1);
             isST = true;
             isZero = false;
+
+
+            //稳定后再次识别  稳定识别
+            final boolean isReIdentificationModel = "1".equals(Const.getSettingValueWithDef(Const.STABLE_RE_IDENTIFICATION, "0"));
+            boolean isTimeAllowed = (System.currentTimeMillis() - Const.identifyTimestamps) > 1000;
+            if (isCanRefreshTotal && isReIdentificationModel && isTimeAllowed) {
+                detectApi();
+            }
             //刷新总价
             if (isCanRefreshTotal) {
                 aiPosAllView.getTitleView().setScalesStatusStable();
@@ -2258,6 +2266,7 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
         if (net >= weight / 1000 && isCanDectect.get() && !isPrint.get()) {
 //            isCanDetectWithoutZero = false;
             isCanDectect.set(false);
+            Const.identifyTimestamps = System.currentTimeMillis();
             // 请求识别
 //            scalesHandler.sendEmptyMessage(SCALES_DETECT);
             if (!Const.DATA_LOADING_OK) {
@@ -2623,8 +2632,8 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
                         @Override
                         public void run() {
                             WintecServiceSingleton.getInstance().printImgLable(co, total, Integer.valueOf(count), isKg, tradeMode, aiPosAllView.getTitleView().getTare(), mNet);
-                            if(Const.printError){
-                                aiTipDialog.showFail("有纸未取走或打印异常", aiPosAllView,1500);
+                            if (Const.printError) {
+                                aiTipDialog.showFail("有纸未取走或打印异常", aiPosAllView, 1500);
                             }
                         }
                     }).start();
@@ -2944,7 +2953,8 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
             total = tempTotal;
             discountPrice = String.format("%.2f", total / net);
         }
-        String mTotal = CommUtils.priceToString(Float.valueOf(CommUtils.Float2String(total, totalPricePoint)));
+//        String mTotal = CommUtils.priceToString(Float.valueOf(CommUtils.Float2String(total, totalPricePoint)));
+        String mTotal = CommUtils.priceToString(Float.valueOf(total));
         return new Total(mTotal, discountPrice, tradeMode);
     }
 //        int flag = 0;

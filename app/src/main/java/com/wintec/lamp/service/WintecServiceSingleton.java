@@ -296,7 +296,7 @@ public class WintecServiceSingleton {
     }
 
     /**
-     * @param byte[] cmd  指令
+     * @param cmd cmd  指令
      * @description:
      * @return: boolean   执行是否成功
      * @author: dean
@@ -1329,7 +1329,7 @@ public class WintecServiceSingleton {
                 break;
             case "26":
                 //皮重
-                value = tare;
+                value = (Double.valueOf(tare)/1000)+"kg";
                 break;
             case "27":
                 //二维码
