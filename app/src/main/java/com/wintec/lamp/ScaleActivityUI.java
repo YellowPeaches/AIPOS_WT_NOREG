@@ -312,8 +312,10 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
 
                     break;
                 case SCALES_SHOW_PLU:
-                    taskId = detectRe.getTaskId();
-                    mPresenter.detect(detectRe, aiPosAllView.getListView(), mNet, tradeMode, discount, tempPrice, tempTotal, maxDetectNum);
+                    if (detectRe != null) {
+                        taskId = detectRe.getTaskId();
+                        mPresenter.detect(detectRe, aiPosAllView.getListView(), mNet, tradeMode, discount, tempPrice, tempTotal, maxDetectNum);
+                    }
                     break;
                 case SCALES_DETECT:
                     if (!Const.DATA_LOADING_OK) {
@@ -1886,7 +1888,12 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
                 Boolean flagNull = this.detectRe.getTaskId() == null;
                 List<String> detectReGoodsIds = this.detectRe.getGoodsIds();
                 String trueGoodsId = goodsModel.getGoodsId();
-                Boolean flagContains = (detectReGoodsIds.contains(trueGoodsId));
+                Boolean flagContains = false;
+                try {
+                    flagContains = detectReGoodsIds.contains(trueGoodsId);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 if (flagNull || !flagContains) {
                     api_confirmResult(this.taskId, goodsModel.getGoodsId(), goodsModel.getGoodsName(), false);
                     detectResult = -1;
@@ -2839,32 +2846,44 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
 //        });
 
 
-//        ThreadPoolManagerUtils.getInstance().execute(() ->{
-        dataBeans.forEach(item -> {
-            if (item instanceof Plu) {
-                Plu plu = (Plu) item;
-                PluDto commdity = new PluDto(plu);
-                String pluName = plu.getNameTextA();
-                //去除商品名里的字母
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                dataBeans.forEach(item -> {
+                    if (item instanceof Plu) {
+                        Plu plu = (Plu) item;
+                        PluDto commdity = new PluDto(plu);
+                        String pluName = plu.getNameTextA();
+                        //去除商品名里的字母
 //                pluName = pluName.replaceAll("[a-zA-Z]", "");
-                commdity.setInitials(PinyinUtil.getFirstSpell(pluName));
-                commdity.setBranchId(Const.getSettingValue(Const.KEY_BRANCH_ID));
-                PluDto commdityByItemCode = PluDtoDaoHelper.getCommdityByScalesCodeLocal(commdity.getPluNo());
-                if (commdityByItemCode == null) {
-                    PluDtoDaoHelper.insertCommdity(commdity);
-                } else {
-                    // CommdityHelper.deleteCommdityByKey(commdityByItemCode.get_id());
-                    commdity.set_id(commdityByItemCode.get_id());
-                    commdity.setPreviewImage(commdityByItemCode.getPreviewImage());
-                    PluDtoDaoHelper.updateCommdity(commdity);
-                }
-            } else if (item instanceof Acc) {
-                Acc acc = (Acc) item;
-                AccDtoHelper.deleteByAccNo(acc.accNo);
-                AccDtoHelper.insert(new AccDto(acc));
-            }
+                        String tempPluName = pluName;
+                        if (pluName.contains("长")) {
+                            tempPluName = pluName.replace("长", "唱");
+                        }
+                        if (pluName.contains("参")) {
+                            tempPluName = pluName.replace("参", "深");
+                        }
+                        commdity.setInitials(PinyinUtil.getFirstSpell(tempPluName));
+                        commdity.setBranchId(Const.getSettingValue(Const.KEY_BRANCH_ID));
+                        PluDto commdityByItemCode = PluDtoDaoHelper.getCommdityByScalesCodeLocal(commdity.getPluNo());
+                        if (commdityByItemCode == null) {
+                            PluDtoDaoHelper.insertCommdity(commdity);
+                        } else {
+                            // CommdityHelper.deleteCommdityByKey(commdityByItemCode.get_id());
+                            commdity.set_id(commdityByItemCode.get_id());
+                            commdity.setPreviewImage(commdityByItemCode.getPreviewImage());
+                            PluDtoDaoHelper.updateCommdity(commdity);
+                        }
+                    } else if (item instanceof Acc) {
+                        Acc acc = (Acc) item;
+                        AccDto accDto = new AccDto(acc);
+                        AccDtoHelper.deleteByAccNo(accDto.getAccNo());
+                        AccDtoHelper.insert(accDto);
+                    }
 
-        });
+                });
+            }
+        }).start();
     }
 
     private void insertbpluszsm(List<DataBean> dataBeans) {

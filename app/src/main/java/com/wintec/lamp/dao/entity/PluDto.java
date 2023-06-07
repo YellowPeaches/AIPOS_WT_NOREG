@@ -338,8 +338,8 @@ public class PluDto {
         if (status == ScaleActivityUI.MODE_CHANGE_TOTAL_TRADE) {
             total = tempTotal;
         }
-        final String tempTotel = CommUtils.Float2String(total, totalPricePoint);
-        String mTotal = CommUtils.priceToString(Float.valueOf(tempTotel));
+//        final String tempTotel = CommUtils.Float2String(total, totalPricePoint);
+        String mTotal = CommUtils.priceToString(total);
         String discountPrice = String.valueOf(price);
         return new Total(mTotal, discountPrice, status);
     }

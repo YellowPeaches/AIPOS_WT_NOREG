@@ -56,12 +56,12 @@ public class MyApp extends BaseApp {
         // 初始化网络框架
         NetWorkManager.getInstance().init();
 //        检查摄像头
-        boolean cameraEnable = checkCameraEnable();
-        if (!cameraEnable) {
-            Toast.makeText(this, "相机未连接", Toast.LENGTH_LONG).show();
-            Toast.makeText(this, "相机未连接", Toast.LENGTH_LONG).show();
-            Toast.makeText(this, "相机未连接", Toast.LENGTH_LONG).show();
-        }
+//        boolean cameraEnable = checkCameraEnable();
+//        if (!cameraEnable) {
+//            Toast.makeText(this, "相机未连接", Toast.LENGTH_LONG).show();
+//            Toast.makeText(this, "相机未连接", Toast.LENGTH_LONG).show();
+//            Toast.makeText(this, "相机未连接", Toast.LENGTH_LONG).show();
+//        }
 
         //根据摄像头选择 CameraCharacteristics.LENS_FACING_FRONT
         WtAISDK.api_setCameraId(CameraCharacteristics.LENS_FACING_FRONT);

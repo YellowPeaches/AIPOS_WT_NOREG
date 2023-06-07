@@ -154,11 +154,9 @@ public class WintecServiceSingleton {
             intent.setAction("cn.wintec.SERVICE");
             boolean isBindService = mContext.bindService(intent, connection, BIND_AUTO_CREATE);
             if (isBindService) {
-
             }
         }
     }
-
     public void unbind() {
         try {
             labelPrinterService.PRN_Close();
@@ -629,7 +627,7 @@ public class WintecServiceSingleton {
                     } else {
                         total1 = price * Integer.valueOf(num);
                     }
-                    String mTotal = CommUtils.priceToString(Float.valueOf(CommUtils.Float2String(total1, 2)));
+                    String mTotal = CommUtils.priceToString(Float.valueOf(total1));
                     list.add(" " + mTotal + " ");
                 }
             }
@@ -655,21 +653,24 @@ public class WintecServiceSingleton {
                 Path path = new Path();
                 switch (item.getUnderline()) {
                     case 0:
-                        if (item.getItalic() == 1) {
-                            if (i == 1) {
-                                int x = (width - (int) item.getFontSize() * lable1.length()) / 2;
-                                canvasTag.drawText(lable1, x, Float.valueOf(item.getOrdinate()), paint);
+                        try {
+                            if (item.getItalic() == 1) {
+                                if (i == 1) {
+                                    int x = (width - (int) item.getFontSize() * lable1.length()) / 2;
+                                    canvasTag.drawText(lable1, x, Float.valueOf(item.getOrdinate()), paint);
+                                } else {
+                                    int x = (width - (int) item.getFontSize() * lable1.length()) / 2;
+                                    canvasTag.drawText(lable1, x, item.getOrdinate() + Float.valueOf(item.getFontSize()), paint);
+                                }
                             } else {
-                                int x = (width - (int) item.getFontSize() * lable1.length()) / 2;
-                                canvasTag.drawText(lable1, x, item.getOrdinate() + Float.valueOf(item.getFontSize()), paint);
+                                if (i == 1) {
+                                    canvasTag.drawText(lable1, item.getAbscissa(), Float.valueOf(item.getOrdinate()), paint);
+                                } else {
+                                    canvasTag.drawText(lable1, item.getAbscissa(), item.getOrdinate() + Float.valueOf(item.getFontSize()), paint);
+                                }
                             }
-
-                        } else {
-                            if (i == 1) {
-                                canvasTag.drawText(lable1, item.getAbscissa(), Float.valueOf(item.getOrdinate()), paint);
-                            } else {
-                                canvasTag.drawText(lable1, item.getAbscissa(), item.getOrdinate() + Float.valueOf(item.getFontSize()), paint);
-                            }
+                        }catch (Exception e){
+                            e.printStackTrace();
                         }
                         break;
                     case 1:
