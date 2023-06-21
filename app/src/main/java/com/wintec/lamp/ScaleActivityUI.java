@@ -101,6 +101,7 @@ import com.wintec.lamp.view.PrintDialog;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.security.NoSuchAlgorithmException;
@@ -2963,7 +2964,9 @@ public class ScaleActivityUI extends BaseMvpActivityYM<ScalePresenter> implement
             total = price * net;
             disCountAppand(flag, price + "", net + "", co);
         } else {
-            total = price * Integer.valueOf(count);
+            BigDecimal countBigDecimal = new BigDecimal(count+"");
+            BigDecimal priceBigDecimal = new BigDecimal(price+"");
+            total = countBigDecimal.multiply(priceBigDecimal).floatValue();
             disCountAppand(flag, price + "", count, co);
 
         }
